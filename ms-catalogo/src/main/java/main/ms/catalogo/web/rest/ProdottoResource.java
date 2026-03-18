@@ -202,4 +202,30 @@ public class ProdottoResource {
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
+
+    // EndPoint castom
+
+    // Carosello home — prodotti marcati inEvidenza=true
+    @GetMapping("/in-evidenza")
+    public ResponseEntity<List<ProdottoDTO>> getProdottiInEvidenza() {
+        LOG.debug("GET /api/prodottos/in-evidenza");
+        List<ProdottoDTO> result = prodottoService.findInEvidenza();
+        return ResponseEntity.ok(result);
+    }
+
+    // Carosello home — top 10 per totalePurchased
+    @GetMapping("/top-venduti")
+    public ResponseEntity<List<ProdottoDTO>> getTopVenduti() {
+        LOG.debug("GET /api/prodottos/top-venduti");
+        List<ProdottoDTO> result = prodottoService.findTopVenduti();
+        return ResponseEntity.ok(result);
+    }
+
+    // Dettaglio prodotto — "Ti potrebbe interessare"
+    @GetMapping("/prodottos/{id}/correlati")
+    public ResponseEntity<List<ProdottoDTO>> getCorrelati(@PathVariable Long id) {
+        LOG.debug("GET /api/prodottos/{}/correlati", id);
+        List<ProdottoDTO> result = prodottoService.findCorrelati(id);
+        return ResponseEntity.ok(result);
+    }
 }
