@@ -1,0 +1,11 @@
+id;nome;descrizione;prezzo;aliquota_iva;immagine_copertina;immagine_copertina_content_type;immagine_prodotto;immagine_prodotto_content_type;disponibile;quantita_disponibile;voto_totale;in_evidenza;totale_purchased;categoria_id
+1;alienated miserably;../fake-data/blob/hipster.txt;10770.73;6837;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;false;30902;16367.11;false;21439;1
+2;than;../fake-data/blob/hipster.txt;5755.55;23447;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;true;31942;17040.57;false;25061;2
+3;book;../fake-data/blob/hipster.txt;16455.87;31797;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;true;16620;9335.6;true;14635;3
+4;how;../fake-data/blob/hipster.txt;31667.99;2383;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;true;3506;10934.34;false;19830;4
+5;westernise;../fake-data/blob/hipster.txt;28578.19;19536;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;true;12777;6108.6;true;22697;5
+6;saturate beyond nor;../fake-data/blob/hipster.txt;17161.58;662;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;true;3384;31519.21;true;10225;6
+7;battle carefully;../fake-data/blob/hipster.txt;15280.05;32679;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;true;26791;21499.5;true;30075;7
+8;fully while;../fake-data/blob/hipster.txt;12761.38;4831;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;false;2121;25897.01;true;12462;8
+9;hydrolyze;../fake-data/blob/hipster.txt;7241.52;18337;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;false;17164;30781.05;true;2890;9
+10;kookily oxidise;../fake-data/blob/hipster.txt;17950.25;239;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;false;20674;1009.82;true;29578;10

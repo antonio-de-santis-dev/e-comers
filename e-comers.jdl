@@ -1,0 +1,246 @@
+// ===================================================
+// ENUM — sempre prima delle entita
+// ===================================================
+
+enum TipoSpedizione {
+    STANDARD,
+    EXPRESS,
+    SAME_DAY,
+    RITIRO
+}
+
+enum StatoOrdine {
+    IN_ELABORAZIONE,
+    PAGATO,
+    IN_SPEDIZIONE,
+    CONSEGNATO,
+    ANNULLATO
+}
+
+enum MetodoPagamento {
+    CARTA_CREDITO,
+    CARTA_DEBITO,
+    PAYPAL
+}
+
+enum StatoPagamento {
+    IN_ATTESA,
+    APPROVATO,
+    RIFIUTATO,
+    RIMBORSATO
+}
+
+// ===================================================
+// APPLICATION BLOCKS
+// Dichiarano a JHipster la configurazione di ogni
+// microservizio — risolvono il tipo UUID e altri
+// tipi avanzati che senza contesto non funzionano
+// ===================================================
+
+// --- ms-catalogo ---
+// Gestisce prodotti e categorie
+// DB: PostgreSQL (dati strutturati con relazioni)
+application {
+    config {
+        baseName msCatalogo
+        packageName main.ms.catalogo
+        applicationType microservice
+        databaseType sql
+        prodDatabaseType postgresql
+        devDatabaseType h2Disk
+        serviceDiscoveryType eureka
+        buildTool maven
+    }
+    entities Prodotto, Categoria
+}
+
+// --- ms-ordini ---
+// Gestisce ordini e righe ordine
+// DB: PostgreSQL (transazioni ACID critiche)
+application {
+    config {
+        baseName msOrdini
+        packageName main.ms.ordini
+        applicationType microservice
+        databaseType sql
+        prodDatabaseType postgresql
+        devDatabaseType h2Disk
+        serviceDiscoveryType eureka
+        buildTool maven
+    }
+    entities Ordine, RigaOrdine
+}
+
+// --- ms-pagamenti ---
+// Gestisce pagamenti e transazioni
+// DB: PostgreSQL (dati finanziari sensibili)
+application {
+    config {
+        baseName msPagamenti
+        packageName main.ms.pagamenti
+        applicationType microservice
+        databaseType sql
+        prodDatabaseType postgresql
+        devDatabaseType h2Disk
+        serviceDiscoveryType eureka
+        buildTool maven
+    }
+    entities Pagamento
+}
+
+// --- ms-recensioni ---
+// Gestisce le recensioni dei prodotti
+// DB: MongoDB (documenti con testo libero e immagini)
+application {
+    config {
+        baseName msRecensioni
+        packageName main.ms.recensioni
+        applicationType microservice
+        databaseType mongodb
+        serviceDiscoveryType eureka
+        buildTool maven
+    }
+    entities Recensione
+}
+
+// ===================================================
+// MS-CATALOGO ENTITIES
+// ===================================================
+
+entity Categoria {
+    nome String required maxlength(100)
+    descrizione String maxlength(500)
+    attiva Boolean required
+}
+
+entity Prodotto {
+    nome String required maxlength(200)
+    descrizione TextBlob required
+    prezzo BigDecimal required min(0)
+    aliquotaIva Integer required
+    immagineCopertina ImageBlob required
+    immagineProdotto ImageBlob
+    disponibile Boolean required
+    quantitaDisponibile Integer required min(0)
+    votoTotale Double
+    inEvidenza Boolean required
+    totalePurchased Integer
+}
+
+relationship ManyToOne {
+    Prodotto{categoria(nome) required} to Categoria
+}
+
+microservice Prodotto, Categoria with msCatalogo
+
+// ===================================================
+// MS-ORDINI ENTITIES
+// ===================================================
+
+entity Ordine {
+    numeroOrdine String required unique
+    clienteId UUID required
+    nomeCliente String required maxlength(100)
+    cognomeCliente String required maxlength(100)
+    email String required
+    telefono String
+    indirizzo String required
+    citta String required
+    provincia String required maxlength(2)
+    cap String required maxlength(5)
+    statoPaese String required
+    noteSpedizione String maxlength(500)
+    tipoSpedizione TipoSpedizione required
+    costoSpedizione BigDecimal required
+    totaleImponibile BigDecimal required
+    totaleIva BigDecimal required
+    totaleFinal BigDecimal required
+    buonoSconto String
+    scontoApplicato BigDecimal
+    statoOrdine StatoOrdine required
+    dataCreazione Instant required
+}
+
+entity RigaOrdine {
+    prodottoId UUID required
+    nomeProdotto String required
+    prezzoUnitario BigDecimal required
+    quantita Integer required min(1)
+    prezzoTotale BigDecimal required
+    aliquotaIva BigDecimal required
+}
+
+relationship OneToMany {
+    Ordine{righeOrdine} to RigaOrdine{ordine required}
+}
+
+microservice Ordine, RigaOrdine with msOrdini
+
+// ===================================================
+// MS-PAGAMENTI ENTITIES
+// ===================================================
+
+entity Pagamento {
+    ordineId UUID required
+    metodoPagamento MetodoPagamento required
+    importo BigDecimal required
+    stato StatoPagamento required
+    transazioneId String
+    dataOperazione Instant required
+}
+
+microservice Pagamento with msPagamenti
+
+// ===================================================
+// MS-RECENSIONI ENTITIES
+// ===================================================
+
+entity Recensione {
+    prodottoId UUID required
+    ordineId UUID required
+    nomeCliente String required maxlength(100)
+    descrizione String required maxlength(1000)
+    votoSingolo Integer required min(1) max(5)
+    immagineRecensione ImageBlob
+    dataRecensione Instant required
+    approvata Boolean required
+}
+
+microservice Recensione with msRecensioni
+
+// ===================================================
+// DTO — MapStruct mapper per tutte le entita
+// ===================================================
+
+dto Prodotto, Categoria with mapstruct
+dto Ordine, RigaOrdine with mapstruct
+dto Pagamento with mapstruct
+dto Recensione with mapstruct
+
+// ===================================================
+// SERVICE CLASS — no serviceImpl, solo serviceClass
+// ===================================================
+
+service Prodotto, Categoria with serviceClass
+service Ordine, RigaOrdine with serviceClass
+service Pagamento with serviceClass
+service Recensione with serviceClass
+
+// ===================================================
+// PAGINAZIONE
+// ===================================================
+
+paginate Prodotto with pagination
+paginate Ordine with pagination
+paginate RigaOrdine with pagination
+paginate Recensione with pagination
+paginate Pagamento with pagination
+
+// ===================================================
+// FILTRI — query dinamiche
+// ===================================================
+
+filter Prodotto
+filter Ordine
+filter Recensione
+filter Pagamento

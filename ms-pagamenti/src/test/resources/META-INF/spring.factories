@@ -1,0 +1,4 @@
+org.springframework.test.context.ContextCustomizerFactory = \
+    main.ms.pagamenti.config.\
+    SqlTestContainersSpringContextCustomizerFactory,main.ms.pagamenti.config.\
+    KafkaTestContainersSpringContextCustomizerFactory

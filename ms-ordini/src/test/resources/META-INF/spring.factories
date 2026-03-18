@@ -1,0 +1,3 @@
+org.springframework.test.context.ContextCustomizerFactory = \
+    main.ms.ordini.config.SqlTestContainersSpringContextCustomizerFactory,main.\
+    ms.ordini.config.KafkaTestContainersSpringContextCustomizerFactory

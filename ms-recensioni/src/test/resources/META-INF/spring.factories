@@ -1,0 +1,3 @@
+org.springframework.test.context.ContextCustomizerFactory = \
+    main.ms.recensioni.config.TestContainersSpringContextCustomizerFactory,main.\
+    ms.recensioni.config.KafkaTestContainersSpringContextCustomizerFactory

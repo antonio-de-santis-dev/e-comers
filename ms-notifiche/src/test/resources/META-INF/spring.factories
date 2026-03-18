@@ -1,0 +1,3 @@
+org.springframework.test.context.ContextCustomizerFactory = \
+    main.ms.notifiche.config.TestContainersSpringContextCustomizerFactory,main.\
+    ms.notifiche.config.KafkaTestContainersSpringContextCustomizerFactory

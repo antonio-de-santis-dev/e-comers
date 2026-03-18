@@ -1,0 +1,343 @@
+services:
+  apigateway:
+    image: apigateway
+    pull_policy: never
+    environment:
+      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+      - SPRING_PROFILES_ACTIVE=prod,api-docs
+      - MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED=true
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/eureka
+      - SPRING_CLOUD_CONFIG_URI=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/config
+      - SPRING_R2DBC_URL=r2dbc:postgresql://apigateway-postgresql:5432/apiGateway
+      - SPRING_LIQUIBASE_URL=jdbc:postgresql://apigateway-postgresql:5432/apiGateway
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
+      - JHIPSTER_REGISTRY_PASSWORD=admin
+    ports:
+      - 8080:8080
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -f
+        - http://localhost:8080/management/health
+      interval: 5s
+      timeout: 5s
+      retries: 40
+    depends_on:
+      apigateway-postgresql:
+        condition: service_healthy
+      jhipster-registry:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  apigateway-postgresql:
+    image: postgres:17.4
+    environment:
+      - POSTGRES_USER=apiGateway
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U $${POSTGRES_USER}
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  msadmin:
+    image: msadmin
+    pull_policy: never
+    environment:
+      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+      - SPRING_PROFILES_ACTIVE=prod,api-docs
+      - MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED=true
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/eureka
+      - SPRING_CLOUD_CONFIG_URI=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/config
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://msadmin-postgresql:5432/msAdmin
+      - SPRING_LIQUIBASE_URL=jdbc:postgresql://msadmin-postgresql:5432/msAdmin
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
+      - JHIPSTER_REGISTRY_PASSWORD=admin
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -f
+        - http://localhost:8085/management/health
+      interval: 5s
+      timeout: 5s
+      retries: 40
+    depends_on:
+      msadmin-postgresql:
+        condition: service_healthy
+      jhipster-registry:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  msadmin-postgresql:
+    image: postgres:17.4
+    environment:
+      - POSTGRES_USER=msAdmin
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U $${POSTGRES_USER}
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  mscatalogo:
+    image: mscatalogo
+    pull_policy: never
+    environment:
+      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+      - SPRING_PROFILES_ACTIVE=prod,api-docs
+      - MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED=true
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/eureka
+      - SPRING_CLOUD_CONFIG_URI=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/config
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://mscatalogo-postgresql:5432/msCatalogo
+      - SPRING_LIQUIBASE_URL=jdbc:postgresql://mscatalogo-postgresql:5432/msCatalogo
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
+      - JHIPSTER_REGISTRY_PASSWORD=admin
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -f
+        - http://localhost:8081/management/health
+      interval: 5s
+      timeout: 5s
+      retries: 40
+    depends_on:
+      mscatalogo-postgresql:
+        condition: service_healthy
+      jhipster-registry:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  mscatalogo-postgresql:
+    image: postgres:17.4
+    environment:
+      - POSTGRES_USER=msCatalogo
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U $${POSTGRES_USER}
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  msnotifiche:
+    image: msnotifiche
+    pull_policy: never
+    environment:
+      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+      - SPRING_PROFILES_ACTIVE=prod,api-docs
+      - MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED=true
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/eureka
+      - SPRING_CLOUD_CONFIG_URI=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/config
+      - SPRING_DATA_MONGODB_URI=mongodb://msnotifiche-mongodb:27017/msNotifiche
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
+      - JHIPSTER_REGISTRY_PASSWORD=admin
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -f
+        - http://localhost:8084/management/health
+      interval: 5s
+      timeout: 5s
+      retries: 40
+    depends_on:
+      msnotifiche-mongodb:
+        condition: service_healthy
+      jhipster-registry:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  msnotifiche-mongodb:
+    image: mongo:8.0.9
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - mongosh --quiet --eval "db.runCommand('ping').ok"
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  msordini:
+    image: msordini
+    pull_policy: never
+    environment:
+      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+      - SPRING_PROFILES_ACTIVE=prod,api-docs
+      - MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED=true
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/eureka
+      - SPRING_CLOUD_CONFIG_URI=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/config
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://msordini-postgresql:5432/msOrdini
+      - SPRING_LIQUIBASE_URL=jdbc:postgresql://msordini-postgresql:5432/msOrdini
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
+      - JHIPSTER_REGISTRY_PASSWORD=admin
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -f
+        - http://localhost:8082/management/health
+      interval: 5s
+      timeout: 5s
+      retries: 40
+    depends_on:
+      msordini-postgresql:
+        condition: service_healthy
+      jhipster-registry:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  msordini-postgresql:
+    image: postgres:17.4
+    environment:
+      - POSTGRES_USER=msOrdini
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U $${POSTGRES_USER}
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  mspagamenti:
+    image: mspagamenti
+    pull_policy: never
+    environment:
+      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+      - SPRING_PROFILES_ACTIVE=prod,api-docs
+      - MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED=true
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/eureka
+      - SPRING_CLOUD_CONFIG_URI=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/config
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://mspagamenti-postgresql:5432/msPagamenti
+      - SPRING_LIQUIBASE_URL=jdbc:postgresql://mspagamenti-postgresql:5432/msPagamenti
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
+      - JHIPSTER_REGISTRY_PASSWORD=admin
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -f
+        - http://localhost:8083/management/health
+      interval: 5s
+      timeout: 5s
+      retries: 40
+    depends_on:
+      mspagamenti-postgresql:
+        condition: service_healthy
+      jhipster-registry:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  mspagamenti-postgresql:
+    image: postgres:17.4
+    environment:
+      - POSTGRES_USER=msPagamenti
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U $${POSTGRES_USER}
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  msrecensioni:
+    image: msrecensioni
+    pull_policy: never
+    environment:
+      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+      - SPRING_PROFILES_ACTIVE=prod,api-docs
+      - MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED=true
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/eureka
+      - SPRING_CLOUD_CONFIG_URI=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/config
+      - SPRING_DATA_MONGODB_URI=mongodb://msrecensioni-mongodb:27017/msRecensioni
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
+      - JHIPSTER_REGISTRY_PASSWORD=admin
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -f
+        - http://localhost:8086/management/health
+      interval: 5s
+      timeout: 5s
+      retries: 40
+    depends_on:
+      msrecensioni-mongodb:
+        condition: service_healthy
+      jhipster-registry:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  msrecensioni-mongodb:
+    image: mongo:8.0.9
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - mongosh --quiet --eval "db.runCommand('ping').ok"
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  kafka:
+    image: apache/kafka-native:4.0.0
+    user: root
+    environment:
+      - KAFKA_NODE_ID=1
+      - KAFKA_PROCESS_ROLES=broker,controller
+      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1
+      - KAFKA_LOG_DIRS=/tmp/kafka-data
+      - CLUSTER_ID=MkU3OEVBNTcwNTJENDM2Qk
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - nc -z localhost 9092 || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 15
+      start_period: 15s
+
+  jhipster-registry:
+    image: jhipster/jhipster-registry:v7.4.0
+    volumes:
+      - ./central-server-config:/central-config
+    environment:
+      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_SECURITY_USER_PASSWORD=admin
+      - JHIPSTER_REGISTRY_PASSWORD=admin
+      - SPRING_CLOUD_CONFIG_SERVER_COMPOSITE_0_TYPE=native
+      - SPRING_CLOUD_CONFIG_SERVER_COMPOSITE_0_SEARCH_LOCATIONS=file:./central-config
+    ports:
+      - 8761:8761
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -f
+        - http://localhost:8761/management/health
+      interval: 5s
+      timeout: 5s
+      retries: 10

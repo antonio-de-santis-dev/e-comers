@@ -1,0 +1,20 @@
+{
+  "generator-jhipster": {
+    "adminPassword": "admin",
+    "appsFolders": [
+      "api-gateway",
+      "ms-admin",
+      "ms-catalogo",
+      "ms-notifiche",
+      "ms-ordini",
+      "ms-pagamenti",
+      "ms-recensioni"
+    ],
+    "clusteredDbApps": [],
+    "directoryPath": "../",
+    "jhipsterVersion": "8.11.0",
+    "jwtSecretKey": "YzdhODIyYzk1OGYwYzcyMTVjZGE4ZjM3ZjFiYmZjNGIwMDI4MzgyMjhiMDU2YjE4ZjU2MzgzZWE5YWY2YWIxZTk3Mjc5MzI5NmE0Yjc2ZjU3ZTY1YTg2NmVlMTFkNTg4OTJjMg==",
+    "monitoring": "no",
+    "serviceDiscoveryType": "eureka"
+  }
+}
