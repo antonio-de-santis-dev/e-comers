@@ -3,18 +3,16 @@ package main.ms.catalogo.service.criteria;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import org.springdoc.core.annotations.ParameterObject;
 import tech.jhipster.service.Criteria;
 import tech.jhipster.service.filter.*;
 
 /**
- * Criteria class for the {@link main.ms.catalogo.domain.Prodotto} entity. This class is used
- * in {@link main.ms.catalogo.web.rest.ProdottoResource} to receive all the possible filtering options from
- * the Http GET request parameters.
- * For example the following could be a valid request:
- * {@code /prodottos?id.greaterThan=5&attr1.contains=something&attr2.specified=false}
- * As Spring is unable to properly convert the types, unless specific {@link Filter} class are used, we need to use
- * fix type specific filters.
+ * Criteria class for the {@link main.ms.catalogo.domain.Prodotto} entity.
+ *
+ * MODIFICA: id cambiato da LongFilter a UUIDFilter per allinearlo con
+ * l'entità Prodotto.java dove @Id è dichiarato come UUID prodottoUuid.
  */
 @ParameterObject
 @SuppressWarnings("common-java:DuplicatedBlocks")
@@ -22,7 +20,8 @@ public class ProdottoCriteria implements Serializable, Criteria {
 
     private static final long serialVersionUID = 1L;
 
-    private LongFilter id;
+    // FIX: era LongFilter, ora UUIDFilter — corrisponde a prodottoUuid nell'entità
+    private UUIDFilter id;
 
     private StringFilter nome;
 
@@ -47,7 +46,7 @@ public class ProdottoCriteria implements Serializable, Criteria {
     public ProdottoCriteria() {}
 
     public ProdottoCriteria(ProdottoCriteria other) {
-        this.id = other.optionalId().map(LongFilter::copy).orElse(null);
+        this.id = other.optionalId().map(UUIDFilter::copy).orElse(null);
         this.nome = other.optionalNome().map(StringFilter::copy).orElse(null);
         this.prezzo = other.optionalPrezzo().map(BigDecimalFilter::copy).orElse(null);
         this.aliquotaIva = other.optionalAliquotaIva().map(IntegerFilter::copy).orElse(null);
@@ -65,22 +64,22 @@ public class ProdottoCriteria implements Serializable, Criteria {
         return new ProdottoCriteria(this);
     }
 
-    public LongFilter getId() {
+    public UUIDFilter getId() {
         return id;
     }
 
-    public Optional<LongFilter> optionalId() {
+    public Optional<UUIDFilter> optionalId() {
         return Optional.ofNullable(id);
     }
 
-    public LongFilter id() {
+    public UUIDFilter id() {
         if (id == null) {
-            setId(new LongFilter());
+            setId(new UUIDFilter());
         }
         return id;
     }
 
-    public void setId(LongFilter id) {
+    public void setId(UUIDFilter id) {
         this.id = id;
     }
 
@@ -285,34 +284,24 @@ public class ProdottoCriteria implements Serializable, Criteria {
         final ProdottoCriteria that = (ProdottoCriteria) o;
         return (
             Objects.equals(id, that.id) &&
-            Objects.equals(nome, that.nome) &&
-            Objects.equals(prezzo, that.prezzo) &&
-            Objects.equals(aliquotaIva, that.aliquotaIva) &&
-            Objects.equals(disponibile, that.disponibile) &&
-            Objects.equals(quantitaDisponibile, that.quantitaDisponibile) &&
-            Objects.equals(votoTotale, that.votoTotale) &&
-            Objects.equals(inEvidenza, that.inEvidenza) &&
-            Objects.equals(totalePurchased, that.totalePurchased) &&
-            Objects.equals(categoriaId, that.categoriaId) &&
-            Objects.equals(distinct, that.distinct)
+                Objects.equals(nome, that.nome) &&
+                Objects.equals(prezzo, that.prezzo) &&
+                Objects.equals(aliquotaIva, that.aliquotaIva) &&
+                Objects.equals(disponibile, that.disponibile) &&
+                Objects.equals(quantitaDisponibile, that.quantitaDisponibile) &&
+                Objects.equals(votoTotale, that.votoTotale) &&
+                Objects.equals(inEvidenza, that.inEvidenza) &&
+                Objects.equals(totalePurchased, that.totalePurchased) &&
+                Objects.equals(categoriaId, that.categoriaId) &&
+                Objects.equals(distinct, that.distinct)
         );
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(
-            id,
-            nome,
-            prezzo,
-            aliquotaIva,
-            disponibile,
-            quantitaDisponibile,
-            votoTotale,
-            inEvidenza,
-            totalePurchased,
-            categoriaId,
-            distinct
-        );
+        return Objects.hash(id, nome, prezzo, aliquotaIva, disponibile,
+            quantitaDisponibile, votoTotale, inEvidenza, totalePurchased,
+            categoriaId, distinct);
     }
 
     // prettier-ignore
@@ -330,6 +319,6 @@ public class ProdottoCriteria implements Serializable, Criteria {
             optionalTotalePurchased().map(f -> "totalePurchased=" + f + ", ").orElse("") +
             optionalCategoriaId().map(f -> "categoriaId=" + f + ", ").orElse("") +
             optionalDistinct().map(f -> "distinct=" + f + ", ").orElse("") +
-        "}";
+            "}";
     }
 }

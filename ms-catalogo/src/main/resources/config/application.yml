@@ -145,7 +145,7 @@ spring:
           content-type: text/plain
           group: ms-catalogo
         kafkaProducer-out-0:
-          content-type: text/plain
+          content-type: application/octet-stream
           group: ms-catalogo
   docker:
     compose:

@@ -1,6 +1,8 @@
 package main.ms.catalogo.service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import main.ms.catalogo.domain.Prodotto;
 import main.ms.catalogo.repository.ProdottoRepository;
 import main.ms.catalogo.service.dto.ProdottoDTO;
@@ -13,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
 
 /**
  * Service Implementation for managing {@link main.ms.catalogo.domain.Prodotto}.
@@ -27,58 +28,39 @@ public class ProdottoService {
     private final ProdottoRepository prodottoRepository;
     private final ProdottoMapper prodottoMapper;
 
-    private final int TOP_VENDUTI_LIMIT= 10;
-    private final int CORRELATI_LIMIT= 5;
+    private static final int TOP_VENDUTI_LIMIT = 10;
+    private static final int CORRELATI_LIMIT = 5;
 
-    public ProdottoService(ProdottoRepository prodottoRepository,
-                           ProdottoMapper prodottoMapper) {
+    public ProdottoService(ProdottoRepository prodottoRepository, ProdottoMapper prodottoMapper) {
         this.prodottoRepository = prodottoRepository;
         this.prodottoMapper = prodottoMapper;
     }
 
-    /**
-     * Save a prodotto.
-     *
-     * @param prodottoDTO the entity to save.
-     * @return the persisted entity.
-     */
+    // =========================================================================
+    // CRUD BASE
+    // =========================================================================
+
     public ProdottoDTO save(ProdottoDTO prodottoDTO) {
         LOG.debug("Request to save Prodotto : {}", prodottoDTO);
         Prodotto prodotto = prodottoMapper.toEntity(prodottoDTO);
-
         sincronizzaDisponibilita(prodotto);
-
         prodotto = prodottoRepository.save(prodotto);
         return prodottoMapper.toDto(prodotto);
     }
 
-    /**
-     * Update a prodotto.
-     *
-     * @param prodottoDTO the entity to save.
-     * @return the persisted entity.
-     */
     public ProdottoDTO update(ProdottoDTO prodottoDTO) {
         LOG.debug("Request to update Prodotto : {}", prodottoDTO);
         Prodotto prodotto = prodottoMapper.toEntity(prodottoDTO);
-
         sincronizzaDisponibilita(prodotto);
-
         prodotto = prodottoRepository.save(prodotto);
         return prodottoMapper.toDto(prodotto);
     }
 
-    /**
-     * Partially update a prodotto.
-     *
-     * @param prodottoDTO the entity to update partially.
-     * @return the persisted entity.
-     */
     public Optional<ProdottoDTO> partialUpdate(ProdottoDTO prodottoDTO) {
         LOG.debug("Request to partially update Prodotto : {}", prodottoDTO);
-
+        // FIX: getId() ora è UUID — usiamo findByProdottoUuid invece di findById(Long)
         return prodottoRepository
-            .findById(prodottoDTO.getId())
+            .findByProdottoUuid(prodottoDTO.getId())
             .map(existingProdotto -> {
                 prodottoMapper.partialUpdate(existingProdotto, prodottoDTO);
                 sincronizzaDisponibilita(existingProdotto);
@@ -88,11 +70,6 @@ public class ProdottoService {
             .map(prodottoMapper::toDto);
     }
 
-    /**
-     * Get all the prodottos with eager load of many-to-many relationships.
-     *
-     * @return the list of entities.
-     */
     public Page<ProdottoDTO> findAllWithEagerRelationships(Pageable pageable) {
         return prodottoRepository.findAllWithEagerRelationships(pageable).map(prodottoMapper::toDto);
     }
@@ -102,31 +79,25 @@ public class ProdottoService {
         return prodottoRepository.findAll(pageable).map(prodottoMapper::toDto);
     }
 
-    /**
-     * Get one prodotto by id.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
-     */
+    // FIX: id cambiato da Long a UUID
     @Transactional(readOnly = true)
-    public Optional<ProdottoDTO> findOne(Long id) {
+    public Optional<ProdottoDTO> findOne(UUID id) {
         LOG.debug("Request to get Prodotto : {}", id);
         return prodottoRepository.findOneWithEagerRelationships(id).map(prodottoMapper::toDto);
     }
 
-    /**
-     * Delete the prodotto by id.
-     *
-     * @param id the id of the entity.
-     */
-    public void delete(Long id) {
+    // FIX: id cambiato da Long a UUID — deleteById usa findByProdottoUuid
+    public void delete(UUID id) {
         LOG.debug("Request to delete Prodotto : {}", id);
-        prodottoRepository.deleteById(id);
+        prodottoRepository
+            .findByProdottoUuid(id)
+            .ifPresent(prodottoRepository::delete);
     }
 
-    //API PER ENDPOINT CUSTOM
+    // =========================================================================
+    // API SPECIALI — endpoint custom per il frontend
+    // =========================================================================
 
-    //RESTITUISCE I PRODOTTI IN EVIDENZA DEL CAROSELO
     @Transactional(readOnly = true)
     public List<ProdottoDTO> findInEvidenza() {
         LOG.debug("Recupero prodotti in evidenza");
@@ -137,7 +108,6 @@ public class ProdottoService {
             .toList();
     }
 
-    // RESTITUISCE I TOP 10 PRODOTTI PIU VENDUTI
     @Transactional(readOnly = true)
     public List<ProdottoDTO> findTopVenduti() {
         LOG.debug("Recupero top {} prodotti più venduti", TOP_VENDUTI_LIMIT);
@@ -150,37 +120,94 @@ public class ProdottoService {
             .toList();
     }
 
-    // RESTITUISCE FINO A 5 PRODOTTI COREALRI AL PRODOTTO SECIFICO
+    // FIX: prodottoId cambiato da Long a UUID
     @Transactional(readOnly = true)
-    public List<ProdottoDTO> findCorrelati(Long prodottoId) {
-        LOG.debug("Recupero prodotti correlati a id={}", prodottoId);
-
+    public List<ProdottoDTO> findCorrelati(UUID prodottoId) {
+        LOG.debug("Recupero prodotti correlati a uuid={}", prodottoId);
         return prodottoRepository
-            .findById(prodottoId)
+            .findByProdottoUuid(prodottoId)
             .map(prodotto -> {
                 Pageable pageable = PageRequest.of(0, CORRELATI_LIMIT);
                 return prodottoRepository
-                    .findByCategoria_IdAndIdNotAndDisponibileTrue(
-                        prodotto.getCategoria().getId(),
-                        prodottoId,
-                        pageable
-                    )
+                    .findByCategoria_IdAndProdottoUuidNotAndDisponibileTrue(
+                    prodotto.getCategoria().getId(),
+                    prodottoId,
+                    pageable
+                )
                     .stream()
                     .map(prodottoMapper::toDto)
                     .toList();
             })
-            .orElse(List.of()); // prodotto non trovato → lista vuota
+            .orElse(List.of());
     }
 
+    // =========================================================================
+    // METODI KAFKA
+    // =========================================================================
+
+    @Transactional
+    public void aggiornaVotoTotale(UUID prodottoUuid, Double nuovaMedia) {
+        LOG.debug("Aggiornamento votoTotale per prodottoUuid={}, nuovaMedia={}", prodottoUuid, nuovaMedia);
+        prodottoRepository
+            .findByProdottoUuid(prodottoUuid)
+            .ifPresentOrElse(
+                prodotto -> {
+                    prodotto.setVotoTotale(nuovaMedia);
+                    prodottoRepository.save(prodotto);
+                    LOG.info("VotoTotale aggiornato a {} per uuid={}", nuovaMedia, prodottoUuid);
+                },
+                () -> LOG.warn("Prodotto uuid={} non trovato — votoTotale non aggiornato", prodottoUuid)
+            );
+    }
+
+    @Transactional
+    public void decrementaScorte(UUID prodottoUuid, Integer quantitaAcquistata) {
+        LOG.debug("Decremento scorte prodottoUuid={}, quantita={}", prodottoUuid, quantitaAcquistata);
+        prodottoRepository
+            .findByProdottoUuid(prodottoUuid)
+            .ifPresentOrElse(
+                prodotto -> {
+                    int nuovaQuantita = prodotto.getQuantitaDisponibile() - quantitaAcquistata;
+                    if (nuovaQuantita < 0) {
+                        LOG.warn("Scorte insufficienti per uuid={}: disponibili={}, richieste={}",
+                            prodottoUuid, prodotto.getQuantitaDisponibile(), quantitaAcquistata);
+                        nuovaQuantita = 0;
+                    }
+                    prodotto.setQuantitaDisponibile(nuovaQuantita);
+                    sincronizzaDisponibilita(prodotto);
+                    prodottoRepository.save(prodotto);
+                    LOG.info("Scorte aggiornate: uuid={}, nuovaQuantita={}", prodottoUuid, nuovaQuantita);
+                },
+                () -> LOG.warn("Prodotto uuid={} non trovato — scorte non decrementate", prodottoUuid)
+            );
+    }
+
+    @Transactional
+    public void incrementaTotalePurchased(UUID prodottoUuid, Integer quantitaAcquistata) {
+        LOG.debug("Incremento totalePurchased prodottoUuid={}, quantita={}", prodottoUuid, quantitaAcquistata);
+        prodottoRepository
+            .findByProdottoUuid(prodottoUuid)
+            .ifPresentOrElse(
+                prodotto -> {
+                    int nuovoTotale = (prodotto.getTotalePurchased() != null
+                        ? prodotto.getTotalePurchased() : 0) + quantitaAcquistata;
+                    prodotto.setTotalePurchased(nuovoTotale);
+                    prodottoRepository.save(prodotto);
+                    LOG.info("TotalePurchased aggiornato a {} per uuid={}", nuovoTotale, prodottoUuid);
+                },
+                () -> LOG.warn("Prodotto uuid={} non trovato — totalePurchased non incrementato", prodottoUuid)
+            );
+    }
+
+    // =========================================================================
     // METODI PRIVATI
+    // =========================================================================
 
     private void sincronizzaDisponibilita(Prodotto prodotto) {
-        if (prodotto.getQuantitaDisponibile() != null
-            && prodotto.getQuantitaDisponibile() == 0) {
+        if (prodotto.getQuantitaDisponibile() != null && prodotto.getQuantitaDisponibile() == 0) {
             prodotto.setDisponibile(false);
-            LOG.debug("Prodotto id={} impostato non disponibile (quantità zero)",
+            LOG.debug("Prodotto uuid={} impostato non disponibile (quantità zero)",
                 prodotto.getProdottoUuid());
         }
     }
-
 }

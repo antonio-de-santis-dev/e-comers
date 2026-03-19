@@ -16,7 +16,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface ProdottoRepository extends JpaRepository<Prodotto, Long>, JpaSpecificationExecutor<Prodotto> {
-    default Optional<Prodotto> findOneWithEagerRelationships(Long id) {
+    default Optional<Prodotto> findOneWithEagerRelationships(UUID id) {
         return this.findOneWithToOneRelationships(id);
     }
 
@@ -37,8 +37,8 @@ public interface ProdottoRepository extends JpaRepository<Prodotto, Long>, JpaSp
     @Query("select prodotto from Prodotto prodotto left join fetch prodotto.categoria")
     List<Prodotto> findAllWithToOneRelationships();
 
-    @Query("select prodotto from Prodotto prodotto left join fetch prodotto.categoria where prodotto.id =:id")
-    Optional<Prodotto> findOneWithToOneRelationships(@Param("id") Long id);
+    @Query("select prodotto from Prodotto prodotto left join fetch prodotto.categoria where prodotto.prodottoUuid  =:id")
+    Optional<Prodotto> findOneWithToOneRelationships(@Param("id") UUID id);
 
     //prodotti in evidenza caroselo home
     List<Prodotto> findByInEvidenzaTrueAndDisponibileTrue();
@@ -47,9 +47,9 @@ public interface ProdottoRepository extends JpaRepository<Prodotto, Long>, JpaSp
     List<Prodotto> findByDisponibileTrue(Pageable pageable);
 
     //Prodotti correlati: stessa categoria, prodotto diverso,
-    List<Prodotto> findByCategoria_IdAndIdNotAndDisponibileTrue(
+    List<Prodotto> findByCategoria_IdAndProdottoUuidNotAndDisponibileTrue(
         Long categoriaId,
-        Long prodottoId,
+        UUID rodottoUuid,
         Pageable pageable
     );
 

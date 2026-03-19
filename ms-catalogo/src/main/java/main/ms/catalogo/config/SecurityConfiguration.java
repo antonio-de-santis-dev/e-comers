@@ -42,6 +42,11 @@ public class SecurityConfiguration {
                 authz
                     .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/authenticate")).permitAll()
                     .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/authenticate")).permitAll()
+                    // ENDPOINT PUBBLICI CATALOGO — lettura prodotti e categorie senza auth
+                    .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/prodottos/**")).permitAll()
+                    .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/categorias/**")).permitAll()
+                    .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/categorias")).permitAll()
+                    // FINE ENDPOINT PUBBLICI
                     .requestMatchers(mvc.pattern("/api/admin/**")).hasAuthority(AuthoritiesConstants.ADMIN)
                     .requestMatchers(mvc.pattern("/api/**")).authenticated()
                     .requestMatchers(mvc.pattern("/v3/api-docs/**")).hasAuthority(AuthoritiesConstants.ADMIN)

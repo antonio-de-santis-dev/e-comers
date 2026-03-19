@@ -7,6 +7,7 @@ import main.api.gateway.security.AuthoritiesConstants;
 import main.api.gateway.web.filter.SpaWebFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
@@ -84,6 +85,10 @@ public class SecurityConfiguration {
                     .pathMatchers("/api/**").authenticated()
                     .pathMatchers("/services/*/management/health/readiness").permitAll()
                     .pathMatchers("/services/*/v3/api-docs").hasAuthority(AuthoritiesConstants.ADMIN)
+                    // API pubbliche ms-catalogo — PRIMA di /services/** authenticated
+                    .pathMatchers(HttpMethod.GET, "/services/mscatalogo/api/prodottos/**").permitAll()
+                    .pathMatchers(HttpMethod.GET, "/services/mscatalogo/api/categorias/**").permitAll()
+                    .pathMatchers(HttpMethod.GET, "/services/mscatalogo/api/categorias").permitAll()
                     .pathMatchers("/services/**").authenticated()
                     .pathMatchers("/v3/api-docs/**").hasAuthority(AuthoritiesConstants.ADMIN)
                     .pathMatchers("/management/health").permitAll()

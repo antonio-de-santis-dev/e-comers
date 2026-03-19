@@ -5,6 +5,7 @@ import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * A DTO for the {@link main.ms.catalogo.domain.Prodotto} entity.
@@ -12,7 +13,7 @@ import java.util.Objects;
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class ProdottoDTO implements Serializable {
 
-    private Long id;
+    private UUID  id;
 
     @NotNull
     @Size(max = 200)
@@ -55,11 +56,11 @@ public class ProdottoDTO implements Serializable {
     @NotNull
     private CategoriaDTO categoria;
 
-    public Long getId() {
+    public UUID  getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

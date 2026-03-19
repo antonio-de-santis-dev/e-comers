@@ -11,7 +11,7 @@
     -->
     <changeSet id="20260318101256-1" author="jhipster">
         <createTable tableName="prodotto">
-            <column name="id" type="bigint">
+            <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="nome" type="varchar(200)">
@@ -76,7 +76,7 @@
                   separator=";"
                   tableName="prodotto"
                   usePreparedStatements="true">
-            <column name="id" type="numeric"/>
+            <column name="id" type="string"/>
             <column name="nome" type="string"/>
             <column name="descrizione" type="clob"/>
             <column name="prezzo" type="numeric"/>

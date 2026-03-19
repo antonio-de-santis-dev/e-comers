@@ -21,6 +21,9 @@ import tech.jhipster.service.QueryService;
  * The main input is a {@link ProdottoCriteria} which gets converted to {@link Specification},
  * in a way that all the filters must apply.
  * It returns a {@link Page} of {@link ProdottoDTO} which fulfills the criteria.
+ *
+ * MODIFICA: id gestito come UUIDFilter + Prodotto_.prodottoUuid
+ * per allineamento con l'entità Prodotto.java.
  */
 @Service
 @Transactional(readOnly = true)
@@ -29,7 +32,6 @@ public class ProdottoQueryService extends QueryService<Prodotto> {
     private static final Logger LOG = LoggerFactory.getLogger(ProdottoQueryService.class);
 
     private final ProdottoRepository prodottoRepository;
-
     private final ProdottoMapper prodottoMapper;
 
     public ProdottoQueryService(ProdottoRepository prodottoRepository, ProdottoMapper prodottoMapper) {
@@ -37,12 +39,6 @@ public class ProdottoQueryService extends QueryService<Prodotto> {
         this.prodottoMapper = prodottoMapper;
     }
 
-    /**
-     * Return a {@link Page} of {@link ProdottoDTO} which matches the criteria from the database.
-     * @param criteria The object which holds all the filters, which the entities should match.
-     * @param page The page, which should be returned.
-     * @return the matching entities.
-     */
     @Transactional(readOnly = true)
     public Page<ProdottoDTO> findByCriteria(ProdottoCriteria criteria, Pageable page) {
         LOG.debug("find by criteria : {}, page: {}", criteria, page);
@@ -50,11 +46,6 @@ public class ProdottoQueryService extends QueryService<Prodotto> {
         return prodottoRepository.findAll(specification, page).map(prodottoMapper::toDto);
     }
 
-    /**
-     * Return the number of matching entities in the database.
-     * @param criteria The object which holds all the filters, which the entities should match.
-     * @return the number of matching entities.
-     */
     @Transactional(readOnly = true)
     public long countByCriteria(ProdottoCriteria criteria) {
         LOG.debug("count by criteria : {}", criteria);
@@ -62,18 +53,13 @@ public class ProdottoQueryService extends QueryService<Prodotto> {
         return prodottoRepository.count(specification);
     }
 
-    /**
-     * Function to convert {@link ProdottoCriteria} to a {@link Specification}
-     * @param criteria The object which holds all the filters, which the entities should match.
-     * @return the matching {@link Specification} of the entity.
-     */
     protected Specification<Prodotto> createSpecification(ProdottoCriteria criteria) {
         Specification<Prodotto> specification = Specification.where(null);
         if (criteria != null) {
-            // This has to be called first, because the distinct method returns null
             specification = Specification.allOf(
                 Boolean.TRUE.equals(criteria.getDistinct()) ? distinct(criteria.getDistinct()) : null,
-                buildRangeSpecification(criteria.getId(), Prodotto_.id),
+                // FIX: UUIDFilter + prodottoUuid — buildSpecification è corretto per UUID
+                buildSpecification(criteria.getId(), Prodotto_.prodottoUuid),
                 buildStringSpecification(criteria.getNome(), Prodotto_.nome),
                 buildRangeSpecification(criteria.getPrezzo(), Prodotto_.prezzo),
                 buildRangeSpecification(criteria.getAliquotaIva(), Prodotto_.aliquotaIva),
@@ -82,7 +68,10 @@ public class ProdottoQueryService extends QueryService<Prodotto> {
                 buildRangeSpecification(criteria.getVotoTotale(), Prodotto_.votoTotale),
                 buildSpecification(criteria.getInEvidenza(), Prodotto_.inEvidenza),
                 buildRangeSpecification(criteria.getTotalePurchased(), Prodotto_.totalePurchased),
-                buildSpecification(criteria.getCategoriaId(), root -> root.join(Prodotto_.categoria, JoinType.LEFT).get(Categoria_.id))
+                buildSpecification(
+                    criteria.getCategoriaId(),
+                    root -> root.join(Prodotto_.categoria, JoinType.LEFT).get(Categoria_.id)
+                )
             );
         }
         return specification;

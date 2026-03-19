@@ -7,6 +7,8 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
+
 import main.ms.catalogo.repository.ProdottoRepository;
 import main.ms.catalogo.service.ProdottoQueryService;
 import main.ms.catalogo.service.ProdottoService;
@@ -87,7 +89,7 @@ public class ProdottoResource {
      */
     @PutMapping("/{id}")
     public ResponseEntity<ProdottoDTO> updateProdotto(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final UUID id,
         @Valid @RequestBody ProdottoDTO prodottoDTO
     ) throws URISyntaxException {
         LOG.debug("REST request to update Prodotto : {}, {}", id, prodottoDTO);
@@ -98,7 +100,7 @@ public class ProdottoResource {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
-        if (!prodottoRepository.existsById(id)) {
+        if (!prodottoRepository.findByProdottoUuid(id).isPresent()) {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
@@ -121,7 +123,7 @@ public class ProdottoResource {
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<ProdottoDTO> partialUpdateProdotto(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final UUID id,
         @NotNull @RequestBody ProdottoDTO prodottoDTO
     ) throws URISyntaxException {
         LOG.debug("REST request to partial update Prodotto partially : {}, {}", id, prodottoDTO);
@@ -132,7 +134,7 @@ public class ProdottoResource {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
-        if (!prodottoRepository.existsById(id)) {
+        if (!prodottoRepository.findByProdottoUuid(id).isPresent()) {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
@@ -182,7 +184,7 @@ public class ProdottoResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the prodottoDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<ProdottoDTO> getProdotto(@PathVariable("id") Long id) {
+    public ResponseEntity<ProdottoDTO> getProdotto(@PathVariable("id") UUID id) {
         LOG.debug("REST request to get Prodotto : {}", id);
         Optional<ProdottoDTO> prodottoDTO = prodottoService.findOne(id);
         return ResponseUtil.wrapOrNotFound(prodottoDTO);
@@ -195,7 +197,7 @@ public class ProdottoResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProdotto(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteProdotto(@PathVariable("id") UUID id) {
         LOG.debug("REST request to delete Prodotto : {}", id);
         prodottoService.delete(id);
         return ResponseEntity.noContent()
@@ -222,8 +224,8 @@ public class ProdottoResource {
     }
 
     // Dettaglio prodotto — "Ti potrebbe interessare"
-    @GetMapping("/prodottos/{id}/correlati")
-    public ResponseEntity<List<ProdottoDTO>> getCorrelati(@PathVariable Long id) {
+    @GetMapping("/{id}/correlati")
+    public ResponseEntity<List<ProdottoDTO>> getCorrelati(@PathVariable UUID id) {
         LOG.debug("GET /api/prodottos/{}/correlati", id);
         List<ProdottoDTO> result = prodottoService.findCorrelati(id);
         return ResponseEntity.ok(result);
