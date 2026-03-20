@@ -1,12 +1,18 @@
 package main.ms.pagamenti.service;
 
+import java.time.Instant;
 import java.util.Optional;
+import java.util.UUID;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import main.ms.pagamenti.domain.Pagamento;
+import main.ms.pagamenti.domain.enumeration.StatoPagamento;
 import main.ms.pagamenti.repository.PagamentoRepository;
 import main.ms.pagamenti.service.dto.PagamentoDTO;
 import main.ms.pagamenti.service.mapper.PagamentoMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,12 +26,15 @@ public class PagamentoService {
     private static final Logger LOG = LoggerFactory.getLogger(PagamentoService.class);
 
     private final PagamentoRepository pagamentoRepository;
-
     private final PagamentoMapper pagamentoMapper;
+    private final StreamBridge streamBridge;
+    private final ObjectMapper objectMapper;
 
-    public PagamentoService(PagamentoRepository pagamentoRepository, PagamentoMapper pagamentoMapper) {
+    public PagamentoService(PagamentoRepository pagamentoRepository, PagamentoMapper pagamentoMapper, StreamBridge streamBridge, ObjectMapper objectMapper) {
         this.pagamentoRepository = pagamentoRepository;
         this.pagamentoMapper = pagamentoMapper;
+        this.streamBridge = streamBridge;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -37,8 +46,23 @@ public class PagamentoService {
     public PagamentoDTO save(PagamentoDTO pagamentoDTO) {
         LOG.debug("Request to save Pagamento : {}", pagamentoDTO);
         Pagamento pagamento = pagamentoMapper.toEntity(pagamentoDTO);
+
+        if (pagamento.getDataOperazione() == null) {
+            pagamento.setDataOperazione(Instant.now());
+        }
+
+        if (pagamento.getStato() == null) {
+            pagamento.setStato(StatoPagamento.IN_ATTESA);
+        }
+
         pagamento = pagamentoRepository.save(pagamento);
-        return pagamentoMapper.toDto(pagamento);
+         PagamentoDTO result = pagamentoMapper.toDto(pagamento);
+
+        if (StatoPagamento.APPROVATO.equals(pagamento.getStato())) {
+            pubblicaPagamentoApprovato(pagamento);
+        }
+
+        return result;
     }
 
     /**
@@ -51,7 +75,13 @@ public class PagamentoService {
         LOG.debug("Request to update Pagamento : {}", pagamentoDTO);
         Pagamento pagamento = pagamentoMapper.toEntity(pagamentoDTO);
         pagamento = pagamentoRepository.save(pagamento);
-        return pagamentoMapper.toDto(pagamento);
+        PagamentoDTO result = pagamentoMapper.toDto(pagamento);
+
+        if (StatoPagamento.APPROVATO.equals(pagamento.getStato())) {
+            pubblicaPagamentoApprovato(pagamento);
+        }
+
+        return result;
     }
 
     /**
@@ -67,10 +97,15 @@ public class PagamentoService {
             .findById(pagamentoDTO.getId())
             .map(existingPagamento -> {
                 pagamentoMapper.partialUpdate(existingPagamento, pagamentoDTO);
-
                 return existingPagamento;
             })
             .map(pagamentoRepository::save)
+            .map(saved -> {
+                if (StatoPagamento.APPROVATO.equals(saved.getStato())) {
+                    pubblicaPagamentoApprovato(saved);
+                }
+                return saved;
+            })
             .map(pagamentoMapper::toDto);
     }
 
@@ -81,7 +116,7 @@ public class PagamentoService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<PagamentoDTO> findOne(Long id) {
+    public Optional<PagamentoDTO> findOne(UUID id) {
         LOG.debug("Request to get Pagamento : {}", id);
         return pagamentoRepository.findById(id).map(pagamentoMapper::toDto);
     }
@@ -91,8 +126,29 @@ public class PagamentoService {
      *
      * @param id the id of the entity.
      */
-    public void delete(Long id) {
+    public void delete(UUID id) {
         LOG.debug("Request to delete Pagamento : {}", id);
         pagamentoRepository.deleteById(id);
     }
+
+    //evento pagamento-approvato su Kafka per agiornare lo sato orine a PAGATO
+    private void pubblicaPagamentoApprovato(Pagamento pagamento) {
+        try {
+            String payload = objectMapper.writeValueAsString(new PagamentoApprovatoEvent(
+                pagamento.getId(),
+                pagamento.getOrdineId(),
+                pagamento.getImporto()
+            ));
+            streamBridge.send("kafkaProducer-out-0", payload);
+            LOG.info("Evento pagamento-approvato pubblicato per ordine: {}", pagamento.getOrdineId());
+        } catch (Exception e) {
+            LOG.error("Errore pubblicazione evento Kafka per pagamento {}: {}", pagamento.getId(), e.getMessage());
+        }
+    }
+
+
+      //Evento Kafka emesso quando un pagamento viene approvato.
+
+    public record PagamentoApprovatoEvent(UUID pagamentoId, UUID ordineId, java.math.BigDecimal importo) {}
+
 }

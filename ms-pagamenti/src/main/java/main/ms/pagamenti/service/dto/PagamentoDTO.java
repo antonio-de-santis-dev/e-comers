@@ -15,7 +15,7 @@ import main.ms.pagamenti.domain.enumeration.StatoPagamento;
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class PagamentoDTO implements Serializable {
 
-    private Long id;
+    private UUID id;
 
     @NotNull
     private UUID ordineId;
@@ -31,14 +31,13 @@ public class PagamentoDTO implements Serializable {
 
     private String transazioneId;
 
-    @NotNull
     private Instant dataOperazione;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -92,18 +91,11 @@ public class PagamentoDTO implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof PagamentoDTO)) {
-            return false;
-        }
-
-        PagamentoDTO pagamentoDTO = (PagamentoDTO) o;
-        if (this.id == null) {
-            return false;
-        }
-        return Objects.equals(this.id, pagamentoDTO.id);
+        if (this == o) return true;
+        if (!(o instanceof PagamentoDTO)) return false;
+        PagamentoDTO that = (PagamentoDTO) o;
+        if (this.id == null) return false;
+        return Objects.equals(this.id, that.id);
     }
 
     @Override
@@ -111,7 +103,6 @@ public class PagamentoDTO implements Serializable {
         return Objects.hash(this.id);
     }
 
-    // prettier-ignore
     @Override
     public String toString() {
         return "PagamentoDTO{" +

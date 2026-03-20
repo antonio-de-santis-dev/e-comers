@@ -7,6 +7,8 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
+
 import main.ms.pagamenti.repository.PagamentoRepository;
 import main.ms.pagamenti.service.PagamentoQueryService;
 import main.ms.pagamenti.service.PagamentoService;
@@ -41,9 +43,7 @@ public class PagamentoResource {
     private String applicationName;
 
     private final PagamentoService pagamentoService;
-
     private final PagamentoRepository pagamentoRepository;
-
     private final PagamentoQueryService pagamentoQueryService;
 
     public PagamentoResource(
@@ -87,7 +87,7 @@ public class PagamentoResource {
      */
     @PutMapping("/{id}")
     public ResponseEntity<PagamentoDTO> updatePagamento(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final UUID id,
         @Valid @RequestBody PagamentoDTO pagamentoDTO
     ) throws URISyntaxException {
         LOG.debug("REST request to update Pagamento : {}, {}", id, pagamentoDTO);
@@ -97,7 +97,6 @@ public class PagamentoResource {
         if (!Objects.equals(id, pagamentoDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
-
         if (!pagamentoRepository.existsById(id)) {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
@@ -121,7 +120,7 @@ public class PagamentoResource {
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<PagamentoDTO> partialUpdatePagamento(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final UUID id,
         @NotNull @RequestBody PagamentoDTO pagamentoDTO
     ) throws URISyntaxException {
         LOG.debug("REST request to partial update Pagamento partially : {}, {}", id, pagamentoDTO);
@@ -131,13 +130,11 @@ public class PagamentoResource {
         if (!Objects.equals(id, pagamentoDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
-
         if (!pagamentoRepository.existsById(id)) {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
         Optional<PagamentoDTO> result = pagamentoService.partialUpdate(pagamentoDTO);
-
         return ResponseUtil.wrapOrNotFound(
             result,
             HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, pagamentoDTO.getId().toString())
@@ -157,7 +154,6 @@ public class PagamentoResource {
         @org.springdoc.core.annotations.ParameterObject Pageable pageable
     ) {
         LOG.debug("REST request to get Pagamentos by criteria: {}", criteria);
-
         Page<PagamentoDTO> page = pagamentoQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
@@ -182,7 +178,7 @@ public class PagamentoResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the pagamentoDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<PagamentoDTO> getPagamento(@PathVariable("id") Long id) {
+    public ResponseEntity<PagamentoDTO> getPagamento(@PathVariable("id") UUID id) {
         LOG.debug("REST request to get Pagamento : {}", id);
         Optional<PagamentoDTO> pagamentoDTO = pagamentoService.findOne(id);
         return ResponseUtil.wrapOrNotFound(pagamentoDTO);
@@ -195,7 +191,7 @@ public class PagamentoResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePagamento(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deletePagamento(@PathVariable("id") UUID id) {
         LOG.debug("REST request to delete Pagamento : {}", id);
         pagamentoService.delete(id);
         return ResponseEntity.noContent()
