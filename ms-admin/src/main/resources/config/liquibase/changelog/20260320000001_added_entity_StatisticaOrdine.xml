@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+  <changeSet id="20260320000001" author="jhipster">
+    <createTable tableName="statistica_ordine">
+      <column name="id" type="uuid">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="ordine_id" type="uuid"/>
+      <column name="pagamento_id" type="uuid"/>
+      <column name="cliente_id" type="uuid"/>
+      <column name="totale" type="double precision"/>
+      <column name="stato_ordine" type="varchar(50)"/>
+      <column name="stato_pagamento" type="varchar(50)"/>
+      <column name="data_registrazione" type="timestamp"/>
+    </createTable>
+  </changeSet>
+
+</databaseChangeLog>
