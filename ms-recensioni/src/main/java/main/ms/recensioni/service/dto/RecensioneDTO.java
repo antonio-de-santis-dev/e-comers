@@ -37,10 +37,10 @@ public class RecensioneDTO implements Serializable {
 
     private String immagineRecensioneContentType;
 
-    @NotNull
+    // Auto-generata nel service — rimosso @NotNull
     private Instant dataRecensione;
 
-    @NotNull
+    // Default false nel service — rimosso @NotNull
     private Boolean approvata;
 
     public String getId() {
