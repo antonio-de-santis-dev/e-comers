@@ -1,5 +1,6 @@
 package main.ms.ordini.repository;
 
+import java.util.UUID;
 import main.ms.ordini.domain.Ordine;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
@@ -9,4 +10,4 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface OrdineRepository extends JpaRepository<Ordine, Long>, JpaSpecificationExecutor<Ordine> {}
+public interface OrdineRepository extends JpaRepository<Ordine, UUID>, JpaSpecificationExecutor<Ordine> {}

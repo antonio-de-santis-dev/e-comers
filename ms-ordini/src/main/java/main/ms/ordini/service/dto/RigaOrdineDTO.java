@@ -12,7 +12,7 @@ import java.util.UUID;
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class RigaOrdineDTO implements Serializable {
 
-    private Long id;
+    private UUID id;
 
     @NotNull
     private UUID prodottoId;
@@ -36,11 +36,11 @@ public class RigaOrdineDTO implements Serializable {
     @NotNull
     private OrdineDTO ordine;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import main.ms.ordini.repository.RigaOrdineRepository;
 import main.ms.ordini.service.RigaOrdineService;
 import main.ms.ordini.service.dto.RigaOrdineDTO;
@@ -78,7 +79,7 @@ public class RigaOrdineResource {
      */
     @PutMapping("/{id}")
     public ResponseEntity<RigaOrdineDTO> updateRigaOrdine(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final UUID id,
         @Valid @RequestBody RigaOrdineDTO rigaOrdineDTO
     ) throws URISyntaxException {
         LOG.debug("REST request to update RigaOrdine : {}, {}", id, rigaOrdineDTO);
@@ -112,7 +113,7 @@ public class RigaOrdineResource {
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<RigaOrdineDTO> partialUpdateRigaOrdine(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final UUID id,
         @NotNull @RequestBody RigaOrdineDTO rigaOrdineDTO
     ) throws URISyntaxException {
         LOG.debug("REST request to partial update RigaOrdine partially : {}, {}", id, rigaOrdineDTO);
@@ -156,7 +157,7 @@ public class RigaOrdineResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the rigaOrdineDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<RigaOrdineDTO> getRigaOrdine(@PathVariable("id") Long id) {
+    public ResponseEntity<RigaOrdineDTO> getRigaOrdine(@PathVariable("id") UUID id) {
         LOG.debug("REST request to get RigaOrdine : {}", id);
         Optional<RigaOrdineDTO> rigaOrdineDTO = rigaOrdineService.findOne(id);
         return ResponseUtil.wrapOrNotFound(rigaOrdineDTO);
@@ -169,7 +170,7 @@ public class RigaOrdineResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteRigaOrdine(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteRigaOrdine(@PathVariable("id") UUID id) {
         LOG.debug("REST request to delete RigaOrdine : {}", id);
         rigaOrdineService.delete(id);
         return ResponseEntity.noContent()

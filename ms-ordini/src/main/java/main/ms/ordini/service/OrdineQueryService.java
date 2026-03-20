@@ -73,7 +73,7 @@ public class OrdineQueryService extends QueryService<Ordine> {
             // This has to be called first, because the distinct method returns null
             specification = Specification.allOf(
                 Boolean.TRUE.equals(criteria.getDistinct()) ? distinct(criteria.getDistinct()) : null,
-                buildRangeSpecification(criteria.getId(), Ordine_.id),
+                buildSpecification(criteria.getId(), Ordine_.id),
                 buildStringSpecification(criteria.getNumeroOrdine(), Ordine_.numeroOrdine),
                 buildSpecification(criteria.getClienteId(), Ordine_.clienteId),
                 buildStringSpecification(criteria.getNomeCliente(), Ordine_.nomeCliente),

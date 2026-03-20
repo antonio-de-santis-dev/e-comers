@@ -1,6 +1,7 @@
 package main.ms.ordini.service;
 
 import java.util.Optional;
+import java.util.UUID;
 import main.ms.ordini.domain.RigaOrdine;
 import main.ms.ordini.repository.RigaOrdineRepository;
 import main.ms.ordini.service.dto.RigaOrdineDTO;
@@ -95,7 +96,7 @@ public class RigaOrdineService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<RigaOrdineDTO> findOne(Long id) {
+    public Optional<RigaOrdineDTO> findOne(UUID id) {
         LOG.debug("Request to get RigaOrdine : {}", id);
         return rigaOrdineRepository.findById(id).map(rigaOrdineMapper::toDto);
     }
@@ -105,7 +106,7 @@ public class RigaOrdineService {
      *
      * @param id the id of the entity.
      */
-    public void delete(Long id) {
+    public void delete(UUID id) {
         LOG.debug("Request to delete RigaOrdine : {}", id);
         rigaOrdineRepository.deleteById(id);
     }

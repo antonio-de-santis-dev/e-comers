@@ -58,7 +58,7 @@ public class OrdineCriteria implements Serializable, Criteria {
 
     private static final long serialVersionUID = 1L;
 
-    private LongFilter id;
+    private UUIDFilter id;
 
     private StringFilter numeroOrdine;
 
@@ -102,14 +102,14 @@ public class OrdineCriteria implements Serializable, Criteria {
 
     private InstantFilter dataCreazione;
 
-    private LongFilter righeOrdineId;
+    private UUIDFilter righeOrdineId;
 
     private Boolean distinct;
 
     public OrdineCriteria() {}
 
     public OrdineCriteria(OrdineCriteria other) {
-        this.id = other.optionalId().map(LongFilter::copy).orElse(null);
+        this.id = other.optionalId().map(UUIDFilter::copy).orElse(null);
         this.numeroOrdine = other.optionalNumeroOrdine().map(StringFilter::copy).orElse(null);
         this.clienteId = other.optionalClienteId().map(UUIDFilter::copy).orElse(null);
         this.nomeCliente = other.optionalNomeCliente().map(StringFilter::copy).orElse(null);
@@ -131,7 +131,7 @@ public class OrdineCriteria implements Serializable, Criteria {
         this.scontoApplicato = other.optionalScontoApplicato().map(BigDecimalFilter::copy).orElse(null);
         this.statoOrdine = other.optionalStatoOrdine().map(StatoOrdineFilter::copy).orElse(null);
         this.dataCreazione = other.optionalDataCreazione().map(InstantFilter::copy).orElse(null);
-        this.righeOrdineId = other.optionalRigheOrdineId().map(LongFilter::copy).orElse(null);
+        this.righeOrdineId = other.optionalRigheOrdineId().map(UUIDFilter::copy).orElse(null);
         this.distinct = other.distinct;
     }
 
@@ -140,22 +140,22 @@ public class OrdineCriteria implements Serializable, Criteria {
         return new OrdineCriteria(this);
     }
 
-    public LongFilter getId() {
+    public UUIDFilter getId() {
         return id;
     }
 
-    public Optional<LongFilter> optionalId() {
+    public Optional<UUIDFilter> optionalId() {
         return Optional.ofNullable(id);
     }
 
-    public LongFilter id() {
+    public UUIDFilter id() {
         if (id == null) {
-            setId(new LongFilter());
+            setId(new UUIDFilter());
         }
         return id;
     }
 
-    public void setId(LongFilter id) {
+    public void setId(UUIDFilter id) {
         this.id = id;
     }
 
@@ -558,22 +558,22 @@ public class OrdineCriteria implements Serializable, Criteria {
         this.dataCreazione = dataCreazione;
     }
 
-    public LongFilter getRigheOrdineId() {
+    public UUIDFilter getRigheOrdineId() {
         return righeOrdineId;
     }
 
-    public Optional<LongFilter> optionalRigheOrdineId() {
+    public Optional<UUIDFilter> optionalRigheOrdineId() {
         return Optional.ofNullable(righeOrdineId);
     }
 
-    public LongFilter righeOrdineId() {
+    public UUIDFilter righeOrdineId() {
         if (righeOrdineId == null) {
-            setRigheOrdineId(new LongFilter());
+            setRigheOrdineId(new UUIDFilter());
         }
         return righeOrdineId;
     }
 
-    public void setRigheOrdineId(LongFilter righeOrdineId) {
+    public void setRigheOrdineId(UUIDFilter righeOrdineId) {
         this.righeOrdineId = righeOrdineId;
     }
 

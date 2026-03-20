@@ -15,9 +15,8 @@ import main.ms.ordini.domain.enumeration.TipoSpedizione;
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class OrdineDTO implements Serializable {
 
-    private Long id;
+    private UUID id;
 
-    @NotNull
     private String numeroOrdine;
 
     @NotNull
@@ -81,11 +80,11 @@ public class OrdineDTO implements Serializable {
     @NotNull
     private Instant dataCreazione;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -259,17 +258,10 @@ public class OrdineDTO implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof OrdineDTO)) {
-            return false;
-        }
-
+        if (this == o) return true;
+        if (!(o instanceof OrdineDTO)) return false;
         OrdineDTO ordineDTO = (OrdineDTO) o;
-        if (this.id == null) {
-            return false;
-        }
+        if (this.id == null) return false;
         return Objects.equals(this.id, ordineDTO.id);
     }
 
@@ -278,7 +270,6 @@ public class OrdineDTO implements Serializable {
         return Objects.hash(this.id);
     }
 
-    // prettier-ignore
     @Override
     public String toString() {
         return "OrdineDTO{" +

@@ -1,126 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
 <databaseChangeLog
-    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
                         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-    <!--
-        Added the entity Ordine.
-    -->
-    <changeSet id="20260318101256-1" author="jhipster">
-        <createTable tableName="ordine">
-            <column name="id" type="bigint">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="numero_ordine" type="varchar(255)">
-                <constraints nullable="false" unique="true" uniqueConstraintName="ux_ordine__numero_ordine" />
-            </column>
-            <column name="cliente_id" type="${uuidType}">
-                <constraints nullable="false" />
-            </column>
-            <column name="nome_cliente" type="varchar(100)">
-                <constraints nullable="false" />
-            </column>
-            <column name="cognome_cliente" type="varchar(100)">
-                <constraints nullable="false" />
-            </column>
-            <column name="email" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="telefono" type="varchar(255)">
-                <constraints nullable="true" />
-            </column>
-            <column name="indirizzo" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="citta" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="provincia" type="varchar(2)">
-                <constraints nullable="false" />
-            </column>
-            <column name="cap" type="varchar(5)">
-                <constraints nullable="false" />
-            </column>
-            <column name="stato_paese" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="note_spedizione" type="varchar(500)">
-                <constraints nullable="true" />
-            </column>
-            <column name="tipo_spedizione" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="costo_spedizione" type="decimal(21,2)">
-                <constraints nullable="false" />
-            </column>
-            <column name="totale_imponibile" type="decimal(21,2)">
-                <constraints nullable="false" />
-            </column>
-            <column name="totale_iva" type="decimal(21,2)">
-                <constraints nullable="false" />
-            </column>
-            <column name="totale_final" type="decimal(21,2)">
-                <constraints nullable="false" />
-            </column>
-            <column name="buono_sconto" type="varchar(255)">
-                <constraints nullable="true" />
-            </column>
-            <column name="sconto_applicato" type="decimal(21,2)">
-                <constraints nullable="true" />
-            </column>
-            <column name="stato_ordine" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="data_creazione" type="${datetimeType}">
-                <constraints nullable="false" />
-            </column>
-            <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
-        </createTable>
-        <dropDefaultValue tableName="ordine" columnName="data_creazione" columnDataType="${datetimeType}"/>
-    </changeSet>
+  <!--
+      Added the entity Ordine.
+  -->
+  <changeSet id="20260318101256-1" author="jhipster">
+    <createTable tableName="ordine">
+      <column name="id" type="${uuidType}">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="numero_ordine" type="varchar(255)">
+        <constraints nullable="false" unique="true" uniqueConstraintName="ux_ordine__numero_ordine" />
+      </column>
+      <column name="cliente_id" type="${uuidType}">
+        <constraints nullable="false" />
+      </column>
+      <column name="nome_cliente" type="varchar(100)">
+        <constraints nullable="false" />
+      </column>
+      <column name="cognome_cliente" type="varchar(100)">
+        <constraints nullable="false" />
+      </column>
+      <column name="email" type="varchar(255)">
+        <constraints nullable="false" />
+      </column>
+      <column name="telefono" type="varchar(255)">
+        <constraints nullable="true" />
+      </column>
+      <column name="indirizzo" type="varchar(255)">
+        <constraints nullable="false" />
+      </column>
+      <column name="citta" type="varchar(255)">
+        <constraints nullable="false" />
+      </column>
+      <column name="provincia" type="varchar(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="cap" type="varchar(5)">
+        <constraints nullable="false" />
+      </column>
+      <column name="stato_paese" type="varchar(255)">
+        <constraints nullable="false" />
+      </column>
+      <column name="note_spedizione" type="varchar(500)">
+        <constraints nullable="true" />
+      </column>
+      <column name="tipo_spedizione" type="varchar(255)">
+        <constraints nullable="false" />
+      </column>
+      <column name="costo_spedizione" type="decimal(21,2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="totale_imponibile" type="decimal(21,2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="totale_iva" type="decimal(21,2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="totale_final" type="decimal(21,2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="buono_sconto" type="varchar(255)">
+        <constraints nullable="true" />
+      </column>
+      <column name="sconto_applicato" type="decimal(21,2)">
+        <constraints nullable="true" />
+      </column>
+      <column name="stato_ordine" type="varchar(255)">
+        <constraints nullable="false" />
+      </column>
+      <column name="data_creazione" type="${datetimeType}">
+        <constraints nullable="false" />
+      </column>
+      <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
+    </createTable>
+    <dropDefaultValue tableName="ordine" columnName="data_creazione" columnDataType="${datetimeType}"/>
+  </changeSet>
 
-    <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->
+  <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->
 
-    <!--
-        Load sample data generated with Faker.js
-        - This data can be easily edited using a CSV editor (or even MS Excel) and
-          is located in the 'src/main/resources/config/liquibase/fake-data' directory
-        - By default this data is applied when running with the JHipster 'dev' profile.
-          This can be customized by adding or removing 'faker' in the 'spring.liquibase.contexts'
-          Spring Boot configuration key.
-    -->
-    <changeSet id="20260318101256-1-data" author="jhipster" context="faker">
-        <loadData
-                  file="config/liquibase/fake-data/ordine.csv"
-                  separator=";"
-                  tableName="ordine"
-                  usePreparedStatements="true">
-            <column name="id" type="numeric"/>
-            <column name="numero_ordine" type="string"/>
-            <column name="cliente_id" type="${uuidType}"/>
-            <column name="nome_cliente" type="string"/>
-            <column name="cognome_cliente" type="string"/>
-            <column name="email" type="string"/>
-            <column name="telefono" type="string"/>
-            <column name="indirizzo" type="string"/>
-            <column name="citta" type="string"/>
-            <column name="provincia" type="string"/>
-            <column name="cap" type="string"/>
-            <column name="stato_paese" type="string"/>
-            <column name="note_spedizione" type="string"/>
-            <column name="tipo_spedizione" type="string"/>
-            <column name="costo_spedizione" type="numeric"/>
-            <column name="totale_imponibile" type="numeric"/>
-            <column name="totale_iva" type="numeric"/>
-            <column name="totale_final" type="numeric"/>
-            <column name="buono_sconto" type="string"/>
-            <column name="sconto_applicato" type="numeric"/>
-            <column name="stato_ordine" type="string"/>
-            <column name="data_creazione" type="date"/>
-            <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
-        </loadData>
-    </changeSet>
+  <changeSet id="20260318101256-1-data" author="jhipster" context="faker">
+    <loadData
+      file="config/liquibase/fake-data/ordine.csv"
+      separator=";"
+      tableName="ordine"
+      usePreparedStatements="true">
+      <column name="id" type="${uuidType}"/>
+      <column name="numero_ordine" type="string"/>
+      <column name="cliente_id" type="${uuidType}"/>
+      <column name="nome_cliente" type="string"/>
+      <column name="cognome_cliente" type="string"/>
+      <column name="email" type="string"/>
+      <column name="telefono" type="string"/>
+      <column name="indirizzo" type="string"/>
+      <column name="citta" type="string"/>
+      <column name="provincia" type="string"/>
+      <column name="cap" type="string"/>
+      <column name="stato_paese" type="string"/>
+      <column name="note_spedizione" type="string"/>
+      <column name="tipo_spedizione" type="string"/>
+      <column name="costo_spedizione" type="numeric"/>
+      <column name="totale_imponibile" type="numeric"/>
+      <column name="totale_iva" type="numeric"/>
+      <column name="totale_final" type="numeric"/>
+      <column name="buono_sconto" type="string"/>
+      <column name="sconto_applicato" type="numeric"/>
+      <column name="stato_ordine" type="string"/>
+      <column name="data_creazione" type="date"/>
+    </loadData>
+  </changeSet>
 </databaseChangeLog>

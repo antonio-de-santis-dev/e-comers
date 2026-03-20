@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import main.ms.ordini.repository.OrdineRepository;
 import main.ms.ordini.service.OrdineQueryService;
 import main.ms.ordini.service.OrdineService;
@@ -41,9 +42,7 @@ public class OrdineResource {
     private String applicationName;
 
     private final OrdineService ordineService;
-
     private final OrdineRepository ordineRepository;
-
     private final OrdineQueryService ordineQueryService;
 
     public OrdineResource(OrdineService ordineService, OrdineRepository ordineRepository, OrdineQueryService ordineQueryService) {
@@ -54,10 +53,6 @@ public class OrdineResource {
 
     /**
      * {@code POST  /ordines} : Create a new ordine.
-     *
-     * @param ordineDTO the ordineDTO to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new ordineDTO, or with status {@code 400 (Bad Request)} if the ordine has already an ID.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
     public ResponseEntity<OrdineDTO> createOrdine(@Valid @RequestBody OrdineDTO ordineDTO) throws URISyntaxException {
@@ -73,17 +68,10 @@ public class OrdineResource {
 
     /**
      * {@code PUT  /ordines/:id} : Updates an existing ordine.
-     *
-     * @param id the id of the ordineDTO to save.
-     * @param ordineDTO the ordineDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated ordineDTO,
-     * or with status {@code 400 (Bad Request)} if the ordineDTO is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the ordineDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
     public ResponseEntity<OrdineDTO> updateOrdine(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final UUID id,
         @Valid @RequestBody OrdineDTO ordineDTO
     ) throws URISyntaxException {
         LOG.debug("REST request to update Ordine : {}, {}", id, ordineDTO);
@@ -93,7 +81,6 @@ public class OrdineResource {
         if (!Objects.equals(id, ordineDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
-
         if (!ordineRepository.existsById(id)) {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
@@ -105,19 +92,11 @@ public class OrdineResource {
     }
 
     /**
-     * {@code PATCH  /ordines/:id} : Partial updates given fields of an existing ordine, field will ignore if it is null
-     *
-     * @param id the id of the ordineDTO to save.
-     * @param ordineDTO the ordineDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated ordineDTO,
-     * or with status {@code 400 (Bad Request)} if the ordineDTO is not valid,
-     * or with status {@code 404 (Not Found)} if the ordineDTO is not found,
-     * or with status {@code 500 (Internal Server Error)} if the ordineDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     * {@code PATCH  /ordines/:id} : Partial updates given fields of an existing ordine.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<OrdineDTO> partialUpdateOrdine(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final UUID id,
         @NotNull @RequestBody OrdineDTO ordineDTO
     ) throws URISyntaxException {
         LOG.debug("REST request to partial update Ordine partially : {}, {}", id, ordineDTO);
@@ -127,13 +106,11 @@ public class OrdineResource {
         if (!Objects.equals(id, ordineDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
-
         if (!ordineRepository.existsById(id)) {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
         Optional<OrdineDTO> result = ordineService.partialUpdate(ordineDTO);
-
         return ResponseUtil.wrapOrNotFound(
             result,
             HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, ordineDTO.getId().toString())
@@ -142,10 +119,6 @@ public class OrdineResource {
 
     /**
      * {@code GET  /ordines} : get all the ordines.
-     *
-     * @param pageable the pagination information.
-     * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of ordines in body.
      */
     @GetMapping("")
     public ResponseEntity<List<OrdineDTO>> getAllOrdines(
@@ -153,7 +126,6 @@ public class OrdineResource {
         @org.springdoc.core.annotations.ParameterObject Pageable pageable
     ) {
         LOG.debug("REST request to get Ordines by criteria: {}", criteria);
-
         Page<OrdineDTO> page = ordineQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
@@ -161,9 +133,6 @@ public class OrdineResource {
 
     /**
      * {@code GET  /ordines/count} : count all the ordines.
-     *
-     * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
      */
     @GetMapping("/count")
     public ResponseEntity<Long> countOrdines(OrdineCriteria criteria) {
@@ -173,12 +142,9 @@ public class OrdineResource {
 
     /**
      * {@code GET  /ordines/:id} : get the "id" ordine.
-     *
-     * @param id the id of the ordineDTO to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the ordineDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<OrdineDTO> getOrdine(@PathVariable("id") Long id) {
+    public ResponseEntity<OrdineDTO> getOrdine(@PathVariable("id") UUID id) {
         LOG.debug("REST request to get Ordine : {}", id);
         Optional<OrdineDTO> ordineDTO = ordineService.findOne(id);
         return ResponseUtil.wrapOrNotFound(ordineDTO);
@@ -186,12 +152,9 @@ public class OrdineResource {
 
     /**
      * {@code DELETE  /ordines/:id} : delete the "id" ordine.
-     *
-     * @param id the id of the ordineDTO to delete.
-     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteOrdine(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteOrdine(@PathVariable("id") UUID id) {
         LOG.debug("REST request to delete Ordine : {}", id);
         ordineService.delete(id);
         return ResponseEntity.noContent()
