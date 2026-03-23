@@ -1,0 +1,143 @@
+<div>
+  <h2 id="page-heading" data-cy="NotificaHeading">
+    <span jhiTranslate="apiGatewayApp.msnotificheNotifica.home.title">Notificas</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span jhiTranslate="apiGatewayApp.msnotificheNotifica.home.refreshListLabel">Refresh list</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-notifica"
+        [routerLink]="['/notifica/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="apiGatewayApp.msnotificheNotifica.home.createLabel">Genera un nuovo Notifica</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error />
+
+  <jhi-alert />
+
+  @if (notificas().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span jhiTranslate="apiGatewayApp.msnotificheNotifica.home.notFound">No Notificas found</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span jhiTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="tipo">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.msnotificheNotifica.tipo">Tipo</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="messaggio">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.msnotificheNotifica.messaggio">Messaggio</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="destinatario">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.msnotificheNotifica.destinatario">Destinatario</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="letta">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.msnotificheNotifica.letta">Letta</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="dataNotifica">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.msnotificheNotifica.dataNotifica">Data Notifica</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="riferimentoId">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.msnotificheNotifica.riferimentoId">Riferimento Id</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (notifica of notificas(); track trackId(notifica)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/notifica', notifica.id, 'view']">{{ notifica.id }}</a>
+              </td>
+              <td>{{ notifica.tipo }}</td>
+              <td>{{ notifica.messaggio }}</td>
+              <td>{{ notifica.destinatario }}</td>
+              <td>{{ notifica.letta }}</td>
+              <td>{{ notifica.dataNotifica | formatMediumDatetime }}</td>
+              <td>{{ notifica.riferimentoId }}</td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/notifica', notifica.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">Visualizza</span>
+                  </a>
+
+                  <a [routerLink]="['/notifica', notifica.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Modifica</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(notifica)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Elimina</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  @if (notificas().length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <jhi-item-count [params]="{ page, totalItems, itemsPerPage }" />
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
+    </div>
+  }
+</div>

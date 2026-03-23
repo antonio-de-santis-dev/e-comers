@@ -1,0 +1,34 @@
+{
+  "apiGatewayApp": {
+    "msrecensioniRecensione": {
+      "home": {
+        "title": "Recensiones",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Genera un nuovo Recensione",
+        "createOrEditLabel": "Genera o modifica un Recensione",
+        "notFound": "No Recensiones found"
+      },
+      "delete": {
+        "question": "Sei sicuro di volere eliminare Recensione {{ id }}?"
+      },
+      "detail": {
+        "title": "Recensione"
+      },
+      "id": "ID",
+      "prodottoId": "Prodotto Id",
+      "ordineId": "Ordine Id",
+      "nomeCliente": "Nome Cliente",
+      "descrizione": "Descrizione",
+      "votoSingolo": "Voto Singolo",
+      "approvata": "Approvata",
+      "dataRecensione": "Data Recensione"
+    }
+  },
+  "msrecensioniApp": {
+    "msrecensioniRecensione": {
+      "created": "&Egrave; stato generato un nuovo Recensione con identificatore { param }}",
+      "updated": "&Egrave; stato aggiornato Recensione identificato da {{ param }}",
+      "deleted": "&Egrave; stato eliminato Recensione con identificatore {{ param }}"
+    }
+  }
+}

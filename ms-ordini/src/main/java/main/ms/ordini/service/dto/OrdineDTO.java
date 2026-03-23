@@ -77,7 +77,7 @@ public class OrdineDTO implements Serializable {
     @NotNull
     private StatoOrdine statoOrdine;
 
-    @NotNull
+    // @NotNull rimosso — dataCreazione viene auto-generata nel service
     private Instant dataCreazione;
 
     public UUID getId() {

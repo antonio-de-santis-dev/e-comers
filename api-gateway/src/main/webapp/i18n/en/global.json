@@ -8,7 +8,14 @@
       "entities": {
         "main": "Entities",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
-        "adminAuthority": "Authority"
+        "mscatalogoCategoria": "Categoria",
+        "mscatalogoProdotto": "Prodotto",
+        "msordiniOrdine": "Ordine",
+        "msordiniRigaOrdine": "Riga Ordine",
+        "mspagamentiPagamento": "Pagamento",
+        "msrecensioniRecensione": "Recensione",
+        "msnotificheNotifica": "Notifica",
+        "msadminStatisticaOrdine": "Statistica Ordine"
       },
       "account": {
         "main": "Account",

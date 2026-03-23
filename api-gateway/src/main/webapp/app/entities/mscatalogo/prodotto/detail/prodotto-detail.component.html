@@ -1,0 +1,66 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (prodotto(); as prodottoRef) {
+      <div>
+        <h2 data-cy="prodottoDetailsHeading"><span jhiTranslate="apiGatewayApp.mscatalogoProdotto.detail.title">Prodotto</span></h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ prodottoRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.mscatalogoProdotto.nome">Nome</span></dt>
+          <dd>
+            <span>{{ prodottoRef.nome }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.mscatalogoProdotto.descrizione">Descrizione</span></dt>
+          <dd>
+            <span>{{ prodottoRef.descrizione }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.mscatalogoProdotto.prezzo">Prezzo</span></dt>
+          <dd>
+            <span>{{ prodottoRef.prezzo }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.mscatalogoProdotto.quantitaDisponibile">Quantita Disponibile</span></dt>
+          <dd>
+            <span>{{ prodottoRef.quantitaDisponibile }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.mscatalogoProdotto.inEvidenza">In Evidenza</span></dt>
+          <dd>
+            <span>{{ prodottoRef.inEvidenza }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.mscatalogoProdotto.immagineUrl">Immagine Url</span></dt>
+          <dd>
+            <span>{{ prodottoRef.immagineUrl }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.mscatalogoProdotto.votaMedio">Vota Medio</span></dt>
+          <dd>
+            <span>{{ prodottoRef.votaMedio }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.mscatalogoProdotto.categoria">Categoria</span></dt>
+          <dd>
+            @if (prodotto()!.categoria) {
+              <div>
+                <a [routerLink]="['/categoria', prodotto()!.categoria?.id, 'view']">{{ prodottoRef.categoria?.nome }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Indietro</span>
+        </button>
+
+        <button type="button" [routerLink]="['/prodotto', prodottoRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Modifica</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

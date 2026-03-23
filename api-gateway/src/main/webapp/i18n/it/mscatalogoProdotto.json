@@ -1,0 +1,35 @@
+{
+  "apiGatewayApp": {
+    "mscatalogoProdotto": {
+      "home": {
+        "title": "Prodottos",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Genera un nuovo Prodotto",
+        "createOrEditLabel": "Genera o modifica un Prodotto",
+        "notFound": "No Prodottos found"
+      },
+      "delete": {
+        "question": "Sei sicuro di volere eliminare Prodotto {{ id }}?"
+      },
+      "detail": {
+        "title": "Prodotto"
+      },
+      "id": "ID",
+      "nome": "Nome",
+      "descrizione": "Descrizione",
+      "prezzo": "Prezzo",
+      "quantitaDisponibile": "Quantita Disponibile",
+      "inEvidenza": "In Evidenza",
+      "immagineUrl": "Immagine Url",
+      "votaMedio": "Vota Medio",
+      "categoria": "Categoria"
+    }
+  },
+  "mscatalogoApp": {
+    "mscatalogoProdotto": {
+      "created": "&Egrave; stato generato un nuovo Prodotto con identificatore { param }}",
+      "updated": "&Egrave; stato aggiornato Prodotto identificato da {{ param }}",
+      "deleted": "&Egrave; stato eliminato Prodotto con identificatore {{ param }}"
+    }
+  }
+}

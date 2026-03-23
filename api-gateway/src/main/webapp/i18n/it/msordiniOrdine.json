@@ -1,0 +1,44 @@
+{
+  "apiGatewayApp": {
+    "msordiniOrdine": {
+      "home": {
+        "title": "Ordines",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Genera un nuovo Ordine",
+        "createOrEditLabel": "Genera o modifica un Ordine",
+        "notFound": "No Ordines found"
+      },
+      "delete": {
+        "question": "Sei sicuro di volere eliminare Ordine {{ id }}?"
+      },
+      "detail": {
+        "title": "Ordine"
+      },
+      "id": "ID",
+      "numeroOrdine": "Numero Ordine",
+      "clienteId": "Cliente Id",
+      "nomeCliente": "Nome Cliente",
+      "cognomeCliente": "Cognome Cliente",
+      "email": "Email",
+      "indirizzo": "Indirizzo",
+      "citta": "Citta",
+      "provincia": "Provincia",
+      "cap": "Cap",
+      "statoPaese": "Stato Paese",
+      "tipoSpedizione": "Tipo Spedizione",
+      "costoSpedizione": "Costo Spedizione",
+      "totaleImponibile": "Totale Imponibile",
+      "totaleIva": "Totale Iva",
+      "totaleFinal": "Totale Final",
+      "statoOrdine": "Stato Ordine",
+      "dataCreazione": "Data Creazione"
+    }
+  },
+  "msordiniApp": {
+    "msordiniOrdine": {
+      "created": "&Egrave; stato generato un nuovo Ordine con identificatore { param }}",
+      "updated": "&Egrave; stato aggiornato Ordine identificato da {{ param }}",
+      "deleted": "&Egrave; stato eliminato Ordine con identificatore {{ param }}"
+    }
+  }
+}

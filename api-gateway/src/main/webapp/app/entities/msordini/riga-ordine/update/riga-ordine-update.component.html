@@ -1,0 +1,189 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-riga-ordine-heading"
+        data-cy="RigaOrdineCreateUpdateHeading"
+        jhiTranslate="apiGatewayApp.msordiniRigaOrdine.home.createOrEditLabel"
+      >
+        Genera o modifica un Riga Ordine
+      </h2>
+
+      <div>
+        <jhi-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="apiGatewayApp.msordiniRigaOrdine.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let prodottoIdRef = editForm.get('prodottoId')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_prodottoId" jhiTranslate="apiGatewayApp.msordiniRigaOrdine.prodottoId">Prodotto Id</label>
+          <input
+            type="text"
+            class="form-control"
+            name="prodottoId"
+            id="field_prodottoId"
+            data-cy="prodottoId"
+            formControlName="prodottoId"
+          />
+          @if (prodottoIdRef.invalid && (prodottoIdRef.dirty || prodottoIdRef.touched)) {
+            <div>
+              @if (editForm.get('prodottoId')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Questo campo è obbligatorio.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let nomeProdottoRef = editForm.get('nomeProdotto')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_nomeProdotto" jhiTranslate="apiGatewayApp.msordiniRigaOrdine.nomeProdotto"
+            >Nome Prodotto</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="nomeProdotto"
+            id="field_nomeProdotto"
+            data-cy="nomeProdotto"
+            formControlName="nomeProdotto"
+          />
+          @if (nomeProdottoRef.invalid && (nomeProdottoRef.dirty || nomeProdottoRef.touched)) {
+            <div>
+              @if (editForm.get('nomeProdotto')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Questo campo è obbligatorio.</small>
+              }
+              @if (editForm.get('nomeProdotto')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '200' }"
+                  >Questo campo non può essere più di 200 caratteri.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let quantitaRef = editForm.get('quantita')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_quantita" jhiTranslate="apiGatewayApp.msordiniRigaOrdine.quantita">Quantita</label>
+          <input type="number" class="form-control" name="quantita" id="field_quantita" data-cy="quantita" formControlName="quantita" />
+          @if (quantitaRef.invalid && (quantitaRef.dirty || quantitaRef.touched)) {
+            <div>
+              @if (editForm.get('quantita')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Questo campo è obbligatorio.</small>
+              }
+              @if (editForm.get('quantita')?.errors?.min) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '1' }"
+                  >Questo campo dovrebbe essere più di 1.</small
+                >
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('quantita')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >Questo campo dovrebbe essere un numero.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let prezzoUnitarioRef = editForm.get('prezzoUnitario')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_prezzoUnitario" jhiTranslate="apiGatewayApp.msordiniRigaOrdine.prezzoUnitario"
+            >Prezzo Unitario</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="prezzoUnitario"
+            id="field_prezzoUnitario"
+            data-cy="prezzoUnitario"
+            formControlName="prezzoUnitario"
+          />
+          @if (prezzoUnitarioRef.invalid && (prezzoUnitarioRef.dirty || prezzoUnitarioRef.touched)) {
+            <div>
+              @if (editForm.get('prezzoUnitario')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Questo campo è obbligatorio.</small>
+              }
+              @if (editForm.get('prezzoUnitario')?.errors?.min) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
+                  >Questo campo dovrebbe essere più di 0.</small
+                >
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('prezzoUnitario')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >Questo campo dovrebbe essere un numero.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let totaleRigaRef = editForm.get('totaleRiga')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_totaleRiga" jhiTranslate="apiGatewayApp.msordiniRigaOrdine.totaleRiga">Totale Riga</label>
+          <input
+            type="number"
+            class="form-control"
+            name="totaleRiga"
+            id="field_totaleRiga"
+            data-cy="totaleRiga"
+            formControlName="totaleRiga"
+          />
+          @if (totaleRigaRef.invalid && (totaleRigaRef.dirty || totaleRigaRef.touched)) {
+            <div>
+              @if (editForm.get('totaleRiga')?.errors?.min) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
+                  >Questo campo dovrebbe essere più di 0.</small
+                >
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('totaleRiga')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >Questo campo dovrebbe essere un numero.</small
+              >
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_ordine" jhiTranslate="apiGatewayApp.msordiniRigaOrdine.ordine">Ordine</label>
+          <select
+            class="form-control"
+            id="field_ordine"
+            data-cy="ordine"
+            name="ordine"
+            formControlName="ordine"
+            [compareWith]="compareOrdine"
+          >
+            <option [ngValue]="null"></option>
+            @for (ordineOption of ordinesSharedCollection; track $index) {
+              <option [ngValue]="ordineOption">{{ ordineOption.id }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Annulla</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Salva</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

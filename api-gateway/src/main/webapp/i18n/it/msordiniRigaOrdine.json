@@ -1,0 +1,33 @@
+{
+  "apiGatewayApp": {
+    "msordiniRigaOrdine": {
+      "home": {
+        "title": "RigaOrdines",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Genera un nuovo Riga Ordine",
+        "createOrEditLabel": "Genera o modifica un Riga Ordine",
+        "notFound": "No Riga Ordines found"
+      },
+      "delete": {
+        "question": "Sei sicuro di volere eliminare Riga Ordine {{ id }}?"
+      },
+      "detail": {
+        "title": "Riga Ordine"
+      },
+      "id": "ID",
+      "prodottoId": "Prodotto Id",
+      "nomeProdotto": "Nome Prodotto",
+      "quantita": "Quantita",
+      "prezzoUnitario": "Prezzo Unitario",
+      "totaleRiga": "Totale Riga",
+      "ordine": "Ordine"
+    }
+  },
+  "msordiniApp": {
+    "msordiniRigaOrdine": {
+      "created": "&Egrave; stato generato un nuovo Riga Ordine con identificatore { param }}",
+      "updated": "&Egrave; stato aggiornato Riga Ordine identificato da {{ param }}",
+      "deleted": "&Egrave; stato eliminato Riga Ordine con identificatore {{ param }}"
+    }
+  }
+}

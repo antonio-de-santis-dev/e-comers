@@ -14,6 +14,7 @@ import main.ms.catalogo.service.ProdottoQueryService;
 import main.ms.catalogo.service.ProdottoService;
 import main.ms.catalogo.service.criteria.ProdottoCriteria;
 import main.ms.catalogo.service.dto.ProdottoDTO;
+import main.ms.catalogo.service.mapper.ProdottoMapper;
 import main.ms.catalogo.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,14 +49,18 @@ public class ProdottoResource {
 
     private final ProdottoQueryService prodottoQueryService;
 
+    private final ProdottoMapper prodottoMapper;
+
     public ProdottoResource(
         ProdottoService prodottoService,
         ProdottoRepository prodottoRepository,
-        ProdottoQueryService prodottoQueryService
+        ProdottoQueryService prodottoQueryService,
+        ProdottoMapper prodottoMapper
     ) {
         this.prodottoService = prodottoService;
         this.prodottoRepository = prodottoRepository;
         this.prodottoQueryService = prodottoQueryService;
+        this.prodottoMapper = prodottoMapper;
     }
 
     /**
@@ -156,12 +161,24 @@ public class ProdottoResource {
     @GetMapping("")
     public ResponseEntity<List<ProdottoDTO>> getAllProdottos(
         ProdottoCriteria criteria,
-        @org.springdoc.core.annotations.ParameterObject Pageable pageable
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable,
+        @RequestParam(name = "eagerload", required = false, defaultValue = "false") boolean eagerload
     ) {
         LOG.debug("REST request to get Prodottos by criteria: {}", criteria);
 
-        Page<ProdottoDTO> page = prodottoQueryService.findByCriteria(criteria, pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        Page<ProdottoDTO> page;
+        if (eagerload) {
+            // Carica prodotti con categoria in JOIN FETCH — evita N+1 queries
+            page = prodottoRepository
+                .findAllWithEagerRelationships(pageable)
+                .map(prodottoMapper::toDto);
+        } else {
+            page = prodottoQueryService.findByCriteria(criteria, pageable);
+        }
+
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
+            ServletUriComponentsBuilder.fromCurrentRequest(), page
+        );
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 

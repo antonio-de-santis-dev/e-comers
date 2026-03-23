@@ -1,0 +1,9 @@
+export enum StatoPagamento {
+  IN_ATTESA = 'IN_ATTESA',
+
+  APPROVATO = 'APPROVATO',
+
+  RIFIUTATO = 'RIFIUTATO',
+
+  RIMBORSATO = 'RIMBORSATO',
+}

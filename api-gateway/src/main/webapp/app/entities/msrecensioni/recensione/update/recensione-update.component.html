@@ -1,0 +1,175 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-recensione-heading"
+        data-cy="RecensioneCreateUpdateHeading"
+        jhiTranslate="apiGatewayApp.msrecensioniRecensione.home.createOrEditLabel"
+      >
+        Genera o modifica un Recensione
+      </h2>
+
+      <div>
+        <jhi-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="apiGatewayApp.msrecensioniRecensione.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let prodottoIdRef = editForm.get('prodottoId')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_prodottoId" jhiTranslate="apiGatewayApp.msrecensioniRecensione.prodottoId"
+            >Prodotto Id</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="prodottoId"
+            id="field_prodottoId"
+            data-cy="prodottoId"
+            formControlName="prodottoId"
+          />
+          @if (prodottoIdRef.invalid && (prodottoIdRef.dirty || prodottoIdRef.touched)) {
+            <div>
+              @if (editForm.get('prodottoId')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Questo campo è obbligatorio.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_ordineId" jhiTranslate="apiGatewayApp.msrecensioniRecensione.ordineId">Ordine Id</label>
+          <input type="text" class="form-control" name="ordineId" id="field_ordineId" data-cy="ordineId" formControlName="ordineId" />
+        </div>
+
+        @let nomeClienteRef = editForm.get('nomeCliente')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_nomeCliente" jhiTranslate="apiGatewayApp.msrecensioniRecensione.nomeCliente"
+            >Nome Cliente</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="nomeCliente"
+            id="field_nomeCliente"
+            data-cy="nomeCliente"
+            formControlName="nomeCliente"
+          />
+          @if (nomeClienteRef.invalid && (nomeClienteRef.dirty || nomeClienteRef.touched)) {
+            <div>
+              @if (editForm.get('nomeCliente')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Questo campo è obbligatorio.</small>
+              }
+              @if (editForm.get('nomeCliente')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '200' }"
+                  >Questo campo non può essere più di 200 caratteri.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let descrizioneRef = editForm.get('descrizione')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_descrizione" jhiTranslate="apiGatewayApp.msrecensioniRecensione.descrizione"
+            >Descrizione</label
+          >
+          <textarea
+            class="form-control"
+            name="descrizione"
+            id="field_descrizione"
+            data-cy="descrizione"
+            formControlName="descrizione"
+          ></textarea>
+          @if (descrizioneRef.invalid && (descrizioneRef.dirty || descrizioneRef.touched)) {
+            <div>
+              @if (editForm.get('descrizione')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Questo campo è obbligatorio.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let votoSingoloRef = editForm.get('votoSingolo')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_votoSingolo" jhiTranslate="apiGatewayApp.msrecensioniRecensione.votoSingolo"
+            >Voto Singolo</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="votoSingolo"
+            id="field_votoSingolo"
+            data-cy="votoSingolo"
+            formControlName="votoSingolo"
+          />
+          @if (votoSingoloRef.invalid && (votoSingoloRef.dirty || votoSingoloRef.touched)) {
+            <div>
+              @if (editForm.get('votoSingolo')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Questo campo è obbligatorio.</small>
+              }
+              @if (editForm.get('votoSingolo')?.errors?.min) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '1' }"
+                  >Questo campo dovrebbe essere più di 1.</small
+                >
+              }
+              @if (editForm.get('votoSingolo')?.errors?.max) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.max" [translateValues]="{ max: '5' }"
+                  >Questo campo non può essere superiore a 5.</small
+                >
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('votoSingolo')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >Questo campo dovrebbe essere un numero.</small
+              >
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_approvata" jhiTranslate="apiGatewayApp.msrecensioniRecensione.approvata">Approvata</label>
+          <input type="checkbox" class="form-check" name="approvata" id="field_approvata" data-cy="approvata" formControlName="approvata" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_dataRecensione" jhiTranslate="apiGatewayApp.msrecensioniRecensione.dataRecensione"
+            >Data Recensione</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_dataRecensione"
+              data-cy="dataRecensione"
+              type="datetime-local"
+              class="form-control"
+              name="dataRecensione"
+              formControlName="dataRecensione"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Annulla</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Salva</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

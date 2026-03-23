@@ -1,0 +1,166 @@
+<div>
+  <h2 id="page-heading" data-cy="ProdottoHeading">
+    <span jhiTranslate="apiGatewayApp.mscatalogoProdotto.home.title">Prodottos</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span jhiTranslate="apiGatewayApp.mscatalogoProdotto.home.refreshListLabel">Refresh list</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-prodotto"
+        [routerLink]="['/prodotto/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="apiGatewayApp.mscatalogoProdotto.home.createLabel">Genera un nuovo Prodotto</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error />
+
+  <jhi-alert />
+
+  <jhi-filter [filters]="filters" />
+
+  @if (prodottos().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span jhiTranslate="apiGatewayApp.mscatalogoProdotto.home.notFound">No Prodottos found</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span jhiTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="nome">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.mscatalogoProdotto.nome">Nome</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="descrizione">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.mscatalogoProdotto.descrizione">Descrizione</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="prezzo">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.mscatalogoProdotto.prezzo">Prezzo</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="quantitaDisponibile">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.mscatalogoProdotto.quantitaDisponibile">Quantita Disponibile</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="inEvidenza">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.mscatalogoProdotto.inEvidenza">In Evidenza</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="immagineUrl">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.mscatalogoProdotto.immagineUrl">Immagine Url</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="votaMedio">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.mscatalogoProdotto.votaMedio">Vota Medio</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="categoria.nome">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.mscatalogoProdotto.categoria">Categoria</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (prodotto of prodottos(); track trackId(prodotto)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/prodotto', prodotto.id, 'view']">{{ prodotto.id }}</a>
+              </td>
+              <td>{{ prodotto.nome }}</td>
+              <td>{{ prodotto.descrizione }}</td>
+              <td>{{ prodotto.prezzo }}</td>
+              <td>{{ prodotto.quantitaDisponibile }}</td>
+              <td>{{ prodotto.inEvidenza }}</td>
+              <td>{{ prodotto.immagineUrl }}</td>
+              <td>{{ prodotto.votaMedio }}</td>
+              <td>
+                @if (prodotto.categoria) {
+                  <div>
+                    <a [routerLink]="['/categoria', prodotto.categoria.id, 'view']">{{ prodotto.categoria.nome }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/prodotto', prodotto.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">Visualizza</span>
+                  </a>
+
+                  <a [routerLink]="['/prodotto', prodotto.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Modifica</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(prodotto)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Elimina</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  @if (prodottos().length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <jhi-item-count [params]="{ page, totalItems, itemsPerPage }" />
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
+    </div>
+  }
+</div>

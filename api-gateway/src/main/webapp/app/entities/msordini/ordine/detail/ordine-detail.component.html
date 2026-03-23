@@ -1,0 +1,111 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (ordine(); as ordineRef) {
+      <div>
+        <h2 data-cy="ordineDetailsHeading"><span jhiTranslate="apiGatewayApp.msordiniOrdine.detail.title">Ordine</span></h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ ordineRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msordiniOrdine.numeroOrdine">Numero Ordine</span></dt>
+          <dd>
+            <span>{{ ordineRef.numeroOrdine }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msordiniOrdine.clienteId">Cliente Id</span></dt>
+          <dd>
+            <span>{{ ordineRef.clienteId }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msordiniOrdine.nomeCliente">Nome Cliente</span></dt>
+          <dd>
+            <span>{{ ordineRef.nomeCliente }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msordiniOrdine.cognomeCliente">Cognome Cliente</span></dt>
+          <dd>
+            <span>{{ ordineRef.cognomeCliente }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msordiniOrdine.email">Email</span></dt>
+          <dd>
+            <span>{{ ordineRef.email }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msordiniOrdine.indirizzo">Indirizzo</span></dt>
+          <dd>
+            <span>{{ ordineRef.indirizzo }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msordiniOrdine.citta">Citta</span></dt>
+          <dd>
+            <span>{{ ordineRef.citta }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msordiniOrdine.provincia">Provincia</span></dt>
+          <dd>
+            <span>{{ ordineRef.provincia }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msordiniOrdine.cap">Cap</span></dt>
+          <dd>
+            <span>{{ ordineRef.cap }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msordiniOrdine.statoPaese">Stato Paese</span></dt>
+          <dd>
+            <span>{{ ordineRef.statoPaese }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msordiniOrdine.tipoSpedizione">Tipo Spedizione</span></dt>
+          <dd>
+            <span [jhiTranslate]="'apiGatewayApp.TipoSpedizione.' + (ordineRef.tipoSpedizione ?? 'null')">{{
+              { null: '', STANDARD: 'STANDARD', EXPRESS: 'EXPRESS', SAME_DAY: 'SAME_DAY', RITIRO: 'RITIRO' }[
+                ordineRef.tipoSpedizione ?? 'null'
+              ]
+            }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msordiniOrdine.costoSpedizione">Costo Spedizione</span></dt>
+          <dd>
+            <span>{{ ordineRef.costoSpedizione }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msordiniOrdine.totaleImponibile">Totale Imponibile</span></dt>
+          <dd>
+            <span>{{ ordineRef.totaleImponibile }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msordiniOrdine.totaleIva">Totale Iva</span></dt>
+          <dd>
+            <span>{{ ordineRef.totaleIva }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msordiniOrdine.totaleFinal">Totale Final</span></dt>
+          <dd>
+            <span>{{ ordineRef.totaleFinal }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msordiniOrdine.statoOrdine">Stato Ordine</span></dt>
+          <dd>
+            <span [jhiTranslate]="'apiGatewayApp.StatoOrdine.' + (ordineRef.statoOrdine ?? 'null')">{{
+              {
+                null: '',
+                IN_ELABORAZIONE: 'IN_ELABORAZIONE',
+                PAGATO: 'PAGATO',
+                IN_SPEDIZIONE: 'IN_SPEDIZIONE',
+                CONSEGNATO: 'CONSEGNATO',
+                ANNULLATO: 'ANNULLATO',
+              }[ordineRef.statoOrdine ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msordiniOrdine.dataCreazione">Data Creazione</span></dt>
+          <dd>
+            <span>{{ ordineRef.dataCreazione | formatMediumDatetime }}</span>
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Indietro</span>
+        </button>
+
+        <button type="button" [routerLink]="['/ordine', ordineRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Modifica</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

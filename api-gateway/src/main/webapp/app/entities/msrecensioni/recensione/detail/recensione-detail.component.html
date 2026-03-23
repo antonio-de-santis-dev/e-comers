@@ -1,0 +1,58 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (recensione(); as recensioneRef) {
+      <div>
+        <h2 data-cy="recensioneDetailsHeading"><span jhiTranslate="apiGatewayApp.msrecensioniRecensione.detail.title">Recensione</span></h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ recensioneRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msrecensioniRecensione.prodottoId">Prodotto Id</span></dt>
+          <dd>
+            <span>{{ recensioneRef.prodottoId }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msrecensioniRecensione.ordineId">Ordine Id</span></dt>
+          <dd>
+            <span>{{ recensioneRef.ordineId }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msrecensioniRecensione.nomeCliente">Nome Cliente</span></dt>
+          <dd>
+            <span>{{ recensioneRef.nomeCliente }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msrecensioniRecensione.descrizione">Descrizione</span></dt>
+          <dd>
+            <span>{{ recensioneRef.descrizione }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msrecensioniRecensione.votoSingolo">Voto Singolo</span></dt>
+          <dd>
+            <span>{{ recensioneRef.votoSingolo }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msrecensioniRecensione.approvata">Approvata</span></dt>
+          <dd>
+            <span>{{ recensioneRef.approvata }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msrecensioniRecensione.dataRecensione">Data Recensione</span></dt>
+          <dd>
+            <span>{{ recensioneRef.dataRecensione | formatMediumDatetime }}</span>
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Indietro</span>
+        </button>
+
+        <button type="button" [routerLink]="['/recensione', recensioneRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Modifica</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

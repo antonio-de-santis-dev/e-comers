@@ -1,0 +1,33 @@
+{
+  "apiGatewayApp": {
+    "msnotificheNotifica": {
+      "home": {
+        "title": "Notificas",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Notifica",
+        "createOrEditLabel": "Create or edit a Notifica",
+        "notFound": "No Notificas found"
+      },
+      "delete": {
+        "question": "Are you sure you want to delete Notifica {{ id }}?"
+      },
+      "detail": {
+        "title": "Notifica"
+      },
+      "id": "ID",
+      "tipo": "Tipo",
+      "messaggio": "Messaggio",
+      "destinatario": "Destinatario",
+      "letta": "Letta",
+      "dataNotifica": "Data Notifica",
+      "riferimentoId": "Riferimento Id"
+    }
+  },
+  "msnotificheApp": {
+    "msnotificheNotifica": {
+      "created": "A new Notifica is created with identifier {{ param }}",
+      "updated": "A Notifica is updated with identifier {{ param }}",
+      "deleted": "A Notifica is deleted with identifier {{ param }}"
+    }
+  }
+}

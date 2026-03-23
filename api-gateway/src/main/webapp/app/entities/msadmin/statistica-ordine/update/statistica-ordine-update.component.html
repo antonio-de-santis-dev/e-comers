@@ -1,0 +1,163 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-statistica-ordine-heading"
+        data-cy="StatisticaOrdineCreateUpdateHeading"
+        jhiTranslate="apiGatewayApp.msadminStatisticaOrdine.home.createOrEditLabel"
+      >
+        Genera o modifica un Statistica Ordine
+      </h2>
+
+      <div>
+        <jhi-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="apiGatewayApp.msadminStatisticaOrdine.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let ordineIdRef = editForm.get('ordineId')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_ordineId" jhiTranslate="apiGatewayApp.msadminStatisticaOrdine.ordineId">Ordine Id</label>
+          <input type="text" class="form-control" name="ordineId" id="field_ordineId" data-cy="ordineId" formControlName="ordineId" />
+          @if (ordineIdRef.invalid && (ordineIdRef.dirty || ordineIdRef.touched)) {
+            <div>
+              @if (editForm.get('ordineId')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Questo campo è obbligatorio.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let importoTotaleRef = editForm.get('importoTotale')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_importoTotale" jhiTranslate="apiGatewayApp.msadminStatisticaOrdine.importoTotale"
+            >Importo Totale</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="importoTotale"
+            id="field_importoTotale"
+            data-cy="importoTotale"
+            formControlName="importoTotale"
+          />
+          @if (importoTotaleRef.invalid && (importoTotaleRef.dirty || importoTotaleRef.touched)) {
+            <div>
+              @if (editForm.get('importoTotale')?.errors?.min) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
+                  >Questo campo dovrebbe essere più di 0.</small
+                >
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('importoTotale')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >Questo campo dovrebbe essere un numero.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let statoOrdineRef = editForm.get('statoOrdine')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_statoOrdine" jhiTranslate="apiGatewayApp.msadminStatisticaOrdine.statoOrdine"
+            >Stato Ordine</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="statoOrdine"
+            id="field_statoOrdine"
+            data-cy="statoOrdine"
+            formControlName="statoOrdine"
+          />
+          @if (statoOrdineRef.invalid && (statoOrdineRef.dirty || statoOrdineRef.touched)) {
+            <div>
+              @if (editForm.get('statoOrdine')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '50' }"
+                  >Questo campo non può essere più di 50 caratteri.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let microservizioRef = editForm.get('microservizio')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_microservizio" jhiTranslate="apiGatewayApp.msadminStatisticaOrdine.microservizio"
+            >Microservizio</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="microservizio"
+            id="field_microservizio"
+            data-cy="microservizio"
+            formControlName="microservizio"
+          />
+          @if (microservizioRef.invalid && (microservizioRef.dirty || microservizioRef.touched)) {
+            <div>
+              @if (editForm.get('microservizio')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '100' }"
+                  >Questo campo non può essere più di 100 caratteri.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_dataRegistrazione" jhiTranslate="apiGatewayApp.msadminStatisticaOrdine.dataRegistrazione"
+            >Data Registrazione</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_dataRegistrazione"
+              data-cy="dataRegistrazione"
+              type="datetime-local"
+              class="form-control"
+              name="dataRegistrazione"
+              formControlName="dataRegistrazione"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        @let noteRef = editForm.get('note')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_note" jhiTranslate="apiGatewayApp.msadminStatisticaOrdine.note">Note</label>
+          <input type="text" class="form-control" name="note" id="field_note" data-cy="note" formControlName="note" />
+          @if (noteRef.invalid && (noteRef.dirty || noteRef.touched)) {
+            <div>
+              @if (editForm.get('note')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '500' }"
+                  >Questo campo non può essere più di 500 caratteri.</small
+                >
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Annulla</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Salva</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

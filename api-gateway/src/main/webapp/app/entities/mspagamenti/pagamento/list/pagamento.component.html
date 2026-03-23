@@ -1,0 +1,165 @@
+<div>
+  <h2 id="page-heading" data-cy="PagamentoHeading">
+    <span jhiTranslate="apiGatewayApp.mspagamentiPagamento.home.title">Pagamentos</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span jhiTranslate="apiGatewayApp.mspagamentiPagamento.home.refreshListLabel">Refresh list</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-pagamento"
+        [routerLink]="['/pagamento/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="apiGatewayApp.mspagamentiPagamento.home.createLabel">Genera un nuovo Pagamento</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error />
+
+  <jhi-alert />
+
+  <jhi-filter [filters]="filters" />
+
+  @if (pagamentos().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span jhiTranslate="apiGatewayApp.mspagamentiPagamento.home.notFound">No Pagamentos found</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span jhiTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="ordineId">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.mspagamentiPagamento.ordineId">Ordine Id</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="importo">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.mspagamentiPagamento.importo">Importo</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="metodoPagamento">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.mspagamentiPagamento.metodoPagamento">Metodo Pagamento</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="statoPagamento">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.mspagamentiPagamento.statoPagamento">Stato Pagamento</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="dataOperazione">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.mspagamentiPagamento.dataOperazione">Data Operazione</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="transazioneId">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.mspagamentiPagamento.transazioneId">Transazione Id</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="note">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.mspagamentiPagamento.note">Note</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (pagamento of pagamentos(); track trackId(pagamento)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/pagamento', pagamento.id, 'view']">{{ pagamento.id }}</a>
+              </td>
+              <td>{{ pagamento.ordineId }}</td>
+              <td>{{ pagamento.importo }}</td>
+              <td [jhiTranslate]="'apiGatewayApp.MetodoPagamento.' + (pagamento.metodoPagamento ?? 'null')">
+                {{
+                  { null: '', CARTA_CREDITO: 'CARTA_CREDITO', CARTA_DEBITO: 'CARTA_DEBITO', PAYPAL: 'PAYPAL' }[
+                    pagamento.metodoPagamento ?? 'null'
+                  ]
+                }}
+              </td>
+              <td [jhiTranslate]="'apiGatewayApp.StatoPagamento.' + (pagamento.statoPagamento ?? 'null')">
+                {{
+                  { null: '', IN_ATTESA: 'IN_ATTESA', APPROVATO: 'APPROVATO', RIFIUTATO: 'RIFIUTATO', RIMBORSATO: 'RIMBORSATO' }[
+                    pagamento.statoPagamento ?? 'null'
+                  ]
+                }}
+              </td>
+              <td>{{ pagamento.dataOperazione | formatMediumDatetime }}</td>
+              <td>{{ pagamento.transazioneId }}</td>
+              <td>{{ pagamento.note }}</td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/pagamento', pagamento.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">Visualizza</span>
+                  </a>
+
+                  <a [routerLink]="['/pagamento', pagamento.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Modifica</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(pagamento)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Elimina</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  @if (pagamentos().length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <jhi-item-count [params]="{ page, totalItems, itemsPerPage }" />
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
+    </div>
+  }
+</div>

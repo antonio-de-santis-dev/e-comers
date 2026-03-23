@@ -1,0 +1,250 @@
+<div>
+  <h2 id="page-heading" data-cy="OrdineHeading">
+    <span jhiTranslate="apiGatewayApp.msordiniOrdine.home.title">Ordines</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span jhiTranslate="apiGatewayApp.msordiniOrdine.home.refreshListLabel">Refresh list</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-ordine"
+        [routerLink]="['/ordine/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="apiGatewayApp.msordiniOrdine.home.createLabel">Genera un nuovo Ordine</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error />
+
+  <jhi-alert />
+
+  <jhi-filter [filters]="filters" />
+
+  @if (ordines().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span jhiTranslate="apiGatewayApp.msordiniOrdine.home.notFound">No Ordines found</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span jhiTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="numeroOrdine">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.msordiniOrdine.numeroOrdine">Numero Ordine</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="clienteId">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.msordiniOrdine.clienteId">Cliente Id</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="nomeCliente">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.msordiniOrdine.nomeCliente">Nome Cliente</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="cognomeCliente">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.msordiniOrdine.cognomeCliente">Cognome Cliente</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="email">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.msordiniOrdine.email">Email</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="indirizzo">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.msordiniOrdine.indirizzo">Indirizzo</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="citta">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.msordiniOrdine.citta">Citta</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="provincia">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.msordiniOrdine.provincia">Provincia</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="cap">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.msordiniOrdine.cap">Cap</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="statoPaese">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.msordiniOrdine.statoPaese">Stato Paese</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="tipoSpedizione">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.msordiniOrdine.tipoSpedizione">Tipo Spedizione</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="costoSpedizione">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.msordiniOrdine.costoSpedizione">Costo Spedizione</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="totaleImponibile">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.msordiniOrdine.totaleImponibile">Totale Imponibile</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="totaleIva">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.msordiniOrdine.totaleIva">Totale Iva</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="totaleFinal">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.msordiniOrdine.totaleFinal">Totale Final</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="statoOrdine">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.msordiniOrdine.statoOrdine">Stato Ordine</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="dataCreazione">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.msordiniOrdine.dataCreazione">Data Creazione</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (ordine of ordines(); track trackId(ordine)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/ordine', ordine.id, 'view']">{{ ordine.id }}</a>
+              </td>
+              <td>{{ ordine.numeroOrdine }}</td>
+              <td>{{ ordine.clienteId }}</td>
+              <td>{{ ordine.nomeCliente }}</td>
+              <td>{{ ordine.cognomeCliente }}</td>
+              <td>{{ ordine.email }}</td>
+              <td>{{ ordine.indirizzo }}</td>
+              <td>{{ ordine.citta }}</td>
+              <td>{{ ordine.provincia }}</td>
+              <td>{{ ordine.cap }}</td>
+              <td>{{ ordine.statoPaese }}</td>
+              <td [jhiTranslate]="'apiGatewayApp.TipoSpedizione.' + (ordine.tipoSpedizione ?? 'null')">
+                {{
+                  { null: '', STANDARD: 'STANDARD', EXPRESS: 'EXPRESS', SAME_DAY: 'SAME_DAY', RITIRO: 'RITIRO' }[
+                    ordine.tipoSpedizione ?? 'null'
+                  ]
+                }}
+              </td>
+              <td>{{ ordine.costoSpedizione }}</td>
+              <td>{{ ordine.totaleImponibile }}</td>
+              <td>{{ ordine.totaleIva }}</td>
+              <td>{{ ordine.totaleFinal }}</td>
+              <td [jhiTranslate]="'apiGatewayApp.StatoOrdine.' + (ordine.statoOrdine ?? 'null')">
+                {{
+                  {
+                    null: '',
+                    IN_ELABORAZIONE: 'IN_ELABORAZIONE',
+                    PAGATO: 'PAGATO',
+                    IN_SPEDIZIONE: 'IN_SPEDIZIONE',
+                    CONSEGNATO: 'CONSEGNATO',
+                    ANNULLATO: 'ANNULLATO',
+                  }[ordine.statoOrdine ?? 'null']
+                }}
+              </td>
+              <td>{{ ordine.dataCreazione | formatMediumDatetime }}</td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/ordine', ordine.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">Visualizza</span>
+                  </a>
+
+                  <a [routerLink]="['/ordine', ordine.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Modifica</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(ordine)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Elimina</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  @if (ordines().length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <jhi-item-count [params]="{ page, totalItems, itemsPerPage }" />
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
+    </div>
+  }
+</div>

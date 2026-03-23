@@ -1,0 +1,52 @@
+{
+  "annotations": {
+    "changelogDate": "20260320154309"
+  },
+  "applications": "*",
+  "clientRootFolder": "msrecensioni",
+  "databaseType": "sql",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "prodottoId",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "ordineId",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "nomeCliente",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "200"
+    },
+    {
+      "fieldName": "descrizione",
+      "fieldType": "TextBlob",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "votoSingolo",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required", "min", "max"],
+      "fieldValidateRulesMax": "5",
+      "fieldValidateRulesMin": "1"
+    },
+    {
+      "fieldName": "approvata",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "dataRecensione",
+      "fieldType": "Instant"
+    }
+  ],
+  "microserviceName": "msrecensioni",
+  "name": "Recensione",
+  "pagination": "pagination",
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

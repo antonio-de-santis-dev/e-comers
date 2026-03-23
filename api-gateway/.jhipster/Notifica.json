@@ -1,0 +1,48 @@
+{
+  "annotations": {
+    "changelogDate": "20260320154310"
+  },
+  "applications": "*",
+  "clientRootFolder": "msnotifiche",
+  "databaseType": "sql",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "tipo",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "100"
+    },
+    {
+      "fieldName": "messaggio",
+      "fieldType": "TextBlob",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "destinatario",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "200"
+    },
+    {
+      "fieldName": "letta",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "dataNotifica",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "riferimentoId",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "100"
+    }
+  ],
+  "microserviceName": "msnotifiche",
+  "name": "Notifica",
+  "pagination": "pagination",
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

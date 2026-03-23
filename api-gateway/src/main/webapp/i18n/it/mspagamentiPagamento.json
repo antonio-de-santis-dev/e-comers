@@ -1,0 +1,34 @@
+{
+  "apiGatewayApp": {
+    "mspagamentiPagamento": {
+      "home": {
+        "title": "Pagamentos",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Genera un nuovo Pagamento",
+        "createOrEditLabel": "Genera o modifica un Pagamento",
+        "notFound": "No Pagamentos found"
+      },
+      "delete": {
+        "question": "Sei sicuro di volere eliminare Pagamento {{ id }}?"
+      },
+      "detail": {
+        "title": "Pagamento"
+      },
+      "id": "ID",
+      "ordineId": "Ordine Id",
+      "importo": "Importo",
+      "metodoPagamento": "Metodo Pagamento",
+      "statoPagamento": "Stato Pagamento",
+      "dataOperazione": "Data Operazione",
+      "transazioneId": "Transazione Id",
+      "note": "Note"
+    }
+  },
+  "mspagamentiApp": {
+    "mspagamentiPagamento": {
+      "created": "&Egrave; stato generato un nuovo Pagamento con identificatore { param }}",
+      "updated": "&Egrave; stato aggiornato Pagamento identificato da {{ param }}",
+      "deleted": "&Egrave; stato eliminato Pagamento con identificatore {{ param }}"
+    }
+  }
+}

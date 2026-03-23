@@ -1,0 +1,144 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-notifica-heading"
+        data-cy="NotificaCreateUpdateHeading"
+        jhiTranslate="apiGatewayApp.msnotificheNotifica.home.createOrEditLabel"
+      >
+        Genera o modifica un Notifica
+      </h2>
+
+      <div>
+        <jhi-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="apiGatewayApp.msnotificheNotifica.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let tipoRef = editForm.get('tipo')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_tipo" jhiTranslate="apiGatewayApp.msnotificheNotifica.tipo">Tipo</label>
+          <input type="text" class="form-control" name="tipo" id="field_tipo" data-cy="tipo" formControlName="tipo" />
+          @if (tipoRef.invalid && (tipoRef.dirty || tipoRef.touched)) {
+            <div>
+              @if (editForm.get('tipo')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Questo campo è obbligatorio.</small>
+              }
+              @if (editForm.get('tipo')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '100' }"
+                  >Questo campo non può essere più di 100 caratteri.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let messaggioRef = editForm.get('messaggio')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_messaggio" jhiTranslate="apiGatewayApp.msnotificheNotifica.messaggio">Messaggio</label>
+          <textarea class="form-control" name="messaggio" id="field_messaggio" data-cy="messaggio" formControlName="messaggio"></textarea>
+          @if (messaggioRef.invalid && (messaggioRef.dirty || messaggioRef.touched)) {
+            <div>
+              @if (editForm.get('messaggio')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Questo campo è obbligatorio.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let destinatarioRef = editForm.get('destinatario')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_destinatario" jhiTranslate="apiGatewayApp.msnotificheNotifica.destinatario"
+            >Destinatario</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="destinatario"
+            id="field_destinatario"
+            data-cy="destinatario"
+            formControlName="destinatario"
+          />
+          @if (destinatarioRef.invalid && (destinatarioRef.dirty || destinatarioRef.touched)) {
+            <div>
+              @if (editForm.get('destinatario')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Questo campo è obbligatorio.</small>
+              }
+              @if (editForm.get('destinatario')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '200' }"
+                  >Questo campo non può essere più di 200 caratteri.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_letta" jhiTranslate="apiGatewayApp.msnotificheNotifica.letta">Letta</label>
+          <input type="checkbox" class="form-check" name="letta" id="field_letta" data-cy="letta" formControlName="letta" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_dataNotifica" jhiTranslate="apiGatewayApp.msnotificheNotifica.dataNotifica"
+            >Data Notifica</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_dataNotifica"
+              data-cy="dataNotifica"
+              type="datetime-local"
+              class="form-control"
+              name="dataNotifica"
+              formControlName="dataNotifica"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        @let riferimentoIdRef = editForm.get('riferimentoId')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_riferimentoId" jhiTranslate="apiGatewayApp.msnotificheNotifica.riferimentoId"
+            >Riferimento Id</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="riferimentoId"
+            id="field_riferimentoId"
+            data-cy="riferimentoId"
+            formControlName="riferimentoId"
+          />
+          @if (riferimentoIdRef.invalid && (riferimentoIdRef.dirty || riferimentoIdRef.touched)) {
+            <div>
+              @if (editForm.get('riferimentoId')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '100' }"
+                  >Questo campo non può essere più di 100 caratteri.</small
+                >
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Annulla</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Salva</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

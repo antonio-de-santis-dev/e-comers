@@ -1,0 +1,12 @@
+{
+  "apiGatewayApp": {
+    "StatoOrdine": {
+      "null": "",
+      "IN_ELABORAZIONE": "IN_ELABORAZIONE",
+      "PAGATO": "PAGATO",
+      "IN_SPEDIZIONE": "IN_SPEDIZIONE",
+      "CONSEGNATO": "CONSEGNATO",
+      "ANNULLATO": "ANNULLATO"
+    }
+  }
+}

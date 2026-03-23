@@ -1,0 +1,184 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-prodotto-heading"
+        data-cy="ProdottoCreateUpdateHeading"
+        jhiTranslate="apiGatewayApp.mscatalogoProdotto.home.createOrEditLabel"
+      >
+        Genera o modifica un Prodotto
+      </h2>
+
+      <div>
+        <jhi-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="apiGatewayApp.mscatalogoProdotto.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let nomeRef = editForm.get('nome')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_nome" jhiTranslate="apiGatewayApp.mscatalogoProdotto.nome">Nome</label>
+          <input type="text" class="form-control" name="nome" id="field_nome" data-cy="nome" formControlName="nome" />
+          @if (nomeRef.invalid && (nomeRef.dirty || nomeRef.touched)) {
+            <div>
+              @if (editForm.get('nome')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Questo campo è obbligatorio.</small>
+              }
+              @if (editForm.get('nome')?.errors?.minlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.minlength" [translateValues]="{ min: '2' }"
+                  >Questo campo deve essere di almeno 2 caratteri.</small
+                >
+              }
+              @if (editForm.get('nome')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '200' }"
+                  >Questo campo non può essere più di 200 caratteri.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_descrizione" jhiTranslate="apiGatewayApp.mscatalogoProdotto.descrizione">Descrizione</label>
+          <textarea
+            class="form-control"
+            name="descrizione"
+            id="field_descrizione"
+            data-cy="descrizione"
+            formControlName="descrizione"
+          ></textarea>
+        </div>
+
+        @let prezzoRef = editForm.get('prezzo')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_prezzo" jhiTranslate="apiGatewayApp.mscatalogoProdotto.prezzo">Prezzo</label>
+          <input type="number" class="form-control" name="prezzo" id="field_prezzo" data-cy="prezzo" formControlName="prezzo" />
+          @if (prezzoRef.invalid && (prezzoRef.dirty || prezzoRef.touched)) {
+            <div>
+              @if (editForm.get('prezzo')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Questo campo è obbligatorio.</small>
+              }
+              @if (editForm.get('prezzo')?.errors?.min) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
+                  >Questo campo dovrebbe essere più di 0.</small
+                >
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('prezzo')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >Questo campo dovrebbe essere un numero.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let quantitaDisponibileRef = editForm.get('quantitaDisponibile')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_quantitaDisponibile" jhiTranslate="apiGatewayApp.mscatalogoProdotto.quantitaDisponibile"
+            >Quantita Disponibile</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="quantitaDisponibile"
+            id="field_quantitaDisponibile"
+            data-cy="quantitaDisponibile"
+            formControlName="quantitaDisponibile"
+          />
+          @if (quantitaDisponibileRef.invalid && (quantitaDisponibileRef.dirty || quantitaDisponibileRef.touched)) {
+            <div>
+              @if (editForm.get('quantitaDisponibile')?.errors?.min) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
+                  >Questo campo dovrebbe essere più di 0.</small
+                >
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('quantitaDisponibile')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >Questo campo dovrebbe essere un numero.</small
+              >
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_inEvidenza" jhiTranslate="apiGatewayApp.mscatalogoProdotto.inEvidenza">In Evidenza</label>
+          <input
+            type="checkbox"
+            class="form-check"
+            name="inEvidenza"
+            id="field_inEvidenza"
+            data-cy="inEvidenza"
+            formControlName="inEvidenza"
+          />
+        </div>
+
+        @let immagineUrlRef = editForm.get('immagineUrl')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_immagineUrl" jhiTranslate="apiGatewayApp.mscatalogoProdotto.immagineUrl">Immagine Url</label>
+          <input
+            type="text"
+            class="form-control"
+            name="immagineUrl"
+            id="field_immagineUrl"
+            data-cy="immagineUrl"
+            formControlName="immagineUrl"
+          />
+          @if (immagineUrlRef.invalid && (immagineUrlRef.dirty || immagineUrlRef.touched)) {
+            <div>
+              @if (editForm.get('immagineUrl')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '500' }"
+                  >Questo campo non può essere più di 500 caratteri.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_votaMedio" jhiTranslate="apiGatewayApp.mscatalogoProdotto.votaMedio">Vota Medio</label>
+          <input type="number" class="form-control" name="votaMedio" id="field_votaMedio" data-cy="votaMedio" formControlName="votaMedio" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_categoria" jhiTranslate="apiGatewayApp.mscatalogoProdotto.categoria">Categoria</label>
+          <select
+            class="form-control"
+            id="field_categoria"
+            data-cy="categoria"
+            name="categoria"
+            formControlName="categoria"
+            [compareWith]="compareCategoria"
+          >
+            <option [ngValue]="null"></option>
+            @for (categoriaOption of categoriasSharedCollection; track $index) {
+              <option [ngValue]="categoriaOption">{{ categoriaOption.nome }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Annulla</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Salva</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

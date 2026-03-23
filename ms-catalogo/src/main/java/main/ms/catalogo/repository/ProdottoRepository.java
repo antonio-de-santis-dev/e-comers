@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
  * Spring Data JPA repository for the Prodotto entity.
  */
 @Repository
-public interface ProdottoRepository extends JpaRepository<Prodotto, Long>, JpaSpecificationExecutor<Prodotto> {
+public interface ProdottoRepository extends JpaRepository<Prodotto, UUID>, JpaSpecificationExecutor<Prodotto> {
     default Optional<Prodotto> findOneWithEagerRelationships(UUID id) {
         return this.findOneWithToOneRelationships(id);
     }

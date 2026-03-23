@@ -1,0 +1,54 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (notifica(); as notificaRef) {
+      <div>
+        <h2 data-cy="notificaDetailsHeading"><span jhiTranslate="apiGatewayApp.msnotificheNotifica.detail.title">Notifica</span></h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ notificaRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msnotificheNotifica.tipo">Tipo</span></dt>
+          <dd>
+            <span>{{ notificaRef.tipo }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msnotificheNotifica.messaggio">Messaggio</span></dt>
+          <dd>
+            <span>{{ notificaRef.messaggio }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msnotificheNotifica.destinatario">Destinatario</span></dt>
+          <dd>
+            <span>{{ notificaRef.destinatario }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msnotificheNotifica.letta">Letta</span></dt>
+          <dd>
+            <span>{{ notificaRef.letta }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msnotificheNotifica.dataNotifica">Data Notifica</span></dt>
+          <dd>
+            <span>{{ notificaRef.dataNotifica | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msnotificheNotifica.riferimentoId">Riferimento Id</span></dt>
+          <dd>
+            <span>{{ notificaRef.riferimentoId }}</span>
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Indietro</span>
+        </button>
+
+        <button type="button" [routerLink]="['/notifica', notificaRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Modifica</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

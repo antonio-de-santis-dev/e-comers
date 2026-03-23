@@ -1,0 +1,33 @@
+{
+  "apiGatewayApp": {
+    "msadminStatisticaOrdine": {
+      "home": {
+        "title": "Statistica Ordines",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Statistica Ordine",
+        "createOrEditLabel": "Create or edit a Statistica Ordine",
+        "notFound": "No Statistica Ordines found"
+      },
+      "delete": {
+        "question": "Are you sure you want to delete Statistica Ordine {{ id }}?"
+      },
+      "detail": {
+        "title": "Statistica Ordine"
+      },
+      "id": "ID",
+      "ordineId": "Ordine Id",
+      "importoTotale": "Importo Totale",
+      "statoOrdine": "Stato Ordine",
+      "microservizio": "Microservizio",
+      "dataRegistrazione": "Data Registrazione",
+      "note": "Note"
+    }
+  },
+  "msadminApp": {
+    "msadminStatisticaOrdine": {
+      "created": "A new Statistica Ordine is created with identifier {{ param }}",
+      "updated": "A Statistica Ordine is updated with identifier {{ param }}",
+      "deleted": "A Statistica Ordine is deleted with identifier {{ param }}"
+    }
+  }
+}

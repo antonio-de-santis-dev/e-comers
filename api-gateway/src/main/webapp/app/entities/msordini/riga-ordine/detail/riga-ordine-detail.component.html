@@ -1,0 +1,58 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (rigaOrdine(); as rigaOrdineRef) {
+      <div>
+        <h2 data-cy="rigaOrdineDetailsHeading"><span jhiTranslate="apiGatewayApp.msordiniRigaOrdine.detail.title">Riga Ordine</span></h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ rigaOrdineRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msordiniRigaOrdine.prodottoId">Prodotto Id</span></dt>
+          <dd>
+            <span>{{ rigaOrdineRef.prodottoId }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msordiniRigaOrdine.nomeProdotto">Nome Prodotto</span></dt>
+          <dd>
+            <span>{{ rigaOrdineRef.nomeProdotto }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msordiniRigaOrdine.quantita">Quantita</span></dt>
+          <dd>
+            <span>{{ rigaOrdineRef.quantita }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msordiniRigaOrdine.prezzoUnitario">Prezzo Unitario</span></dt>
+          <dd>
+            <span>{{ rigaOrdineRef.prezzoUnitario }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msordiniRigaOrdine.totaleRiga">Totale Riga</span></dt>
+          <dd>
+            <span>{{ rigaOrdineRef.totaleRiga }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.msordiniRigaOrdine.ordine">Ordine</span></dt>
+          <dd>
+            @if (rigaOrdine()!.ordine) {
+              <div>
+                <a [routerLink]="['/ordine', rigaOrdine()!.ordine?.id, 'view']">{{ rigaOrdineRef.ordine?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Indietro</span>
+        </button>
+
+        <button type="button" [routerLink]="['/riga-ordine', rigaOrdineRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Modifica</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

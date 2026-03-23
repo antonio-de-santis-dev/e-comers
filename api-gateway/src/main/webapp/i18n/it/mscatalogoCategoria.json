@@ -1,0 +1,29 @@
+{
+  "apiGatewayApp": {
+    "mscatalogoCategoria": {
+      "home": {
+        "title": "Categorias",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Genera un nuovo Categoria",
+        "createOrEditLabel": "Genera o modifica un Categoria",
+        "notFound": "No Categorias found"
+      },
+      "delete": {
+        "question": "Sei sicuro di volere eliminare Categoria {{ id }}?"
+      },
+      "detail": {
+        "title": "Categoria"
+      },
+      "id": "ID",
+      "nome": "Nome",
+      "descrizione": "Descrizione"
+    }
+  },
+  "mscatalogoApp": {
+    "mscatalogoCategoria": {
+      "created": "&Egrave; stato generato un nuovo Categoria con identificatore { param }}",
+      "updated": "&Egrave; stato aggiornato Categoria identificato da {{ param }}",
+      "deleted": "&Egrave; stato eliminato Categoria con identificatore {{ param }}"
+    }
+  }
+}

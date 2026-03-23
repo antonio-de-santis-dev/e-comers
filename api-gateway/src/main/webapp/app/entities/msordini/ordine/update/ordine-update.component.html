@@ -1,0 +1,399 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="jhi-ordine-heading" data-cy="OrdineCreateUpdateHeading" jhiTranslate="apiGatewayApp.msordiniOrdine.home.createOrEditLabel">
+        Genera o modifica un Ordine
+      </h2>
+
+      <div>
+        <jhi-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="apiGatewayApp.msordiniOrdine.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let numeroOrdineRef = editForm.get('numeroOrdine')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_numeroOrdine" jhiTranslate="apiGatewayApp.msordiniOrdine.numeroOrdine">Numero Ordine</label>
+          <input
+            type="text"
+            class="form-control"
+            name="numeroOrdine"
+            id="field_numeroOrdine"
+            data-cy="numeroOrdine"
+            formControlName="numeroOrdine"
+          />
+          @if (numeroOrdineRef.invalid && (numeroOrdineRef.dirty || numeroOrdineRef.touched)) {
+            <div>
+              @if (editForm.get('numeroOrdine')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '50' }"
+                  >Questo campo non può essere più di 50 caratteri.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let clienteIdRef = editForm.get('clienteId')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_clienteId" jhiTranslate="apiGatewayApp.msordiniOrdine.clienteId">Cliente Id</label>
+          <input type="text" class="form-control" name="clienteId" id="field_clienteId" data-cy="clienteId" formControlName="clienteId" />
+          @if (clienteIdRef.invalid && (clienteIdRef.dirty || clienteIdRef.touched)) {
+            <div>
+              @if (editForm.get('clienteId')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Questo campo è obbligatorio.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let nomeClienteRef = editForm.get('nomeCliente')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_nomeCliente" jhiTranslate="apiGatewayApp.msordiniOrdine.nomeCliente">Nome Cliente</label>
+          <input
+            type="text"
+            class="form-control"
+            name="nomeCliente"
+            id="field_nomeCliente"
+            data-cy="nomeCliente"
+            formControlName="nomeCliente"
+          />
+          @if (nomeClienteRef.invalid && (nomeClienteRef.dirty || nomeClienteRef.touched)) {
+            <div>
+              @if (editForm.get('nomeCliente')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Questo campo è obbligatorio.</small>
+              }
+              @if (editForm.get('nomeCliente')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '100' }"
+                  >Questo campo non può essere più di 100 caratteri.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let cognomeClienteRef = editForm.get('cognomeCliente')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_cognomeCliente" jhiTranslate="apiGatewayApp.msordiniOrdine.cognomeCliente"
+            >Cognome Cliente</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="cognomeCliente"
+            id="field_cognomeCliente"
+            data-cy="cognomeCliente"
+            formControlName="cognomeCliente"
+          />
+          @if (cognomeClienteRef.invalid && (cognomeClienteRef.dirty || cognomeClienteRef.touched)) {
+            <div>
+              @if (editForm.get('cognomeCliente')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Questo campo è obbligatorio.</small>
+              }
+              @if (editForm.get('cognomeCliente')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '100' }"
+                  >Questo campo non può essere più di 100 caratteri.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let emailRef = editForm.get('email')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_email" jhiTranslate="apiGatewayApp.msordiniOrdine.email">Email</label>
+          <input type="text" class="form-control" name="email" id="field_email" data-cy="email" formControlName="email" />
+          @if (emailRef.invalid && (emailRef.dirty || emailRef.touched)) {
+            <div>
+              @if (editForm.get('email')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Questo campo è obbligatorio.</small>
+              }
+              @if (editForm.get('email')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '200' }"
+                  >Questo campo non può essere più di 200 caratteri.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let indirizzoRef = editForm.get('indirizzo')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_indirizzo" jhiTranslate="apiGatewayApp.msordiniOrdine.indirizzo">Indirizzo</label>
+          <input type="text" class="form-control" name="indirizzo" id="field_indirizzo" data-cy="indirizzo" formControlName="indirizzo" />
+          @if (indirizzoRef.invalid && (indirizzoRef.dirty || indirizzoRef.touched)) {
+            <div>
+              @if (editForm.get('indirizzo')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Questo campo è obbligatorio.</small>
+              }
+              @if (editForm.get('indirizzo')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '300' }"
+                  >Questo campo non può essere più di 300 caratteri.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let cittaRef = editForm.get('citta')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_citta" jhiTranslate="apiGatewayApp.msordiniOrdine.citta">Citta</label>
+          <input type="text" class="form-control" name="citta" id="field_citta" data-cy="citta" formControlName="citta" />
+          @if (cittaRef.invalid && (cittaRef.dirty || cittaRef.touched)) {
+            <div>
+              @if (editForm.get('citta')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Questo campo è obbligatorio.</small>
+              }
+              @if (editForm.get('citta')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '100' }"
+                  >Questo campo non può essere più di 100 caratteri.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let provinciaRef = editForm.get('provincia')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_provincia" jhiTranslate="apiGatewayApp.msordiniOrdine.provincia">Provincia</label>
+          <input type="text" class="form-control" name="provincia" id="field_provincia" data-cy="provincia" formControlName="provincia" />
+          @if (provinciaRef.invalid && (provinciaRef.dirty || provinciaRef.touched)) {
+            <div>
+              @if (editForm.get('provincia')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '10' }"
+                  >Questo campo non può essere più di 10 caratteri.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let capRef = editForm.get('cap')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_cap" jhiTranslate="apiGatewayApp.msordiniOrdine.cap">Cap</label>
+          <input type="text" class="form-control" name="cap" id="field_cap" data-cy="cap" formControlName="cap" />
+          @if (capRef.invalid && (capRef.dirty || capRef.touched)) {
+            <div>
+              @if (editForm.get('cap')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '20' }"
+                  >Questo campo non può essere più di 20 caratteri.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let statoPaeseRef = editForm.get('statoPaese')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_statoPaese" jhiTranslate="apiGatewayApp.msordiniOrdine.statoPaese">Stato Paese</label>
+          <input
+            type="text"
+            class="form-control"
+            name="statoPaese"
+            id="field_statoPaese"
+            data-cy="statoPaese"
+            formControlName="statoPaese"
+          />
+          @if (statoPaeseRef.invalid && (statoPaeseRef.dirty || statoPaeseRef.touched)) {
+            <div>
+              @if (editForm.get('statoPaese')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '10' }"
+                  >Questo campo non può essere più di 10 caratteri.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let tipoSpedizioneRef = editForm.get('tipoSpedizione')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_tipoSpedizione" jhiTranslate="apiGatewayApp.msordiniOrdine.tipoSpedizione"
+            >Tipo Spedizione</label
+          >
+          <select
+            class="form-control"
+            name="tipoSpedizione"
+            formControlName="tipoSpedizione"
+            id="field_tipoSpedizione"
+            data-cy="tipoSpedizione"
+          >
+            <option [ngValue]="null">{{ 'apiGatewayApp.TipoSpedizione.null' | translate }}</option>
+            @for (tipoSpedizione of tipoSpedizioneValues; track $index) {
+              <option [value]="tipoSpedizione">{{ 'apiGatewayApp.TipoSpedizione.' + tipoSpedizione | translate }}</option>
+            }
+          </select>
+          @if (tipoSpedizioneRef.invalid && (tipoSpedizioneRef.dirty || tipoSpedizioneRef.touched)) {
+            <div>
+              @if (editForm.get('tipoSpedizione')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Questo campo è obbligatorio.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let costoSpedizioneRef = editForm.get('costoSpedizione')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_costoSpedizione" jhiTranslate="apiGatewayApp.msordiniOrdine.costoSpedizione"
+            >Costo Spedizione</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="costoSpedizione"
+            id="field_costoSpedizione"
+            data-cy="costoSpedizione"
+            formControlName="costoSpedizione"
+          />
+          @if (costoSpedizioneRef.invalid && (costoSpedizioneRef.dirty || costoSpedizioneRef.touched)) {
+            <div>
+              @if (editForm.get('costoSpedizione')?.errors?.min) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
+                  >Questo campo dovrebbe essere più di 0.</small
+                >
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('costoSpedizione')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >Questo campo dovrebbe essere un numero.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let totaleImponibileRef = editForm.get('totaleImponibile')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_totaleImponibile" jhiTranslate="apiGatewayApp.msordiniOrdine.totaleImponibile"
+            >Totale Imponibile</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="totaleImponibile"
+            id="field_totaleImponibile"
+            data-cy="totaleImponibile"
+            formControlName="totaleImponibile"
+          />
+          @if (totaleImponibileRef.invalid && (totaleImponibileRef.dirty || totaleImponibileRef.touched)) {
+            <div>
+              @if (editForm.get('totaleImponibile')?.errors?.min) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
+                  >Questo campo dovrebbe essere più di 0.</small
+                >
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('totaleImponibile')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >Questo campo dovrebbe essere un numero.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let totaleIvaRef = editForm.get('totaleIva')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_totaleIva" jhiTranslate="apiGatewayApp.msordiniOrdine.totaleIva">Totale Iva</label>
+          <input type="number" class="form-control" name="totaleIva" id="field_totaleIva" data-cy="totaleIva" formControlName="totaleIva" />
+          @if (totaleIvaRef.invalid && (totaleIvaRef.dirty || totaleIvaRef.touched)) {
+            <div>
+              @if (editForm.get('totaleIva')?.errors?.min) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
+                  >Questo campo dovrebbe essere più di 0.</small
+                >
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('totaleIva')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >Questo campo dovrebbe essere un numero.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let totaleFinalRef = editForm.get('totaleFinal')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_totaleFinal" jhiTranslate="apiGatewayApp.msordiniOrdine.totaleFinal">Totale Final</label>
+          <input
+            type="number"
+            class="form-control"
+            name="totaleFinal"
+            id="field_totaleFinal"
+            data-cy="totaleFinal"
+            formControlName="totaleFinal"
+          />
+          @if (totaleFinalRef.invalid && (totaleFinalRef.dirty || totaleFinalRef.touched)) {
+            <div>
+              @if (editForm.get('totaleFinal')?.errors?.min) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
+                  >Questo campo dovrebbe essere più di 0.</small
+                >
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('totaleFinal')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >Questo campo dovrebbe essere un numero.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let statoOrdineRef = editForm.get('statoOrdine')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_statoOrdine" jhiTranslate="apiGatewayApp.msordiniOrdine.statoOrdine">Stato Ordine</label>
+          <select class="form-control" name="statoOrdine" formControlName="statoOrdine" id="field_statoOrdine" data-cy="statoOrdine">
+            <option [ngValue]="null">{{ 'apiGatewayApp.StatoOrdine.null' | translate }}</option>
+            @for (statoOrdine of statoOrdineValues; track $index) {
+              <option [value]="statoOrdine">{{ 'apiGatewayApp.StatoOrdine.' + statoOrdine | translate }}</option>
+            }
+          </select>
+          @if (statoOrdineRef.invalid && (statoOrdineRef.dirty || statoOrdineRef.touched)) {
+            <div>
+              @if (editForm.get('statoOrdine')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Questo campo è obbligatorio.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_dataCreazione" jhiTranslate="apiGatewayApp.msordiniOrdine.dataCreazione"
+            >Data Creazione</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_dataCreazione"
+              data-cy="dataCreazione"
+              type="datetime-local"
+              class="form-control"
+              name="dataCreazione"
+              formControlName="dataCreazione"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Annulla</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Salva</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

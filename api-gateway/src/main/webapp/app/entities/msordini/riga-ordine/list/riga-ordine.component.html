@@ -1,0 +1,129 @@
+<div>
+  <h2 id="page-heading" data-cy="RigaOrdineHeading">
+    <span jhiTranslate="apiGatewayApp.msordiniRigaOrdine.home.title">RigaOrdines</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span jhiTranslate="apiGatewayApp.msordiniRigaOrdine.home.refreshListLabel">Refresh list</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-riga-ordine"
+        [routerLink]="['/riga-ordine/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="apiGatewayApp.msordiniRigaOrdine.home.createLabel">Genera un nuovo Riga Ordine</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error />
+
+  <jhi-alert />
+
+  @if (rigaOrdines().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span jhiTranslate="apiGatewayApp.msordiniRigaOrdine.home.notFound">No Riga Ordines found</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span jhiTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="prodottoId">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.msordiniRigaOrdine.prodottoId">Prodotto Id</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="nomeProdotto">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.msordiniRigaOrdine.nomeProdotto">Nome Prodotto</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="quantita">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.msordiniRigaOrdine.quantita">Quantita</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="prezzoUnitario">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.msordiniRigaOrdine.prezzoUnitario">Prezzo Unitario</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="totaleRiga">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.msordiniRigaOrdine.totaleRiga">Totale Riga</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="ordine.id">
+              <div class="d-flex">
+                <span jhiTranslate="apiGatewayApp.msordiniRigaOrdine.ordine">Ordine</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody infinite-scroll (scrolled)="loadNextPage()" [infiniteScrollDisabled]="!hasMorePage()" [infiniteScrollDistance]="0">
+          @for (rigaOrdine of rigaOrdines(); track trackId(rigaOrdine)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/riga-ordine', rigaOrdine.id, 'view']">{{ rigaOrdine.id }}</a>
+              </td>
+              <td>{{ rigaOrdine.prodottoId }}</td>
+              <td>{{ rigaOrdine.nomeProdotto }}</td>
+              <td>{{ rigaOrdine.quantita }}</td>
+              <td>{{ rigaOrdine.prezzoUnitario }}</td>
+              <td>{{ rigaOrdine.totaleRiga }}</td>
+              <td>
+                @if (rigaOrdine.ordine) {
+                  <div>
+                    <a [routerLink]="['/ordine', rigaOrdine.ordine.id, 'view']">{{ rigaOrdine.ordine.id }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/riga-ordine', rigaOrdine.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">Visualizza</span>
+                  </a>
+
+                  <a [routerLink]="['/riga-ordine', rigaOrdine.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Modifica</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(rigaOrdine)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Elimina</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

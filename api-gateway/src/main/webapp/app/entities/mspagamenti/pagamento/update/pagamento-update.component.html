@@ -1,0 +1,185 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-pagamento-heading"
+        data-cy="PagamentoCreateUpdateHeading"
+        jhiTranslate="apiGatewayApp.mspagamentiPagamento.home.createOrEditLabel"
+      >
+        Genera o modifica un Pagamento
+      </h2>
+
+      <div>
+        <jhi-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="apiGatewayApp.mspagamentiPagamento.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let ordineIdRef = editForm.get('ordineId')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_ordineId" jhiTranslate="apiGatewayApp.mspagamentiPagamento.ordineId">Ordine Id</label>
+          <input type="text" class="form-control" name="ordineId" id="field_ordineId" data-cy="ordineId" formControlName="ordineId" />
+          @if (ordineIdRef.invalid && (ordineIdRef.dirty || ordineIdRef.touched)) {
+            <div>
+              @if (editForm.get('ordineId')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Questo campo è obbligatorio.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let importoRef = editForm.get('importo')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_importo" jhiTranslate="apiGatewayApp.mspagamentiPagamento.importo">Importo</label>
+          <input type="number" class="form-control" name="importo" id="field_importo" data-cy="importo" formControlName="importo" />
+          @if (importoRef.invalid && (importoRef.dirty || importoRef.touched)) {
+            <div>
+              @if (editForm.get('importo')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Questo campo è obbligatorio.</small>
+              }
+              @if (editForm.get('importo')?.errors?.min) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
+                  >Questo campo dovrebbe essere più di 0.</small
+                >
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('importo')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >Questo campo dovrebbe essere un numero.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let metodoPagamentoRef = editForm.get('metodoPagamento')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_metodoPagamento" jhiTranslate="apiGatewayApp.mspagamentiPagamento.metodoPagamento"
+            >Metodo Pagamento</label
+          >
+          <select
+            class="form-control"
+            name="metodoPagamento"
+            formControlName="metodoPagamento"
+            id="field_metodoPagamento"
+            data-cy="metodoPagamento"
+          >
+            <option [ngValue]="null">{{ 'apiGatewayApp.MetodoPagamento.null' | translate }}</option>
+            @for (metodoPagamento of metodoPagamentoValues; track $index) {
+              <option [value]="metodoPagamento">{{ 'apiGatewayApp.MetodoPagamento.' + metodoPagamento | translate }}</option>
+            }
+          </select>
+          @if (metodoPagamentoRef.invalid && (metodoPagamentoRef.dirty || metodoPagamentoRef.touched)) {
+            <div>
+              @if (editForm.get('metodoPagamento')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Questo campo è obbligatorio.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let statoPagamentoRef = editForm.get('statoPagamento')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_statoPagamento" jhiTranslate="apiGatewayApp.mspagamentiPagamento.statoPagamento"
+            >Stato Pagamento</label
+          >
+          <select
+            class="form-control"
+            name="statoPagamento"
+            formControlName="statoPagamento"
+            id="field_statoPagamento"
+            data-cy="statoPagamento"
+          >
+            <option [ngValue]="null">{{ 'apiGatewayApp.StatoPagamento.null' | translate }}</option>
+            @for (statoPagamento of statoPagamentoValues; track $index) {
+              <option [value]="statoPagamento">{{ 'apiGatewayApp.StatoPagamento.' + statoPagamento | translate }}</option>
+            }
+          </select>
+          @if (statoPagamentoRef.invalid && (statoPagamentoRef.dirty || statoPagamentoRef.touched)) {
+            <div>
+              @if (editForm.get('statoPagamento')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Questo campo è obbligatorio.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_dataOperazione" jhiTranslate="apiGatewayApp.mspagamentiPagamento.dataOperazione"
+            >Data Operazione</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_dataOperazione"
+              data-cy="dataOperazione"
+              type="datetime-local"
+              class="form-control"
+              name="dataOperazione"
+              formControlName="dataOperazione"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        @let transazioneIdRef = editForm.get('transazioneId')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_transazioneId" jhiTranslate="apiGatewayApp.mspagamentiPagamento.transazioneId"
+            >Transazione Id</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="transazioneId"
+            id="field_transazioneId"
+            data-cy="transazioneId"
+            formControlName="transazioneId"
+          />
+          @if (transazioneIdRef.invalid && (transazioneIdRef.dirty || transazioneIdRef.touched)) {
+            <div>
+              @if (editForm.get('transazioneId')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '200' }"
+                  >Questo campo non può essere più di 200 caratteri.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let noteRef = editForm.get('note')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_note" jhiTranslate="apiGatewayApp.mspagamentiPagamento.note">Note</label>
+          <input type="text" class="form-control" name="note" id="field_note" data-cy="note" formControlName="note" />
+          @if (noteRef.invalid && (noteRef.dirty || noteRef.touched)) {
+            <div>
+              @if (editForm.get('note')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '500' }"
+                  >Questo campo non può essere più di 500 caratteri.</small
+                >
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Annulla</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Salva</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

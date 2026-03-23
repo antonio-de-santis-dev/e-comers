@@ -1,0 +1,66 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (pagamento(); as pagamentoRef) {
+      <div>
+        <h2 data-cy="pagamentoDetailsHeading"><span jhiTranslate="apiGatewayApp.mspagamentiPagamento.detail.title">Pagamento</span></h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ pagamentoRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.mspagamentiPagamento.ordineId">Ordine Id</span></dt>
+          <dd>
+            <span>{{ pagamentoRef.ordineId }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.mspagamentiPagamento.importo">Importo</span></dt>
+          <dd>
+            <span>{{ pagamentoRef.importo }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.mspagamentiPagamento.metodoPagamento">Metodo Pagamento</span></dt>
+          <dd>
+            <span [jhiTranslate]="'apiGatewayApp.MetodoPagamento.' + (pagamentoRef.metodoPagamento ?? 'null')">{{
+              { null: '', CARTA_CREDITO: 'CARTA_CREDITO', CARTA_DEBITO: 'CARTA_DEBITO', PAYPAL: 'PAYPAL' }[
+                pagamentoRef.metodoPagamento ?? 'null'
+              ]
+            }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.mspagamentiPagamento.statoPagamento">Stato Pagamento</span></dt>
+          <dd>
+            <span [jhiTranslate]="'apiGatewayApp.StatoPagamento.' + (pagamentoRef.statoPagamento ?? 'null')">{{
+              { null: '', IN_ATTESA: 'IN_ATTESA', APPROVATO: 'APPROVATO', RIFIUTATO: 'RIFIUTATO', RIMBORSATO: 'RIMBORSATO' }[
+                pagamentoRef.statoPagamento ?? 'null'
+              ]
+            }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.mspagamentiPagamento.dataOperazione">Data Operazione</span></dt>
+          <dd>
+            <span>{{ pagamentoRef.dataOperazione | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.mspagamentiPagamento.transazioneId">Transazione Id</span></dt>
+          <dd>
+            <span>{{ pagamentoRef.transazioneId }}</span>
+          </dd>
+          <dt><span jhiTranslate="apiGatewayApp.mspagamentiPagamento.note">Note</span></dt>
+          <dd>
+            <span>{{ pagamentoRef.note }}</span>
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Indietro</span>
+        </button>
+
+        <button type="button" [routerLink]="['/pagamento', pagamentoRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Modifica</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

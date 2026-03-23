@@ -3,7 +3,6 @@ package main.ms.ordini.service;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,14 +27,20 @@ public class OrdineService {
 
     private static final Logger LOG = LoggerFactory.getLogger(OrdineService.class);
 
-    private static final DateTimeFormatter NUMERO_ORDINE_FMT = DateTimeFormatter.ofPattern("yyyyMMdd").withZone(ZoneId.of("Europe/Rome"));
+    private static final DateTimeFormatter NUMERO_ORDINE_FMT =
+        DateTimeFormatter.ofPattern("yyyyMMdd").withZone(ZoneId.of("Europe/Rome"));
 
     private final OrdineRepository ordineRepository;
     private final OrdineMapper ordineMapper;
     private final StreamBridge streamBridge;
     private final ObjectMapper objectMapper;
 
-    public OrdineService(OrdineRepository ordineRepository, OrdineMapper ordineMapper, StreamBridge streamBridge, ObjectMapper objectMapper) {
+    public OrdineService(
+        OrdineRepository ordineRepository,
+        OrdineMapper ordineMapper,
+        StreamBridge streamBridge,
+        ObjectMapper objectMapper
+    ) {
         this.ordineRepository = ordineRepository;
         this.ordineMapper = ordineMapper;
         this.streamBridge = streamBridge;
@@ -44,35 +49,31 @@ public class OrdineService {
 
     /**
      * Save a ordine.
-     *
-     * @param ordineDTO the entity to save.
-     * @return the persisted entity.
      */
     public OrdineDTO save(OrdineDTO ordineDTO) {
         LOG.debug("Request to save Ordine : {}", ordineDTO);
         Ordine ordine = ordineMapper.toEntity(ordineDTO);
 
-        //generatore numeroOrdine
+        // Auto-genera numeroOrdine se non presente
         if (ordine.getNumeroOrdine() == null || ordine.getNumeroOrdine().isBlank()) {
-
-            String data = NUMERO_ORDINE_FMT.format(Instant.now());
+            String data   = NUMERO_ORDINE_FMT.format(Instant.now());
             String random = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
-            ordine.setNumeroOrdine("ORD-"+data+"-"+random);
+            ordine.setNumeroOrdine("ORD-" + data + "-" + random);
         }
 
+        // Auto-genera dataCreazione se non presente (il @NotNull è stato rimosso dal DTO)
         if (ordine.getDataCreazione() == null) {
             ordine.setDataCreazione(Instant.now());
         }
 
-        // Imposta stato iniziale se non fornito
+        // Stato iniziale default
         if (ordine.getStatoOrdine() == null) {
             ordine.setStatoOrdine(StatoOrdine.IN_ELABORAZIONE);
         }
 
         ordine = ordineRepository.save(ordine);
-        OrdineDTO result =  ordineMapper.toDto(ordine);
+        OrdineDTO result = ordineMapper.toDto(ordine);
 
-        //evento kafka
         if (StatoOrdine.PAGATO.equals(ordine.getStatoOrdine())) {
             pubblicaOrdineConfermato(ordine);
         }
@@ -82,17 +83,13 @@ public class OrdineService {
 
     /**
      * Update a ordine.
-     *
-     * @param ordineDTO the entity to save.
-     * @return the persisted entity.
      */
     public OrdineDTO update(OrdineDTO ordineDTO) {
         LOG.debug("Request to update Ordine : {}", ordineDTO);
         Ordine ordine = ordineMapper.toEntity(ordineDTO);
         ordine = ordineRepository.save(ordine);
-        OrdineDTO result =  ordineMapper.toDto(ordine);
+        OrdineDTO result = ordineMapper.toDto(ordine);
 
-        //evento Kafka
         if (StatoOrdine.PAGATO.equals(ordine.getStatoOrdine())) {
             pubblicaOrdineConfermato(ordine);
         }
@@ -102,9 +99,6 @@ public class OrdineService {
 
     /**
      * Partially update a ordine.
-     *
-     * @param ordineDTO the entity to update partially.
-     * @return the persisted entity.
      */
     public Optional<OrdineDTO> partialUpdate(OrdineDTO ordineDTO) {
         LOG.debug("Request to partially update Ordine : {}", ordineDTO);
@@ -113,11 +107,10 @@ public class OrdineService {
             .findById(ordineDTO.getId())
             .map(existingOrdine -> {
                 ordineMapper.partialUpdate(existingOrdine, ordineDTO);
-
                 return existingOrdine;
             })
             .map(ordineRepository::save)
-            .map(saved ->{
+            .map(saved -> {
                 if (StatoOrdine.PAGATO.equals(saved.getStatoOrdine())) {
                     pubblicaOrdineConfermato(saved);
                 }
@@ -128,9 +121,6 @@ public class OrdineService {
 
     /**
      * Get one ordine by id.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
      */
     @Transactional(readOnly = true)
     public Optional<OrdineDTO> findOne(UUID id) {
@@ -140,29 +130,45 @@ public class OrdineService {
 
     /**
      * Delete the ordine by id.
-     *
-     * @param id the id of the entity.
      */
     public void delete(UUID id) {
         LOG.debug("Request to delete Ordine : {}", id);
         ordineRepository.deleteById(id);
     }
 
-    //Evento kafka per la cumicazione con ms-catalogo per decrementare le scorte
+    /**
+     * Pubblica evento Kafka ordine-confermato.
+     * Incluso email del cliente — usato da ms-notifiche come destinatario.
+     */
     private void pubblicaOrdineConfermato(Ordine ordine) {
         try {
-           String payload = objectMapper.writeValueAsString(new  OrdineConfermatoEvent(
-               ordine.getId(),
-               ordine.getNumeroOrdine(),
-               ordine.getClienteId()
-           ));
-           streamBridge.send("kafkaProducer-out-0", payload);
-           LOG.info("Evento ordine-confermato pubblicato per ordine: {}", ordine.getNumeroOrdine());
-        }catch (Exception e) {
-            LOG.error("Errore pubblicazione evento Kafka per ordine {}: {}", ordine.getId(), e.getMessage());
+            String payload = objectMapper.writeValueAsString(new OrdineConfermatoEvent(
+                ordine.getId(),
+                ordine.getNumeroOrdine(),
+                ordine.getClienteId(),
+                ordine.getEmail(),           // <-- aggiunto: destinatario per ms-notifiche
+                ordine.getNomeCliente(),      // <-- aggiunto: utile per il messaggio notifica
+                ordine.getCognomeCliente()    // <-- aggiunto: utile per il messaggio notifica
+            ));
+            streamBridge.send("kafkaProducer-out-0", payload);
+            LOG.info("Evento ordine-confermato pubblicato per ordine: {} cliente: {}",
+                ordine.getNumeroOrdine(), ordine.getEmail());
+        } catch (Exception e) {
+            LOG.error("Errore pubblicazione evento Kafka per ordine {}: {}",
+                ordine.getId(), e.getMessage());
         }
     }
 
-    //Classe interna per evento KAFKA
-    public record OrdineConfermatoEvent(UUID ordineId, String numeroOrdine, UUID clienteId){}
+    /**
+     * Evento Kafka ordine-confermato.
+     * Consumato da: ms-catalogo (scorte), ms-notifiche (email), ms-admin (statistiche).
+     */
+    public record OrdineConfermatoEvent(
+        UUID ordineId,
+        String numeroOrdine,
+        UUID clienteId,
+        String emailCliente,
+        String nomeCliente,
+        String cognomeCliente
+    ) {}
 }

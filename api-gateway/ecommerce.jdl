@@ -1,0 +1,194 @@
+// ============================================================
+//  E-COMMERCE JDL — Frontend Gateway
+//  Genera il codice Angular per tutte le entità sui microservizi
+//
+//  UTILIZZO:
+//  1. Copia questo file in:
+//     C:\Users\A946apulia\Desktop\E-comers-JHpster\api-gateway\
+//  2. Esegui:
+//     cd C:\Users\A946apulia\Desktop\E-comers-JHpster\api-gateway
+//     jhipster import-jdl ecommerce.jdl
+//  3. Quando chiede "overwrite?" rispondere Y a tutto
+//  4. Rebuild completo Gateway (con Angular):
+//     ./mvnw clean compile -Pprod -DskipTests jib:dockerBuild
+// ============================================================
+
+// ============================================================
+//  ENUMS
+// ============================================================
+
+enum StatoOrdine {
+    IN_ELABORAZIONE,
+    PAGATO,
+    IN_SPEDIZIONE,
+    CONSEGNATO,
+    ANNULLATO
+}
+
+enum TipoSpedizione {
+    STANDARD,
+    EXPRESS,
+    SAME_DAY,
+    RITIRO
+}
+
+enum StatoPagamento {
+    IN_ATTESA,
+    APPROVATO,
+    RIFIUTATO,
+    RIMBORSATO
+}
+
+enum MetodoPagamento {
+    CARTA_CREDITO,
+    CARTA_DEBITO,
+    PAYPAL
+}
+
+// ============================================================
+//  MS-CATALOGO — PostgreSQL
+// ============================================================
+
+entity Categoria {
+    nome String required minlength(2) maxlength(100)
+    descrizione String maxlength(500)
+}
+
+entity Prodotto {
+    nome String required minlength(2) maxlength(200)
+    descrizione TextBlob
+    prezzo BigDecimal required min(0)
+    quantitaDisponibile Integer min(0)
+    inEvidenza Boolean
+    immagineUrl String maxlength(500)
+    votaMedio Double
+}
+
+relationship ManyToOne {
+    Prodotto{categoria(nome)} to Categoria
+}
+
+// ============================================================
+//  MS-ORDINI — PostgreSQL
+// ============================================================
+
+entity Ordine {
+    numeroOrdine String maxlength(50)
+    clienteId UUID required
+    nomeCliente String required maxlength(100)
+    cognomeCliente String required maxlength(100)
+    email String required maxlength(200)
+    indirizzo String required maxlength(300)
+    citta String required maxlength(100)
+    provincia String maxlength(10)
+    cap String maxlength(20)
+    statoPaese String maxlength(10)
+    tipoSpedizione TipoSpedizione required
+    costoSpedizione BigDecimal min(0)
+    totaleImponibile BigDecimal min(0)
+    totaleIva BigDecimal min(0)
+    totaleFinal BigDecimal min(0)
+    statoOrdine StatoOrdine required
+    dataCreazione Instant
+}
+
+entity RigaOrdine {
+    prodottoId UUID required
+    nomeProdotto String required maxlength(200)
+    quantita Integer required min(1)
+    prezzoUnitario BigDecimal required min(0)
+    totaleRiga BigDecimal min(0)
+}
+
+relationship ManyToOne {
+    RigaOrdine{ordine} to Ordine
+}
+
+// ============================================================
+//  MS-PAGAMENTI — PostgreSQL
+// ============================================================
+
+entity Pagamento {
+    ordineId UUID required
+    importo BigDecimal required min(0)
+    metodoPagamento MetodoPagamento required
+    statoPagamento StatoPagamento required
+    dataOperazione Instant
+    transazioneId String maxlength(200)
+    note String maxlength(500)
+}
+
+// ============================================================
+//  MS-RECENSIONI — MongoDB
+// ============================================================
+
+entity Recensione {
+    prodottoId String required
+    ordineId String
+    nomeCliente String required maxlength(200)
+    descrizione TextBlob required
+    votoSingolo Integer required min(1) max(5)
+    approvata Boolean
+    dataRecensione Instant
+}
+
+// ============================================================
+//  MS-NOTIFICHE — MongoDB
+// ============================================================
+
+entity Notifica {
+    tipo String required maxlength(100)
+    messaggio TextBlob required
+    destinatario String required maxlength(200)
+    letta Boolean
+    dataNotifica Instant
+    riferimentoId String maxlength(100)
+}
+
+// ============================================================
+//  MS-ADMIN — PostgreSQL
+// ============================================================
+
+entity StatisticaOrdine {
+    ordineId UUID required
+    importoTotale BigDecimal min(0)
+    statoOrdine String maxlength(50)
+    microservizio String maxlength(100)
+    dataRegistrazione Instant
+    note String maxlength(500)
+}
+
+// ============================================================
+//  CONFIGURAZIONE MICROSERVIZI
+//  Dice al Gateway da quale microservizio proviene ogni entità
+// ============================================================
+
+microservice Categoria, Prodotto with mscatalogo
+microservice Ordine, RigaOrdine with msordini
+microservice Pagamento with mspagamenti
+microservice Recensione with msrecensioni
+microservice Notifica with msnotifiche
+microservice StatisticaOrdine with msadmin
+
+// ============================================================
+//  CARTELLE CLIENT — organizzazione nel menu Angular
+// ============================================================
+
+clientRootFolder Categoria, Prodotto with mscatalogo
+clientRootFolder Ordine, RigaOrdine with msordini
+clientRootFolder Pagamento with mspagamenti
+clientRootFolder Recensione with msrecensioni
+clientRootFolder Notifica with msnotifiche
+clientRootFolder StatisticaOrdine with msadmin
+
+// ============================================================
+//  DTO + SERVICE + PAGINAZIONE
+// ============================================================
+
+dto * with mapstruct
+service * with serviceImpl
+
+paginate Prodotto, Ordine, Pagamento, Recensione, Notifica, StatisticaOrdine with pagination
+paginate Categoria, RigaOrdine with infinite-scroll
+
+filter Prodotto, Ordine, Pagamento
