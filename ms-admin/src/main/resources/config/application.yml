@@ -128,25 +128,12 @@ spring:
   application:
     name: msAdmin
   cloud:
-    function:
-      definition: kafkaConsumer;kafkaProducer
     stream:
       kafka:
         binder:
           replicationFactor: 1
           auto-create-topics: true
           brokers: localhost:9092
-      bindings:
-        binding-out-0:
-          content-type: text/plain
-          group: ms-admin
-        kafkaConsumer-in-0:
-          destination: sse-topic
-          content-type: text/plain
-          group: ms-admin
-        kafkaProducer-out-0:
-          content-type: text/plain
-          group: ms-admin
   docker:
     compose:
       enabled: true

@@ -37,6 +37,22 @@ const routes: Routes = [
     path: '',
     loadChildren: () => import(`./entities/entity.routes`),
   },
+  {
+    path: 'catalogo',
+    loadComponent: () => import('./negozio/catalogo/catalogo.component'),
+  },
+  {
+    path: 'prodotto/:id',
+    loadComponent: () => import('./negozio/prodotto/prodotto-dettaglio.component'),
+  },
+  {
+    path: 'carrello',
+    loadComponent: () => import('./negozio/carrello/carrello.component'),
+  },
+  {
+    path: 'ordini',
+    loadComponent: () => import('./negozio/ordini/ordini.component'),
+  },
   ...errorRoute,
 ];
 

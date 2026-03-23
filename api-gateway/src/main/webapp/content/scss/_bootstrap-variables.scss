@@ -1,36 +1,39 @@
-/*
- * Bootstrap overrides https://getbootstrap.com/docs/5.1/customize/sass/
- * All values defined in bootstrap source
- * https://github.com/twbs/bootstrap/blob/v5.1.3/scss/_variables.scss can be overwritten here
- * Make sure not to add !default to values here
- */
+// -------------------------------------------------------
+// _bootstrap-variables.scss
+// Override variabili Bootstrap PRIMA che Bootstrap le definisca.
+// Questo file viene incluso da vendor.scss tramite @use/@forward.
+// NON importare bootstrap-variables qui dentro (import circolare).
+// -------------------------------------------------------
 
-// Options:
-// Quickly modify global styling by enabling or disabling optional features.
-$enable-rounded: true;
-$enable-shadows: false;
-$enable-gradients: false;
-$enable-transitions: true;
-$enable-hover-media-query: false;
-$enable-grid-classes: true;
-$enable-print-styles: true;
+// Colori brand → sovrascrivono $primary di Bootstrap
+$primary:   #2c3e50;
+$secondary: #7f8c8d;
+$success:   #27ae60;
+$danger:    #e74c3c;
+$warning:   #f39c12;
+$info:      #2980b9;
+$light:     #f8f9fa;
+$dark:      #1a1a2e;
 
-// Components:
-// Define common padding and border radius sizes and more.
+// Font
+$font-family-sans-serif: 'DM Sans', system-ui, -apple-system, sans-serif;
+$font-size-base:         1rem;
+$line-height-base:       1.6;
 
-$border-radius: 0.15rem;
-$border-radius-lg: 0.125rem;
-$border-radius-sm: 0.1rem;
+// Border radius
+$border-radius:    8px;
+$border-radius-lg: 12px;
+$border-radius-sm: 4px;
 
-// Body:
-// Settings for the `<body>` element.
+// Bottoni
+$btn-border-radius:    50px;
+$btn-font-weight:      600;
+$btn-padding-y:        0.5rem;
+$btn-padding-x:        1.5rem;
 
-$body-bg: #ffffff;
+// Card
+$card-border-radius: 12px;
+$card-box-shadow:    0 2px 8px rgba(0, 0, 0, 0.07);
 
-// Typography:
-// Font, line-height, and color for body text, headings, and more.
-
-$font-size-base: 1rem;
-
-$dropdown-link-hover-color: white;
-$dropdown-link-hover-bg: #343a40;
+// Navbar
+$navbar-padding-y: 0.75rem;

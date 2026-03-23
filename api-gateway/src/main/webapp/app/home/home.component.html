@@ -1,83 +1,392 @@
-<div class="row">
-  <div class="col-md-3">
-    <span class="hipster img-fluid rounded"></span>
+<!-- ===== HERO SECTION ===== -->
+<section class="hero-section">
+  <div class="hero-content">
+    <div class="hero-text">
+      <p class="hero-eyebrow">Benvenuto nel nostro store</p>
+      <h1 class="hero-title">Scopri i migliori<br><em>prodotti</em> per te</h1>
+      <p class="hero-subtitle">
+        Qualità selezionata, spedizione rapida, pagamenti sicuri.<br>
+        Il tuo negozio di fiducia, sempre con te.
+      </p>
+      <div class="hero-cta">
+        <a routerLink="/catalogo" class="btn-primary-lg">
+          Esplora il catalogo
+          <span class="btn-arrow">→</span>
+        </a>
+        <a routerLink="/catalogo" class="btn-outline-lg">
+          Le offerte del giorno
+        </a>
+      </div>
+    </div>
+    <div class="hero-badges">
+      <div class="hero-badge">
+        <span class="badge-icon">🚚</span>
+        <span class="badge-text">Spedizione gratuita<br><small>sopra €49</small></span>
+      </div>
+      <div class="hero-badge">
+        <span class="badge-icon">🔒</span>
+        <span class="badge-text">Pagamento<br><small>100% sicuro</small></span>
+      </div>
+      <div class="hero-badge">
+        <span class="badge-icon">↩️</span>
+        <span class="badge-text">Reso facile<br><small>entro 30 giorni</small></span>
+      </div>
+    </div>
   </div>
+</section>
 
-  <div class="col-md-9">
-    <h1 class="display-4"><span jhiTranslate="home.title">Benvenuto, Java Hipster!</span> (Api Gateway)</h1>
-
-    <p class="lead" jhiTranslate="home.subtitle">Questa è la tua home page</p>
-
-    <div>
-      @if (account() !== null) {
-        <div class="alert alert-success">
-          @if (account(); as accountRef) {
-            <span id="home-logged-message" jhiTranslate="home.logged.message" [translateValues]="{ username: accountRef.login }"
-              >Autenticato come &quot;{{ accountRef.login }}&quot;.</span
-            >
-          }
-        </div>
-      } @else {
-        <div class="alert alert-warning">
-          <span jhiTranslate="global.messages.info.authenticated.prefix">Se vuoi </span>
-          <a class="alert-link" (click)="login()" jhiTranslate="global.messages.info.authenticated.link">accedere</a
-          ><span jhiTranslate="global.messages.info.authenticated.suffix"
-            >, puoi provare gli account di default: <br />
-            - Amministratore (user = &quot;admin&quot; e la password = &quot;admin&quot;) <br />
-            - utente (user = &quot;user&quot; e la password = &quot;user&quot;)</span
-          >
-        </div>
-
-        <div class="alert alert-warning">
-          <span jhiTranslate="global.messages.info.register.noaccount">Non hai ancora un account?</span>&nbsp;
-          <a class="alert-link" routerLink="/account/register" jhiTranslate="global.messages.info.register.link">Crea un account</a>
-        </div>
-      }
+<!-- ===== CAROSELLO: PRODOTTI IN EVIDENZA ===== -->
+<section class="carousel-section">
+  <div class="section-container">
+    <div class="section-header">
+      <div>
+        <p class="section-label">Scelti per te</p>
+        <h2 class="section-title">Prodotti in Evidenza</h2>
+      </div>
+      <a routerLink="/catalogo" class="view-all-link">
+        Vedi tutti <span>→</span>
+      </a>
     </div>
 
-    <p jhiTranslate="home.question">In caso di domande su JHipster:</p>
+    <!-- Loading state -->
+    @if (loadingEvidenza()) {
+      <div class="skeleton-row">
+        @for (n of [1,2,3,4]; track n) {
+          <div class="skeleton-card">
+            <div class="skeleton-img"></div>
+            <div class="skeleton-line w-80"></div>
+            <div class="skeleton-line w-50"></div>
+            <div class="skeleton-line w-30"></div>
+          </div>
+        }
+      </div>
+    }
 
-    <ul>
-      <li>
-        <a href="https://www.jhipster.tech/" target="_blank" rel="noopener noreferrer" jhiTranslate="home.link.homepage"
-          >Homepage JHipster</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://stackoverflow.com/tags/jhipster/info"
-          target="_blank"
-          rel="noopener noreferrer"
-          jhiTranslate="home.link.stackoverflow"
-          >JHipster su Stack Overflow</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/jhipster/generator-jhipster/issues?state=open"
-          target="_blank"
-          rel="noopener noreferrer"
-          jhiTranslate="home.link.bugtracker"
-          >JHipster tracciamento errori</a
-        >
-      </li>
-      <li>
-        <a href="https://gitter.im/jhipster/generator-jhipster" target="_blank" rel="noopener noreferrer" jhiTranslate="home.link.chat"
-          >Chat room pubblica di JHipster</a
-        >
-      </li>
-      <li>
-        <a href="https://twitter.com/jhipster" target="_blank" rel="noopener noreferrer" jhiTranslate="home.link.follow"
-          >segui &#64;jhipster su Twitter</a
-        >
-      </li>
-    </ul>
+    <!-- Carousel -->
+    @if (!loadingEvidenza() && prodottiInEvidenza().length > 0) {
+      <div class="carousel-wrapper">
+        <button
+          class="carousel-btn carousel-btn--prev"
+          [class.disabled]="!canPrev('evidenza')"
+          (click)="prevSlide('evidenza')"
+          aria-label="Precedente"
+        >‹</button>
 
-    <p>
-      <span jhiTranslate="home.like">Se ti piace JHipster, non dimenticarti di darci una stella su</span>
-      <a href="https://github.com/jhipster/generator-jhipster" target="_blank" rel="noopener noreferrer" jhiTranslate="home.github"
-        >GitHub</a
-      >!
-    </p>
+        <div class="carousel-viewport">
+          <div
+            class="carousel-track"
+            [style.transform]="translateX('evidenza')"
+          >
+            @for (prodotto of prodottiInEvidenza(); track prodotto.id) {
+              <div class="product-card-wrap">
+                <div class="product-card" [class.esaurito]="!prodotto.disponibile">
+                  <a [routerLink]="['/prodotto', prodotto.id]" class="card-img-link">
+                    <img
+                      [src]="getImmagine(prodotto)"
+                      [alt]="prodotto.nome"
+                      class="card-img"
+                      loading="lazy"
+                    />
+                    @if (!prodotto.disponibile) {
+                      <span class="badge-esaurito">Esaurito</span>
+                    }
+                  </a>
+                  <div class="card-body">
+                    @if (prodotto.categoria) {
+                      <span class="card-category">{{ prodotto.categoria.nome }}</span>
+                    }
+                    <h3 class="card-name">
+                      <a [routerLink]="['/prodotto', prodotto.id]">{{ prodotto.nome }}</a>
+                    </h3>
+                    <div class="card-stars">
+                      @for (star of getStarsArray(prodotto.votMedio); track $index) {
+                        <span [class.filled]="star">★</span>
+                      }
+                    </div>
+                    <div class="card-footer">
+                      <span class="card-price">{{ formatPrice(prodotto.prezzoUnitario) }}</span>
+                      <button
+                        class="card-btn-cart"
+                        [disabled]="!prodotto.disponibile"
+                        aria-label="Aggiungi al carrello"
+                      >
+                        🛒
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <button
+          class="carousel-btn carousel-btn--next"
+          [class.disabled]="!canNext('evidenza')"
+          (click)="nextSlide('evidenza')"
+          aria-label="Successivo"
+        >›</button>
+      </div>
+    }
+
+    <!-- Empty state -->
+    @if (!loadingEvidenza() && prodottiInEvidenza().length === 0) {
+      <div class="empty-state">
+        <p>Nessun prodotto in evidenza al momento.</p>
+        <a routerLink="/catalogo" class="btn-primary-sm">Vai al catalogo</a>
+      </div>
+    }
   </div>
-</div>
+</section>
+
+<!-- ===== BANNER INTERMEDIO ===== -->
+<section class="banner-strip">
+  <div class="banner-strip__inner">
+    <div class="banner-strip__item">
+      <span class="strip-icon">⭐</span>
+      <div>
+        <strong>Qualità garantita</strong>
+        <span>Prodotti selezionati e testati</span>
+      </div>
+    </div>
+    <div class="banner-strip__divider"></div>
+    <div class="banner-strip__item">
+      <span class="strip-icon">📦</span>
+      <div>
+        <strong>Spedizione in 24/48h</strong>
+        <span>Corriere espresso incluso</span>
+      </div>
+    </div>
+    <div class="banner-strip__divider"></div>
+    <div class="banner-strip__item">
+      <span class="strip-icon">💳</span>
+      <div>
+        <strong>Paga come vuoi</strong>
+        <span>Carta, PayPal, contanti alla consegna</span>
+      </div>
+    </div>
+    <div class="banner-strip__divider"></div>
+    <div class="banner-strip__item">
+      <span class="strip-icon">🎧</span>
+      <div>
+        <strong>Supporto sempre attivo</strong>
+        <span>Siamo qui per aiutarti</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CAROSELLO: TOP VENDUTI ===== -->
+<section class="carousel-section carousel-section--alt">
+  <div class="section-container">
+    <div class="section-header">
+      <div>
+        <p class="section-label">I più acquistati</p>
+        <h2 class="section-title">Top Venduti</h2>
+      </div>
+      <a routerLink="/catalogo" class="view-all-link">
+        Vedi tutti <span>→</span>
+      </a>
+    </div>
+
+    @if (loadingTop()) {
+      <div class="skeleton-row">
+        @for (n of [1,2,3,4]; track n) {
+          <div class="skeleton-card">
+            <div class="skeleton-img"></div>
+            <div class="skeleton-line w-80"></div>
+            <div class="skeleton-line w-50"></div>
+            <div class="skeleton-line w-30"></div>
+          </div>
+        }
+      </div>
+    }
+
+    @if (!loadingTop() && topVenduti().length > 0) {
+      <div class="carousel-wrapper">
+        <button
+          class="carousel-btn carousel-btn--prev"
+          [class.disabled]="!canPrev('top')"
+          (click)="prevSlide('top')"
+          aria-label="Precedente"
+        >‹</button>
+
+        <div class="carousel-viewport">
+          <div
+            class="carousel-track"
+            [style.transform]="translateX('top')"
+          >
+            @for (prodotto of topVenduti(); track prodotto.id) {
+              <div class="product-card-wrap">
+                <div class="product-card" [class.esaurito]="!prodotto.disponibile">
+                  <a [routerLink]="['/prodotto', prodotto.id]" class="card-img-link">
+                    <img
+                      [src]="getImmagine(prodotto)"
+                      [alt]="prodotto.nome"
+                      class="card-img"
+                      loading="lazy"
+                    />
+                    <span class="badge-top">🔥 Top</span>
+                    @if (!prodotto.disponibile) {
+                      <span class="badge-esaurito">Esaurito</span>
+                    }
+                  </a>
+                  <div class="card-body">
+                    @if (prodotto.categoria) {
+                      <span class="card-category">{{ prodotto.categoria.nome }}</span>
+                    }
+                    <h3 class="card-name">
+                      <a [routerLink]="['/prodotto', prodotto.id]">{{ prodotto.nome }}</a>
+                    </h3>
+                    <div class="card-stars">
+                      @for (star of getStarsArray(prodotto.votMedio); track $index) {
+                        <span [class.filled]="star">★</span>
+                      }
+                    </div>
+                    <div class="card-footer">
+                      <span class="card-price">{{ formatPrice(prodotto.prezzoUnitario) }}</span>
+                      <button
+                        class="card-btn-cart"
+                        [disabled]="!prodotto.disponibile"
+                        aria-label="Aggiungi al carrello"
+                      >
+                        🛒
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <button
+          class="carousel-btn carousel-btn--next"
+          [class.disabled]="!canNext('top')"
+          (click)="nextSlide('top')"
+          aria-label="Successivo"
+        >›</button>
+      </div>
+    }
+
+    @if (!loadingTop() && topVenduti().length === 0) {
+      <div class="empty-state">
+        <p>Nessun dato disponibile al momento.</p>
+        <a routerLink="/catalogo" class="btn-primary-sm">Vai al catalogo</a>
+      </div>
+    }
+  </div>
+</section>
+
+<!-- ===== CHI SIAMO ===== -->
+<section class="chi-siamo-section">
+  <div class="section-container">
+    <div class="chi-siamo-grid">
+
+      <div class="chi-siamo-text">
+        <p class="section-label">La nostra storia</p>
+        <h2 class="section-title">Chi Siamo</h2>
+        <p class="chi-siamo-body">
+          Siamo un team appassionato, convinti che fare acquisti online debba essere
+          semplice, trasparente e piacevole. Ogni prodotto nel nostro catalogo è
+          selezionato con cura, testato e garantito.
+        </p>
+        <p class="chi-siamo-body">
+          Fondata con l'obiettivo di portare qualità a portata di tutti,
+          la nostra piattaforma unisce tecnologia moderna e attenzione al cliente.
+          Dalla ricerca del prodotto al tuo doorstep: ci prendiamo cura di ogni passo.
+        </p>
+        <div class="chi-siamo-valori">
+          <div class="valore-item">
+            <span class="valore-icon">🎯</span>
+            <div>
+              <strong>Qualità prima di tutto</strong>
+              <p>Ogni prodotto supera i nostri standard di selezione</p>
+            </div>
+          </div>
+          <div class="valore-item">
+            <span class="valore-icon">🤝</span>
+            <div>
+              <strong>Trasparenza totale</strong>
+              <p>Prezzi chiari, nessun costo nascosto</p>
+            </div>
+          </div>
+          <div class="valore-item">
+            <span class="valore-icon">💚</span>
+            <div>
+              <strong>Sostenibilità</strong>
+              <p>Packaging eco-friendly e spedizioni compensate</p>
+            </div>
+          </div>
+        </div>
+        <a routerLink="/catalogo" class="btn-primary-lg" style="display:inline-flex; margin-top: 2rem;">
+          Esplora il catalogo <span class="btn-arrow">→</span>
+        </a>
+      </div>
+
+      <div class="chi-siamo-stats">
+        <div class="stat-card">
+          <span class="stat-number">5.000+</span>
+          <span class="stat-label">Clienti soddisfatti</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">500+</span>
+          <span class="stat-label">Prodotti disponibili</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">4,8★</span>
+          <span class="stat-label">Valutazione media</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">24h</span>
+          <span class="stat-label">Tempi di spedizione</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="site-footer">
+  <div class="section-container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <span class="footer-logo">🛍️ Il Tuo Store</span>
+        <p>Il tuo negozio online di fiducia.<br>Qualità, velocità, trasparenza.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Negozio</h4>
+        <ul>
+          <li><a routerLink="/catalogo">Catalogo</a></li>
+          <li><a routerLink="/catalogo">Offerte</a></li>
+          <li><a routerLink="/ordini">I miei ordini</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Assistenza</h4>
+        <ul>
+          <li><a href="#">Contattaci</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Resi e rimborsi</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Legale</h4>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Termini di servizio</a></li>
+          <li><a href="#">Cookie Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© {{ getCurrentYear() }} Il Tuo Store. Tutti i diritti riservati.</span>
+      <div class="payment-icons">
+        <span title="Visa">💳</span>
+        <span title="PayPal">🅿️</span>
+        <span title="Mastercard">💳</span>
+      </div>
+    </div>
+  </div>
+</footer>

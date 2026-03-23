@@ -1,23 +1,349 @@
-/* ==========================================================================
-Main page styles
-========================================================================== */
+// -------------------------------------------------------
+// home.component.scss
+// Importa le variabili del tema (NON bootstrap direttamente)
+// -------------------------------------------------------
 
-.hipster {
-  display: inline-block;
-  width: 347px;
-  height: 497px;
-  background: url('../../content/images/jhipster_family_member_2.svg') no-repeat center top;
-  background-size: contain;
+// Variabili locali di comodo
+$card-radius: 12px;
+$transition-speed: 0.25s;
+
+// ---- HERO ----
+.hero-section {
+  background: linear-gradient(135deg, var(--color-primary, #2c3e50) 0%, var(--color-primary-dark, #1a252f) 100%);
+  color: #fff;
+  padding: 5rem 0 4rem;
+  text-align: center;
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    font-size: 1.15rem;
+    opacity: 0.85;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+  }
+
+  .btn-hero {
+    background: #fff;
+    color: var(--color-primary, #2c3e50);
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    transition: transform $transition-speed, box-shadow $transition-speed;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+  }
 }
 
-/* wait autoprefixer update to allow simple generation of high pixel density media query */
-@media only screen and (-webkit-min-device-pixel-ratio: 2),
-  only screen and (-moz-min-device-pixel-ratio: 2),
-  only screen and (-o-min-device-pixel-ratio: 2/1),
-  only screen and (min-resolution: 192dpi),
-  only screen and (min-resolution: 2dppx) {
-  .hipster {
-    background: url('../../content/images/jhipster_family_member_2.svg') no-repeat center top;
-    background-size: contain;
+// ---- SEZIONE GENERICA ----
+.section-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.section-subtitle {
+  color: #6c757d;
+  margin-bottom: 2rem;
+}
+
+// ---- CAROSELLO ----
+.carousel-wrapper {
+  position: relative;
+}
+
+.carousel-track-outer {
+  overflow: hidden;
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+}
+
+.carousel-item-slot {
+  flex-shrink: 0;
+  padding: 0 0.5rem;
+  box-sizing: border-box;
+}
+
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  transition: background $transition-speed, box-shadow $transition-speed;
+
+  &:hover:not(:disabled) {
+    background: var(--color-primary, #2c3e50);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  &.prev { left: -21px; }
+  &.next { right: -21px; }
+}
+
+// ---- CARD PRODOTTO ----
+.product-card {
+  background: #fff;
+  border-radius: $card-radius;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform $transition-speed, box-shadow $transition-speed;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.13);
+  }
+
+  .card-img-wrap {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: #f8f9fa;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    &:hover img {
+      transform: scale(1.05);
+    }
+  }
+
+  .badge-esaurito {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(220, 53, 69, 0.9);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .card-body {
+    padding: 1rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-category {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--color-primary, #2c3e50);
+    margin-bottom: 0.25rem;
+  }
+
+  .card-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: auto;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .card-stars {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: #ffc107;
+  }
+
+  .card-price {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-primary, #2c3e50);
+    margin-top: 0.5rem;
+  }
+}
+
+// ---- SKELETON LOADING ----
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+@keyframes skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-card {
+  border-radius: $card-radius;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+
+  .sk-img  { height: 180px; }
+  .sk-line { height: 14px; margin: 12px 16px 6px; border-radius: 4px; }
+  .sk-line-short { width: 60%; }
+  .sk-price { height: 20px; margin: 8px 16px 16px; width: 40%; border-radius: 4px; }
+}
+
+// ---- STRIP BANNER ----
+.strip-banner {
+  background: var(--color-primary, #2c3e50);
+  color: #fff;
+  padding: 1.25rem 0;
+  text-align: center;
+
+  .strip-items {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+
+  .strip-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+
+    .strip-icon { font-size: 1.2rem; }
+  }
+}
+
+// ---- CHI SIAMO ----
+.chi-siamo-section {
+  background: #f8f9fa;
+
+  .chi-siamo-text {
+    h2 { font-weight: 700; font-size: 2rem; }
+    p  { color: #555; line-height: 1.8; }
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .stat-box {
+    background: #fff;
+    border-radius: $card-radius;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+
+    .stat-number {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--color-primary, #2c3e50);
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: #6c757d;
+      margin-top: 0.25rem;
+    }
+  }
+
+  .chi-siamo-image {
+    border-radius: $card-radius;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      min-height: 300px;
+    }
+  }
+}
+
+// ---- FOOTER ----
+.site-footer {
+  background: #1a1a2e;
+  color: rgba(255, 255, 255, 0.75);
+  padding: 3rem 0 1.5rem;
+
+  .footer-brand {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.5rem;
+  }
+
+  .footer-title {
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 1rem;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li { margin-bottom: 0.4rem; }
+
+    a {
+      color: rgba(255, 255, 255, 0.6);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color $transition-speed;
+
+      &:hover { color: #fff; }
+    }
+  }
+
+  .footer-divider {
+    border-color: rgba(255, 255, 255, 0.1);
+    margin: 2rem 0 1rem;
+  }
+
+  .footer-bottom {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.4);
   }
 }
