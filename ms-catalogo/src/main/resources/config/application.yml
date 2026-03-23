@@ -129,7 +129,7 @@ spring:
     name: msCatalogo
   cloud:
     function:
-      definition: kafkaConsumer;kafkaProducer
+      definition: kafkaConsumer
     stream:
       kafka:
         binder:
@@ -137,16 +137,14 @@ spring:
           auto-create-topics: true
           brokers: localhost:9092
       bindings:
-        binding-out-0:
-          content-type: text/plain
-          group: ms-catalogo
         kafkaConsumer-in-0:
-          destination: sse-topic
-          content-type: text/plain
-          group: ms-catalogo
-        kafkaProducer-out-0:
-          content-type: application/octet-stream
-          group: ms-catalogo
+          destination: ordine-confermato
+          content-type: application/json
+          group: mscatalogo-ordine
+        kafkaConsumer-in-1:
+          destination: recensione-approvata
+          content-type: application/json
+          group: mscatalogo-recensione
   docker:
     compose:
       enabled: true

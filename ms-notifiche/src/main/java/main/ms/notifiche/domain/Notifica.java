@@ -17,16 +17,19 @@ public class Notifica implements Serializable {
     private String id;
 
     @Field("tipo")
-    private String tipo; // ORDINE_CONFERMATO, PAGAMENTO_APPROVATO, RECENSIONE_APPROVATA
+    private String tipo;
 
     @Field("messaggio")
     private String messaggio;
+
+    @Field("destinatario")
+    private String destinatario; // email del cliente
 
     @Field("cliente_id")
     private UUID clienteId;
 
     @Field("entita_id")
-    private String entitaId; // id ordine, pagamento o recensione
+    private String entitaId;
 
     @Field("data_notifica")
     private Instant dataNotifica;
@@ -42,6 +45,9 @@ public class Notifica implements Serializable {
 
     public String getMessaggio() { return messaggio; }
     public void setMessaggio(String messaggio) { this.messaggio = messaggio; }
+
+    public String getDestinatario() { return destinatario; }
+    public void setDestinatario(String destinatario) { this.destinatario = destinatario; }
 
     public UUID getClienteId() { return clienteId; }
     public void setClienteId(UUID clienteId) { this.clienteId = clienteId; }
@@ -67,6 +73,6 @@ public class Notifica implements Serializable {
 
     @Override
     public String toString() {
-        return "Notifica{id='" + id + "', tipo='" + tipo + "', clienteId=" + clienteId + ", letta=" + letta + "}";
+        return "Notifica{id='" + id + "', tipo='" + tipo + "', destinatario='" + destinatario + "', letta=" + letta + "}";
     }
 }

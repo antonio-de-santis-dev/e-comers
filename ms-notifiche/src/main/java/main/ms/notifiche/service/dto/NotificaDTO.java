@@ -13,6 +13,8 @@ public class NotificaDTO implements Serializable {
 
     private String messaggio;
 
+    private String destinatario; // email del cliente — auto-impostato dal consumer Kafka
+
     private UUID clienteId;
 
     private String entitaId;
@@ -31,6 +33,9 @@ public class NotificaDTO implements Serializable {
 
     public String getMessaggio() { return messaggio; }
     public void setMessaggio(String messaggio) { this.messaggio = messaggio; }
+
+    public String getDestinatario() { return destinatario; }
+    public void setDestinatario(String destinatario) { this.destinatario = destinatario; }
 
     public UUID getClienteId() { return clienteId; }
     public void setClienteId(UUID clienteId) { this.clienteId = clienteId; }
@@ -58,6 +63,6 @@ public class NotificaDTO implements Serializable {
 
     @Override
     public String toString() {
-        return "NotificaDTO{id='" + id + "', tipo='" + tipo + "', clienteId=" + clienteId + ", letta=" + letta + "}";
+        return "NotificaDTO{id='" + id + "', tipo='" + tipo + "', destinatario='" + destinatario + "', letta=" + letta + "}";
     }
 }

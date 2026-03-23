@@ -29,12 +29,9 @@ public class NotificaService {
         LOG.debug("Request to save Notifica : {}", notificaDTO);
         Notifica notifica = notificaMapper.toEntity(notificaDTO);
 
-        // Auto-genera dataNotifica se non fornita
         if (notifica.getDataNotifica() == null) {
             notifica.setDataNotifica(Instant.now());
         }
-
-        // Default letta = false
         if (notifica.getLetta() == null) {
             notifica.setLetta(false);
         }
@@ -60,15 +57,20 @@ public class NotificaService {
 
     /**
      * Crea e salva una notifica da un evento Kafka.
+     * @param tipo           tipo evento (ORDINE_CONFERMATO, PAGAMENTO_APPROVATO, ecc.)
+     * @param messaggio      testo della notifica
+     * @param entitaId       id dell'entità sorgente (ordineId, pagamentoId, ecc.)
+     * @param destinatario   email del cliente destinatario
      */
-    public void creaNotifica(String tipo, String messaggio, String entitaId) {
+    public void creaNotifica(String tipo, String messaggio, String entitaId, String destinatario) {
         NotificaDTO dto = new NotificaDTO();
         dto.setTipo(tipo);
         dto.setMessaggio(messaggio);
         dto.setEntitaId(entitaId);
+        dto.setDestinatario(destinatario);
         dto.setDataNotifica(Instant.now());
         dto.setLetta(false);
         save(dto);
-        LOG.info("Notifica creata — tipo: {}, entitaId: {}", tipo, entitaId);
+        LOG.info("Notifica creata — tipo: {}, entitaId: {}, destinatario: {}", tipo, entitaId, destinatario);
     }
 }

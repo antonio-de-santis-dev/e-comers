@@ -24,7 +24,8 @@ public class NotificaKafkaConsumer {
     }
 
     /**
-     * Ascolta topic ordine-confermato (prodotto da ms-ordini quando stato=PAGATO)
+     * Topic ordine-confermato — payload da OrdineService:
+     * { ordineId, clienteId, emailCliente, nomeCliente, cognomeCliente, numeroOrdine }
      */
     @Bean
     public Consumer<String> ordineConfermato() {
@@ -32,21 +33,28 @@ public class NotificaKafkaConsumer {
             LOG.info("Ricevuto evento ordine-confermato: {}", payload);
             try {
                 JsonNode node = objectMapper.readTree(payload);
-                String ordineId = node.has("ordineId") ? node.get("ordineId").asText() : payload;
-                notificaService.creaNotifica(
-                    "ORDINE_CONFERMATO",
-                    "Il tuo ordine è stato confermato e pagato.",
-                    ordineId
+                String ordineId      = node.has("ordineId")      ? node.get("ordineId").asText()      : payload;
+                String emailCliente  = node.has("emailCliente")  ? node.get("emailCliente").asText()  : "";
+                String nomeCliente   = node.has("nomeCliente")   ? node.get("nomeCliente").asText()   : "";
+                String numeroOrdine  = node.has("numeroOrdine")  ? node.get("numeroOrdine").asText()  : ordineId;
+
+                String messaggio = String.format(
+                    "Ciao %s, il tuo ordine %s è stato confermato e pagato con successo.",
+                    nomeCliente, numeroOrdine
                 );
+
+                notificaService.creaNotifica("ORDINE_CONFERMATO", messaggio, ordineId, emailCliente);
+
             } catch (Exception e) {
                 LOG.error("Errore parsing evento ordine-confermato: {}", e.getMessage());
-                notificaService.creaNotifica("ORDINE_CONFERMATO", "Ordine confermato.", payload);
+                notificaService.creaNotifica("ORDINE_CONFERMATO", "Ordine confermato.", payload, "");
             }
         };
     }
 
     /**
-     * Ascolta topic pagamento-approvato (prodotto da ms-pagamenti quando stato=APPROVATO)
+     * Topic pagamento-approvato — payload da PagamentoService:
+     * { pagamentoId, ordineId, importo, metodoPagamento }
      */
     @Bean
     public Consumer<String> pagamentoApprovato() {
@@ -55,20 +63,24 @@ public class NotificaKafkaConsumer {
             try {
                 JsonNode node = objectMapper.readTree(payload);
                 String pagamentoId = node.has("pagamentoId") ? node.get("pagamentoId").asText() : payload;
-                notificaService.creaNotifica(
-                    "PAGAMENTO_APPROVATO",
-                    "Il tuo pagamento è stato approvato.",
-                    pagamentoId
+                String ordineId    = node.has("ordineId")    ? node.get("ordineId").asText()    : "";
+                String importo     = node.has("importo")     ? node.get("importo").asText()     : "";
+
+                String messaggio = String.format(
+                    "Pagamento di €%s approvato per l'ordine %s.", importo, ordineId
                 );
+
+                notificaService.creaNotifica("PAGAMENTO_APPROVATO", messaggio, pagamentoId, "");
+
             } catch (Exception e) {
                 LOG.error("Errore parsing evento pagamento-approvato: {}", e.getMessage());
-                notificaService.creaNotifica("PAGAMENTO_APPROVATO", "Pagamento approvato.", payload);
+                notificaService.creaNotifica("PAGAMENTO_APPROVATO", "Pagamento approvato.", payload, "");
             }
         };
     }
 
     /**
-     * Ascolta topic recensione-approvata (prodotto da ms-recensioni quando approvata=true)
+     * Topic recensione-approvata — payload da RecensioneService
      */
     @Bean
     public Consumer<String> recensioneApprovata() {
@@ -77,14 +89,17 @@ public class NotificaKafkaConsumer {
             try {
                 JsonNode node = objectMapper.readTree(payload);
                 String recensioneId = node.has("recensioneId") ? node.get("recensioneId").asText() : payload;
-                notificaService.creaNotifica(
-                    "RECENSIONE_APPROVATA",
-                    "La tua recensione è stata approvata.",
-                    recensioneId
+                String nomeCliente  = node.has("nomeCliente")  ? node.get("nomeCliente").asText()  : "";
+
+                String messaggio = String.format(
+                    "Ciao %s, la tua recensione è stata approvata e pubblicata.", nomeCliente
                 );
+
+                notificaService.creaNotifica("RECENSIONE_APPROVATA", messaggio, recensioneId, "");
+
             } catch (Exception e) {
                 LOG.error("Errore parsing evento recensione-approvata: {}", e.getMessage());
-                notificaService.creaNotifica("RECENSIONE_APPROVATA", "Recensione approvata.", payload);
+                notificaService.creaNotifica("RECENSIONE_APPROVATA", "Recensione approvata.", payload, "");
             }
         };
     }

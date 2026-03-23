@@ -128,25 +128,12 @@ spring:
   application:
     name: msOrdini
   cloud:
-    function:
-      definition: kafkaConsumer;kafkaProducer
     stream:
       kafka:
         binder:
           replicationFactor: 1
           auto-create-topics: true
           brokers: localhost:9092
-      bindings:
-        binding-out-0:
-          content-type: text/plain
-          group: ms-ordini
-        kafkaConsumer-in-0:
-          destination: sse-topic
-          content-type: text/plain
-          group: ms-ordini
-        kafkaProducer-out-0:
-          content-type: text/plain
-          group: ms-ordini
   docker:
     compose:
       enabled: true

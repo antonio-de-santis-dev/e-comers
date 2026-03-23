@@ -128,25 +128,12 @@ spring:
   application:
     name: msRecensioni
   cloud:
-    function:
-      definition: kafkaConsumer;kafkaProducer
     stream:
       kafka:
         binder:
           replicationFactor: 1
           auto-create-topics: true
           brokers: localhost:9092
-      bindings:
-        binding-out-0:
-          content-type: text/plain
-          group: ms-recensioni
-        kafkaConsumer-in-0:
-          destination: sse-topic
-          content-type: text/plain
-          group: ms-recensioni
-        kafkaProducer-out-0:
-          content-type: text/plain
-          group: ms-recensioni
   docker:
     compose:
       enabled: true

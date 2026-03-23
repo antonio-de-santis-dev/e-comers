@@ -13,6 +13,7 @@ public class NotificaMapper {
         dto.setId(notifica.getId());
         dto.setTipo(notifica.getTipo());
         dto.setMessaggio(notifica.getMessaggio());
+        dto.setDestinatario(notifica.getDestinatario());
         dto.setClienteId(notifica.getClienteId());
         dto.setEntitaId(notifica.getEntitaId());
         dto.setDataNotifica(notifica.getDataNotifica());
@@ -26,6 +27,7 @@ public class NotificaMapper {
         notifica.setId(dto.getId());
         notifica.setTipo(dto.getTipo());
         notifica.setMessaggio(dto.getMessaggio());
+        notifica.setDestinatario(dto.getDestinatario());
         notifica.setClienteId(dto.getClienteId());
         notifica.setEntitaId(dto.getEntitaId());
         notifica.setDataNotifica(dto.getDataNotifica());
