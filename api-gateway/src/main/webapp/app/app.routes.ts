@@ -53,6 +53,11 @@ const routes: Routes = [
     path: 'ordini',
     loadComponent: () => import('./negozio/ordini/ordini.component'),
   },
+  {
+    path: 'catalogo',
+    redirectTo: '/mscatalogo/prodotto',
+    pathMatch: 'full'
+  },
   ...errorRoute,
 ];
 

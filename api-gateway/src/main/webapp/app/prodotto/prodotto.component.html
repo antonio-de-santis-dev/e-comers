@@ -1,0 +1,267 @@
+<div class="catalogo-page">
+
+  <!-- ===== PAGE HEADER ===== -->
+  <div class="catalogo-header">
+    <div class="catalogo-header__inner">
+      <div>
+        <h1 class="catalogo-title">Catalogo Prodotti</h1>
+        <p class="catalogo-subtitle">
+          {{ totalItems }} prodotti disponibili
+        </p>
+      </div>
+      <div class="catalogo-header__actions">
+        <!-- Vedi azioni solo se admin -->
+        @if (account()?.authorities?.includes('ROLE_ADMIN')) {
+          <a
+            id="jh-create-entity"
+            data-cy="entityCreateButton"
+            class="btn-primary-sm"
+            [routerLink]="['/mscatalogo/prodotto/new']"
+          >
+            + Nuovo prodotto
+          </a>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="catalogo-layout">
+
+    <!-- ===== SIDEBAR FILTRI ===== -->
+    <aside class="catalogo-sidebar">
+
+      <!-- Cerca per nome -->
+      <div class="filter-block">
+        <h3 class="filter-title">Cerca</h3>
+        <div class="search-input-wrap">
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Nome prodotto..."
+            [(ngModel)]="searchNome"
+            (input)="onSearchChange()"
+          />
+          <span class="search-icon">🔍</span>
+        </div>
+      </div>
+
+      <!-- Filtro per categoria -->
+      <div class="filter-block">
+        <h3 class="filter-title">Categoria</h3>
+        <div class="filter-options">
+          <label class="filter-option">
+            <input type="radio" name="categoria" [value]="null" [(ngModel)]="selectedCategoriaId" (change)="applyFilters()" />
+            <span>Tutte le categorie</span>
+          </label>
+          @for (cat of categorie(); track cat.id) {
+            <label class="filter-option">
+              <input type="radio" name="categoria" [value]="cat.id" [(ngModel)]="selectedCategoriaId" (change)="applyFilters()" />
+              <span>{{ cat.nome }}</span>
+            </label>
+          }
+        </div>
+      </div>
+
+      <!-- Filtro In Evidenza -->
+      <div class="filter-block">
+        <h3 class="filter-title">Filtri rapidi</h3>
+        <label class="filter-toggle">
+          <input type="checkbox" [(ngModel)]="soloInEvidenza" (change)="applyFilters()" />
+          <span class="toggle-track">
+            <span class="toggle-thumb"></span>
+          </span>
+          <span>Solo in evidenza</span>
+        </label>
+        <label class="filter-toggle" style="margin-top: 0.5rem;">
+          <input type="checkbox" [(ngModel)]="soloDisponibili" (change)="applyFilters()" />
+          <span class="toggle-track">
+            <span class="toggle-thumb"></span>
+          </span>
+          <span>Solo disponibili</span>
+        </label>
+      </div>
+
+      <!-- Range prezzo -->
+      <div class="filter-block">
+        <h3 class="filter-title">Prezzo massimo</h3>
+        <div class="price-range">
+          <input
+            type="range"
+            class="price-slider"
+            [min]="0"
+            [max]="prezzoMax"
+            [step]="5"
+            [(ngModel)]="prezzoFiltro"
+            (input)="applyFilters()"
+          />
+          <span class="price-label">fino a {{ formatPrice(prezzoFiltro) }}</span>
+        </div>
+      </div>
+
+      <!-- Reset filtri -->
+      @if (hasActiveFilters()) {
+        <button class="btn-reset-filters" (click)="resetFilters()">
+          ✕ Azzera filtri
+        </button>
+      }
+
+    </aside>
+
+    <!-- ===== AREA PRINCIPALE ===== -->
+    <main class="catalogo-main">
+
+      <!-- Toolbar (ordinamento + contatore) -->
+      <div class="catalogo-toolbar">
+        <span class="results-count">
+          @if (!isLoading) {
+            {{ prodottos().length }} risultati
+          }
+        </span>
+        <div class="sort-select-wrap">
+          <select class="sort-select" [(ngModel)]="currentSort" (change)="onSortChange()">
+            <option value="nome,asc">Nome A-Z</option>
+            <option value="nome,desc">Nome Z-A</option>
+            <option value="prezzo,asc">Prezzo crescente</option>
+            <option value="prezzo,desc">Prezzo decrescente</option>
+            <option value="votaMedio,desc">Valutazione</option>
+            <option value="inEvidenza,desc">In evidenza prima</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- ===== SKELETON LOADING ===== -->
+      @if (isLoading) {
+        <div class="products-grid">
+          @for (n of [1,2,3,4,5,6,7,8]; track n) {
+            <div class="skeleton-card">
+              <div class="skeleton-img"></div>
+              <div class="skeleton-body">
+                <div class="skeleton-line w-30"></div>
+                <div class="skeleton-line w-80"></div>
+                <div class="skeleton-line w-50"></div>
+                <div class="skeleton-line w-40"></div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- ===== GRID PRODOTTI ===== -->
+      @if (!isLoading && prodottos().length > 0) {
+        <div class="products-grid" id="entities">
+          @for (prodotto of prodottos(); track trackId(prodotto)) {
+            <div class="product-card" [class.esaurito]="!isDisponibile(prodotto)" data-cy="entityTable">
+
+              <!-- Immagine -->
+              <a [routerLink]="['/mscatalogo/prodotto', prodotto.id, 'view']" class="card-img-link">
+                <img
+                  [src]="getImmagine(prodotto)"
+                  [alt]="prodotto.nome"
+                  class="card-img"
+                  loading="lazy"
+                />
+                @if (prodotto.inEvidenza) {
+                  <span class="badge-evidenza">⭐ In evidenza</span>
+                }
+                @if (!isDisponibile(prodotto)) {
+                  <span class="badge-esaurito">Esaurito</span>
+                }
+              </a>
+
+              <!-- Body -->
+              <div class="card-body">
+                @if (prodotto.categoria) {
+                  <span class="card-category">{{ prodotto.categoria.nome }}</span>
+                }
+
+                <h3 class="card-name">
+                  <a [routerLink]="['/mscatalogo/prodotto', prodotto.id, 'view']">{{ prodotto.nome }}</a>
+                </h3>
+
+                <!-- Stelle voto medio -->
+                <div class="card-stars">
+                  @for (star of getStarsArray(prodotto.votaMedio); track $index) {
+                    <span [class.filled]="star">★</span>
+                  }
+                  @if (prodotto.votaMedio) {
+                    <span class="star-value">({{ prodotto.votaMedio | number: '1.1-1' }})</span>
+                  }
+                </div>
+
+                <!-- Disponibilità -->
+                <div class="card-disponibilita">
+                  @if (isDisponibile(prodotto)) {
+                    <span class="disponibile">✓ Disponibile ({{ prodotto.quantitaDisponibile }})</span>
+                  } @else {
+                    <span class="non-disponibile">✕ Esaurito</span>
+                  }
+                </div>
+
+                <!-- Footer: prezzo + azioni -->
+                <div class="card-footer">
+                  <span class="card-price">{{ formatPrice(prodotto.prezzo) }}</span>
+                  <div class="card-actions">
+                    <a
+                      [routerLink]="['/mscatalogo/prodotto', prodotto.id, 'view']"
+                      class="btn-card-view"
+                      title="Visualizza"
+                    >
+                      👁
+                    </a>
+                    @if (account()?.authorities?.includes('ROLE_ADMIN')) {
+                      <a
+                        [routerLink]="['/mscatalogo/prodotto', prodotto.id, 'edit']"
+                        class="btn-card-edit"
+                        data-cy="entityEditButton"
+                        title="Modifica"
+                      >
+                        ✏️
+                      </a>
+                      <button
+                        class="btn-card-delete"
+                        (click)="delete(prodotto)"
+                        data-cy="entityDeleteButton"
+                        title="Elimina"
+                      >
+                        🗑
+                      </button>
+                    }
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          }
+        </div>
+      }
+
+      <!-- ===== EMPTY STATE ===== -->
+      @if (!isLoading && prodottos().length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon">📦</div>
+          <h3>Nessun prodotto trovato</h3>
+          <p>Prova a modificare i filtri di ricerca.</p>
+          <button class="btn-primary-sm" (click)="resetFilters()">Azzera filtri</button>
+        </div>
+      }
+
+      <!-- ===== PAGINAZIONE ===== -->
+      @if (prodottos().length > 0) {
+        <div class="pagination-wrap">
+          <jhi-item-count [params]="{ page, totalItems, itemsPerPage }" />
+          <ngb-pagination
+            [collectionSize]="totalItems"
+            [page]="page"
+            [pageSize]="itemsPerPage"
+            [maxSize]="5"
+            [rotate]="true"
+            [boundaryLinks]="true"
+            (pageChange)="navigateToPage($event)"
+          />
+        </div>
+      }
+
+    </main>
+  </div>
+
+</div>
