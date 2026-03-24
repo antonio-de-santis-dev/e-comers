@@ -37,26 +37,31 @@ const routes: Routes = [
     path: '',
     loadChildren: () => import(`./entities/entity.routes`),
   },
+  // -------------------------------------------------------
+  // ROUTE NEGOZIO (vetrina pubblica)
+  // /catalogo  → usa il ProdottoComponent già sviluppato in /app/prodotto/
+  //              (ha sidebar filtri, grid card, paginazione — stesso stile home)
+  // /prodotto/:id → pagina dettaglio prodotto
+  // -------------------------------------------------------
   {
     path: 'catalogo',
-    loadComponent: () => import('./negozio/catalogo/catalogo.component'),
+    loadComponent: () => import('./prodotto/prodotto.component').then(m => m.ProdottoComponent),
+    title: 'Catalogo Prodotti',
   },
   {
     path: 'prodotto/:id',
     loadComponent: () => import('./negozio/prodotto/prodotto-dettaglio.component'),
+    title: 'Dettaglio Prodotto',
   },
   {
     path: 'carrello',
     loadComponent: () => import('./negozio/carrello/carrello.component'),
+    title: 'Carrello',
   },
   {
     path: 'ordini',
     loadComponent: () => import('./negozio/ordini/ordini.component'),
-  },
-  {
-    path: 'catalogo',
-    redirectTo: '/mscatalogo/prodotto',
-    pathMatch: 'full'
+    title: 'I miei ordini',
   },
   ...errorRoute,
 ];

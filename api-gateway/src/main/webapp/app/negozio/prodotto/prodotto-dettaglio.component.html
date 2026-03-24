@@ -1,0 +1,243 @@
+<!-- ===== BREADCRUMB ===== -->
+<nav class="det-breadcrumb">
+  <div class="det-breadcrumb__inner">
+    <a routerLink="/" class="crumb">Home</a>
+    <span class="crumb-sep">›</span>
+    <a routerLink="/catalogo" class="crumb">Catalogo</a>
+    @if (prodotto()) {
+      <span class="crumb-sep">›</span>
+      <span class="crumb crumb--current">{{ prodotto()!.nome }}</span>
+    }
+  </div>
+</nav>
+
+<!-- ===== LOADING ===== -->
+@if (loadingProdotto()) {
+  <div class="det-page">
+    <div class="det-layout">
+      <div class="det-img-col">
+        <div class="skeleton-img-lg"></div>
+      </div>
+      <div class="det-info-col">
+        <div class="skeleton-line w-30" style="height:14px;margin-bottom:1.5rem;"></div>
+        <div class="skeleton-line w-80" style="height:28px;margin-bottom:.75rem;"></div>
+        <div class="skeleton-line w-50" style="height:28px;margin-bottom:1.5rem;"></div>
+        <div class="skeleton-line w-40" style="height:20px;margin-bottom:2rem;"></div>
+        <div class="skeleton-line w-100" style="height:14px;margin-bottom:.4rem;"></div>
+        <div class="skeleton-line w-100" style="height:14px;margin-bottom:.4rem;"></div>
+        <div class="skeleton-line w-70" style="height:14px;margin-bottom:2rem;"></div>
+        <div class="skeleton-line w-60" style="height:48px;border-radius:12px;"></div>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ===== ERRORE ===== -->
+@if (errore() && !loadingProdotto()) {
+  <div class="det-page">
+    <div class="empty-state">
+      <div class="empty-icon">😕</div>
+      <h3>Prodotto non trovato</h3>
+      <p>Il prodotto che cerchi non è disponibile o è stato rimosso.</p>
+      <button class="btn-primary-sm" (click)="tornaAlCatalogo()">← Torna al catalogo</button>
+    </div>
+  </div>
+}
+
+<!-- ===== PRODOTTO TROVATO ===== -->
+@if (!loadingProdotto() && !errore() && prodotto(); as p) {
+  <div class="det-page">
+    <div class="det-layout">
+
+      <!-- COLONNA IMMAGINE -->
+      <div class="det-img-col">
+        <div
+          class="det-img-wrap"
+          [class.zoomed]="imgZoom()"
+          (click)="toggleZoom()"
+          [attr.title]="imgZoom() ? 'Clicca per ridurre' : 'Clicca per ingrandire'"
+        >
+          <img
+            [src]="getImmagine(p)"
+            [alt]="p.nome"
+            class="det-img"
+            loading="eager"
+          />
+          @if (p.inEvidenza) {
+            <span class="badge-evidenza">⭐ In evidenza</span>
+          }
+          @if (!isDisponibile(p)) {
+            <span class="badge-esaurito">Esaurito</span>
+          }
+          <span class="zoom-hint">{{ imgZoom() ? '−' : '+' }}</span>
+        </div>
+      </div>
+
+      <!-- COLONNA INFO -->
+      <div class="det-info-col">
+
+        <!-- Categoria -->
+        @if (p.categoria) {
+          <a
+            routerLink="/catalogo"
+            [queryParams]="{'categoriaId.equals': p.categoria.id}"
+            class="det-categoria"
+          >{{ p.categoria.nome }}</a>
+        }
+
+        <!-- Nome -->
+        <h1 class="det-nome">{{ p.nome }}</h1>
+
+        <!-- Stelle + voto -->
+        <div class="det-stars-row">
+          <div class="det-stars">
+            @for (star of getStarsArray(p.votaMedio); track $index) {
+              <span [class.filled]="star">★</span>
+            }
+          </div>
+          @if (p.votaMedio) {
+            <span class="det-voto">{{ p.votaMedio | number:'1.1-1' }} / 5</span>
+          }
+          <span class="det-rec-count">
+            ({{ recensioniApprovate().length }} recension{{ recensioniApprovate().length === 1 ? 'e' : 'i' }})
+          </span>
+        </div>
+
+        <!-- Prezzo -->
+        <div class="det-prezzo">{{ formatPrice(p.prezzo) }}</div>
+
+        <!-- Disponibilità -->
+        <div class="det-disponibilita">
+          @if (isDisponibile(p)) {
+            <span class="disponibile">
+              ✓ Disponibile
+              @if (p.quantitaDisponibile != null) {
+                <em>({{ p.quantitaDisponibile }} in magazzino)</em>
+              }
+            </span>
+          } @else {
+            <span class="non-disponibile">✕ Prodotto esaurito</span>
+          }
+        </div>
+
+        <!-- Descrizione -->
+        @if (p.descrizione) {
+          <p class="det-descrizione">{{ p.descrizione }}</p>
+        }
+
+        <!-- Selettore quantità + CTA carrello -->
+        @if (isDisponibile(p)) {
+          <div class="det-cta">
+            <div class="qty-selector">
+              <button class="qty-btn" (click)="decrementaQuantita()" [disabled]="quantita() <= 1">−</button>
+              <span class="qty-value">{{ quantita() }}</span>
+              <button class="qty-btn" (click)="incrementaQuantita()" [disabled]="quantita() >= (p.quantitaDisponibile ?? 99)">+</button>
+            </div>
+            <button class="btn-cart" (click)="aggiungiAlCarrello()">
+              🛒 Aggiungi al carrello
+            </button>
+          </div>
+        } @else {
+          <div class="det-cta">
+            <button class="btn-cart btn-cart--disabled" disabled>
+              Prodotto non disponibile
+            </button>
+          </div>
+        }
+
+        <!-- Garanzie -->
+        <div class="det-garanzie">
+          <div class="garanzia-item">
+            <span>🚚</span>
+            <span>Spedizione gratuita sopra €49</span>
+          </div>
+          <div class="garanzia-item">
+            <span>↩️</span>
+            <span>Reso entro 30 giorni</span>
+          </div>
+          <div class="garanzia-item">
+            <span>🔒</span>
+            <span>Pagamento sicuro</span>
+          </div>
+        </div>
+
+        <!-- Azioni admin -->
+        @if (account()?.authorities?.includes('ROLE_ADMIN')) {
+          <div class="det-admin-actions">
+            <a [routerLink]="['/mscatalogo/prodotto', p.id, 'edit']" class="btn-admin-edit">
+              ✏️ Modifica prodotto
+            </a>
+          </div>
+        }
+
+      </div>
+    </div>
+
+    <!-- ===== SEZIONE RECENSIONI ===== -->
+    <section class="recensioni-section">
+      <div class="recensioni-header">
+        <h2 class="recensioni-title">Recensioni dei clienti</h2>
+        @if (p.votaMedio) {
+          <div class="recensioni-summary">
+            <span class="summary-voto">{{ p.votaMedio | number:'1.1-1' }}</span>
+            <div class="summary-stars">
+              @for (star of getStarsArray(p.votaMedio); track $index) {
+                <span [class.filled]="star">★</span>
+              }
+            </div>
+            <span class="summary-count">su {{ recensioniApprovate().length }} recensioni</span>
+          </div>
+        }
+      </div>
+
+      <!-- Skeleton recensioni -->
+      @if (loadingRecensioni()) {
+        <div class="recensioni-grid">
+          @for (n of [1,2,3]; track n) {
+            <div class="recensione-card skeleton-rec">
+              <div class="skeleton-line w-40" style="height:12px;margin-bottom:.75rem;"></div>
+              <div class="skeleton-line w-70" style="height:12px;margin-bottom:.4rem;"></div>
+              <div class="skeleton-line w-100" style="height:12px;margin-bottom:.4rem;"></div>
+              <div class="skeleton-line w-60" style="height:12px;"></div>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Lista recensioni -->
+      @if (!loadingRecensioni() && recensioniApprovate().length > 0) {
+        <div class="recensioni-grid">
+          @for (rec of recensioniApprovate(); track rec.id) {
+            <div class="recensione-card">
+              <div class="rec-header">
+                <div class="rec-stars">
+                  @for (star of getStarsArray(rec.votoSingolo); track $index) {
+                    <span [class.filled]="star">★</span>
+                  }
+                </div>
+                <span class="rec-data">{{ formatData(rec.dataRecensione) }}</span>
+              </div>
+              <p class="rec-autore">{{ rec.nomeCliente ?? 'Cliente verificato' }}</p>
+              @if (rec.descrizione) {
+                <p class="rec-testo">{{ rec.descrizione }}</p>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Empty recensioni -->
+      @if (!loadingRecensioni() && recensioniApprovate().length === 0) {
+        <div class="recensioni-empty">
+          <p>Nessuna recensione ancora. Acquista questo prodotto e lascia la tua opinione!</p>
+        </div>
+      }
+    </section>
+
+    <!-- Back button -->
+    <div class="det-back-wrap">
+      <button class="btn-back" (click)="tornaAlCatalogo()">← Torna al catalogo</button>
+    </div>
+
+  </div>
+}
