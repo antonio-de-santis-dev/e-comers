@@ -18,7 +18,33 @@ Navbar
 .navbar {
   padding: 0.2rem 1rem;
 
-  a.nav-link {
+  a.nav-link {// ── Badge carrello ─────────────────────────────────────────────
+    // Aggiunto al navbar.component.scss esistente (non sovrascrivere
+    // gli stili JHipster già presenti — aggiungere in fondo al file)
+    // ──────────────────────────────────────────────────────────────
+
+    .carrello-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      position: relative;
+    }
+
+    .carrello-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #ef4444;      // rosso vivace — cambia qui per adattare
+      color: #fff;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1;
+      margin-left: 2px;
+    }
+
     font-weight: 400;
   }
 }

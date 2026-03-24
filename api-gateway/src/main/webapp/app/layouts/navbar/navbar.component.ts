@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -14,6 +14,10 @@ import { environment } from 'environments/environment';
 import ActiveMenuDirective from './active-menu.directive';
 import NavbarItem from './navbar-item.model';
 
+// ── Import del servizio carrello ───────────────────────────
+// Inietta il servizio per mostrare il badge con il totale articoli
+import { CarrelloService } from 'app/negozio/carrello/carrello.service';
+
 @Component({
   selector: 'jhi-navbar',
   templateUrl: './navbar.component.html',
@@ -28,6 +32,11 @@ export default class NavbarComponent implements OnInit {
   version = '';
   account = inject(AccountService).trackCurrentAccount();
   entitiesNavbarItems: NavbarItem[] = [];
+
+  // ── Badge carrello ─────────────────────────────────────
+  // Computed signal — si aggiorna automaticamente quando
+  // il carrello cambia. Usato nel template come carrelloCount().
+  readonly carrelloCount = inject(CarrelloService).totaleArticoli;
 
   private readonly loginService = inject(LoginService);
   private readonly translateService = inject(TranslateService);

@@ -1,0 +1,90 @@
+<!-- ═══════════════════════════════════════════════════
+     PAGINA CARRELLO
+     ═══════════════════════════════════════════════════ -->
+
+<div class="cart-page">
+
+  <h1 class="cart-title">Il tuo Carrello</h1>
+
+  <!-- Carrello vuoto -->
+  @if (items().length === 0) {
+    <div class="cart-empty">
+      <span class="cart-empty__icon">🛒</span>
+      <h2>Il carrello è vuoto</h2>
+      <p>Aggiungi qualche prodotto per continuare</p>
+      <button class="btn-primary" (click)="continuaAcquisti()">
+        Sfoglia il catalogo
+      </button>
+    </div>
+  }
+
+  <!-- Lista articoli + riepilogo -->
+  @if (items().length > 0) {
+    <div class="cart-layout">
+
+      <!-- Lista articoli -->
+      <div class="cart-items">
+        @for (item of items(); track item.id) {
+          <div class="cart-item">
+            <img
+              [src]="getImmagine(item)"
+              [alt]="item.nome"
+              class="item-img"
+              loading="lazy"
+            />
+
+            <div class="item-info">
+              <p class="item-nome">{{ item.nome }}</p>
+              <p class="item-prezzo-unit">{{ formatPrice(item.prezzo) }} cad.</p>
+            </div>
+
+            <div class="item-qty">
+              <button class="qty-btn" (click)="modificaQuantita(item.id, item.quantita - 1)">−</button>
+              <span class="qty-val">{{ item.quantita }}</span>
+              <button class="qty-btn" (click)="modificaQuantita(item.id, item.quantita + 1)">+</button>
+            </div>
+
+            <span class="item-subtotale">{{ formatPrice(item.prezzo * item.quantita) }}</span>
+
+            <button class="item-remove" title="Rimuovi" (click)="rimuovi(item.id)">✕</button>
+          </div>
+        }
+
+        <div class="cart-actions-bottom">
+          <button class="btn-link" (click)="continuaAcquisti()">← Continua gli acquisti</button>
+          <button class="btn-link btn-link--danger" (click)="svuotaCarrello()">Svuota carrello</button>
+        </div>
+      </div>
+
+      <!-- Riepilogo ordine -->
+      <aside class="cart-summary">
+        <h2 class="summary-title">Riepilogo ordine</h2>
+
+        <div class="summary-row">
+          <span>Articoli ({{ totaleArticoli() }})</span>
+          <span>{{ formatPrice(totale()) }}</span>
+        </div>
+        <div class="summary-row">
+          <span>Spedizione</span>
+          <span class="text-success">Gratuita</span>
+        </div>
+
+        <div class="summary-total">
+          <span>Totale</span>
+          <span>{{ formatPrice(totale()) }}</span>
+        </div>
+
+        <button class="btn-primary btn-full" (click)="procediPagamento()">
+          Procedi al pagamento
+        </button>
+
+        <div class="summary-badges">
+          <span>🔒 Pagamento sicuro</span>
+          <span>↩️ Reso 30 giorni</span>
+        </div>
+      </aside>
+
+    </div>
+  }
+
+</div>

@@ -1,0 +1,253 @@
+// ═══════════════════════════════════════════════════════════
+//  TEMA — stesse variabili del catalogo per coerenza
+// ═══════════════════════════════════════════════════════════
+$color-primary:   #1D4ED8;
+$color-text:      #111827;
+$color-text-muted:#6B7280;
+$color-border:    #E5E7EB;
+$color-bg:        #F9FAFB;
+$color-white:     #FFFFFF;
+$color-danger:    #EF4444;
+$color-success:   #10B981;
+
+// ───────────────────────────────────────────────────────────
+
+.cart-page {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 40px 24px 64px;
+}
+
+.cart-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $color-text;
+  margin: 0 0 28px;
+}
+
+// ── Carrello vuoto ────────────────────────────────────────
+.cart-empty {
+  text-align: center;
+  padding: 80px 0;
+
+  &__icon {
+    display: block;
+    font-size: 4rem;
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: $color-text;
+    margin: 0 0 8px;
+  }
+
+  p {
+    color: $color-text-muted;
+    margin: 0 0 24px;
+  }
+}
+
+// ── Layout principale ─────────────────────────────────────
+.cart-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 32px;
+  align-items: start;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ── Singolo articolo ──────────────────────────────────────
+.cart-items {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: $color-white;
+  border: 1px solid $color-border;
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.item-img {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+  background: $color-bg;
+}
+
+.item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-nome {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: $color-text;
+  margin: 0 0 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-prezzo-unit {
+  font-size: 0.8rem;
+  color: $color-text-muted;
+  margin: 0;
+}
+
+// ── Quantità ──────────────────────────────────────────────
+.item-qty {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.qty-btn {
+  width: 28px;
+  height: 28px;
+  border: 1px solid $color-border;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1rem;
+  color: $color-text;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+
+  &:hover {
+    background: $color-bg;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.qty-val {
+  min-width: 24px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: $color-text;
+}
+
+.item-subtotale {
+  font-size: 1rem;
+  font-weight: 700;
+  color: $color-text;
+  min-width: 80px;
+  text-align: right;
+}
+
+.item-remove {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: $color-text-muted;
+  font-size: 1rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: color 0.15s;
+
+  &:hover { color: $color-danger; }
+}
+
+// ── Azioni fondo lista ────────────────────────────────────
+.cart-actions-bottom {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: $color-primary;
+  padding: 0;
+  text-decoration: underline;
+
+  &--danger { color: $color-danger; }
+}
+
+// ── Riepilogo ordine ──────────────────────────────────────
+.cart-summary {
+  background: $color-white;
+  border: 1px solid $color-border;
+  border-radius: 14px;
+  padding: 22px 20px;
+  position: sticky;
+  top: 80px;
+}
+
+.summary-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: $color-text;
+  margin: 0 0 18px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.88rem;
+  color: $color-text-muted;
+  margin-bottom: 10px;
+}
+
+.text-success { color: $color-success; font-weight: 600; }
+
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: $color-text;
+  border-top: 1px solid $color-border;
+  padding-top: 14px;
+  margin-top: 6px;
+  margin-bottom: 18px;
+}
+
+.btn-full { width: 100%; }
+
+.summary-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 14px;
+  font-size: 0.78rem;
+  color: $color-text-muted;
+}
+
+// ── Bottoni ───────────────────────────────────────────────
+.btn-primary {
+  padding: 12px 28px;
+  border-radius: 9px;
+  border: none;
+  background: $color-primary;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s;
+
+  &:hover { opacity: 0.9; }
+}

@@ -1,0 +1,229 @@
+// ═══════════════════════════════════════════════════════════════
+//  TEMA NEGOZIO — modifica qui per personalizzare colori e stile
+//  Tutte le variabili del catalogo partono da qui.
+// ═══════════════════════════════════════════════════════════════
+
+// — Colori principali —
+$color-primary:       #1D4ED8;   // Bottoni, link, bordi attivi
+$color-primary-light: #EFF6FF;   // Background hover riga
+$color-text:          #111827;   // Testo principale
+$color-text-muted:    #6B7280;   // Testo secondario / descrizioni
+$color-border:        #E5E7EB;   // Bordi contenitore
+$color-bg:            #F9FAFB;   // Sfondo pagina
+$color-white:         #FFFFFF;
+
+// — Icona sfondo per categoria —
+//   Puoi cambiare questi hex per avere colori diversi per icona
+$icon-bg-1: #DBEAFE;  // blu chiaro
+$icon-bg-2: #D1FAE5;  // verde chiaro
+$icon-bg-3: #FEF3C7;  // giallo chiaro
+$icon-bg-4: #FCE7F3;  // rosa chiaro
+
+// — Layout —
+$page-max-width:  640px;
+$row-padding-v:   16px;
+$row-padding-h:   20px;
+$icon-size:       46px;
+$border-radius:   14px;
+
+// ═══════════════════════════════════════════════════════════════
+//  STILI COMPONENTE
+// ═══════════════════════════════════════════════════════════════
+
+.cat-page {
+  max-width: $page-max-width;
+  margin: 0 auto;
+  padding: 48px 24px 64px;
+}
+
+// ── Intestazione ──────────────────────────────────────────────
+.cat-header {
+  margin-bottom: 32px;
+}
+
+.cat-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: $color-text;
+  margin: 0 0 6px;
+  line-height: 1.2;
+}
+
+.cat-subtitle {
+  font-size: 0.9rem;
+  color: $color-text-muted;
+  margin: 0;
+}
+
+// ── Lista contenitore ─────────────────────────────────────────
+.cat-list {
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+  overflow: hidden;
+  background: $color-white;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.05);
+}
+
+// ── Singola riga catalogo ─────────────────────────────────────
+.cat-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: $row-padding-v $row-padding-h;
+  border: none;
+  border-bottom: 1px solid $color-border;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: $color-primary-light;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: -2px;
+  }
+
+  // Ultima riga: niente bordo in fondo
+  &--last,
+  &:last-child {
+    border-bottom: none;
+  }
+
+  // Skeleton placeholder
+  &--skeleton {
+    pointer-events: none;
+    cursor: default;
+  }
+}
+
+// ── Icona emoji ───────────────────────────────────────────────
+.cat-icon-wrap {
+  width: $icon-size;
+  height: $icon-size;
+  border-radius: 10px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  // Colori ciclici per le icone (puoi cambiare a piacere)
+  background: $icon-bg-1;
+
+  .cat-row:nth-child(2) &  { background: $icon-bg-1; }
+  .cat-row:nth-child(3) &  { background: $icon-bg-2; }
+  .cat-row:nth-child(4) &  { background: $icon-bg-3; }
+  .cat-row:nth-child(5) &  { background: $icon-bg-4; }
+  .cat-row:nth-child(6) &  { background: $icon-bg-1; }
+  .cat-row:nth-child(7) &  { background: $icon-bg-2; }
+  .cat-row:nth-child(8) &  { background: $icon-bg-3; }
+}
+
+.cat-emoji {
+  font-size: 1.4rem;
+  line-height: 1;
+  user-select: none;
+}
+
+// ── Testo (nome + descrizione) ────────────────────────────────
+.cat-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.cat-nome {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: $color-text;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cat-desc {
+  font-size: 0.78rem;
+  color: $color-text-muted;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// ── Freccia destra ────────────────────────────────────────────
+.cat-arrow {
+  width: 16px;
+  height: 16px;
+  color: $color-text-muted;
+  flex-shrink: 0;
+  transition: transform 0.15s ease, color 0.15s ease;
+
+  .cat-row:hover & {
+    color: $color-primary;
+    transform: translateX(2px);
+  }
+}
+
+// ── Stato vuoto ───────────────────────────────────────────────
+.cat-empty {
+  text-align: center;
+  padding: 60px 0;
+  color: $color-text-muted;
+
+  &__icon {
+    display: block;
+    font-size: 3rem;
+    margin-bottom: 12px;
+  }
+
+  p {
+    font-size: 0.95rem;
+    margin: 0;
+  }
+}
+
+// ── Contatore in fondo ────────────────────────────────────────
+.cat-footer-count {
+  margin-top: 12px;
+  font-size: 0.78rem;
+  color: $color-text-muted;
+  text-align: center;
+}
+
+// ── Skeleton ──────────────────────────────────────────────────
+.skeleton-block {
+  background: #E5E7EB;
+  border-radius: 10px;
+  animation: shimmer 1.4s infinite;
+}
+
+.skeleton-line {
+  height: 11px;
+  border-radius: 4px;
+  background: #E5E7EB;
+  animation: shimmer 1.4s infinite;
+
+  &.w-40 { width: 40%; }
+  &.w-60 { width: 60%; }
+  &.w-80 { width: 80%; }
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+// ── Responsive ────────────────────────────────────────────────
+@media (max-width: 480px) {
+  .cat-page {
+    padding: 32px 16px 48px;
+  }
+
+  .cat-title {
+    font-size: 1.3rem;
+  }
+}

@@ -1,0 +1,78 @@
+<!-- ═══════════════════════════════════════════════════════════
+     PAGINA HOME CATALOGO — lista verticale scrollabile
+     Ogni riga: emoji + nome + descrizione + freccia
+     Clic → /catalogo/prodotti  (con o senza filtro categoriaId)
+     ═══════════════════════════════════════════════════════════ -->
+
+<div class="cat-page">
+
+  <!-- Intestazione -->
+  <div class="cat-header">
+    <h1 class="cat-title">Cataloghi disponibili</h1>
+    <p class="cat-subtitle">Seleziona un catalogo per vedere i prodotti</p>
+  </div>
+
+  <!-- Skeleton loading -->
+  @if (isLoading()) {
+    <div class="cat-list">
+      @for (n of [1, 2, 3, 4]; track n) {
+        <div class="cat-row cat-row--skeleton">
+          <div class="cat-icon-wrap skeleton-block"></div>
+          <div class="cat-text" style="flex:1; gap: 6px; display:flex; flex-direction:column;">
+            <div class="skeleton-line w-40"></div>
+            <div class="skeleton-line w-60"></div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Lista cataloghi -->
+  @if (!isLoading() && cataloghi().length > 0) {
+    <div class="cat-list">
+      @for (cat of cataloghi(); track cat.id; let last = $last) {
+        <button
+          class="cat-row"
+          [class.cat-row--last]="last"
+          (click)="vaiALista(cat)"
+          type="button"
+        >
+          <!-- Icona emoji -->
+          <div class="cat-icon-wrap">
+            <span class="cat-emoji">{{ cat.emoji }}</span>
+          </div>
+
+          <!-- Testo -->
+          <div class="cat-text">
+            <span class="cat-nome">{{ cat.nome }}</span>
+            @if (cat.descrizione) {
+              <span class="cat-desc">{{ cat.descrizione }}</span>
+            }
+          </div>
+
+          <!-- Freccia destra -->
+          <svg class="cat-arrow" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </button>
+      }
+    </div>
+  }
+
+  <!-- Stato vuoto (nessuna categoria dal server) -->
+  @if (!isLoading() && cataloghi().length === 0) {
+    <div class="cat-empty">
+      <span class="cat-empty__icon">📦</span>
+      <p>Nessun catalogo disponibile al momento.</p>
+    </div>
+  }
+
+  <!-- Contatore in fondo -->
+  @if (!isLoading() && totProdotti() > 0) {
+    <p class="cat-footer-count">
+      {{ totProdotti() }} prodotti totali in {{ cataloghi().length - 1 }} categorie
+    </p>
+  }
+
+</div>
