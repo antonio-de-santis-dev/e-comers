@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+        FIX: Converte le colonne immagine da oid a bytea.
+        Su PostgreSQL, Liquibase mappa blobType come oid, ma Hibernate
+        si aspetta bytea. Questo changeset allinea il DB con il mapping JPA.
+    -->
+    <changeSet id="20260324-fix-blob-oid-to-bytea" author="fix" dbms="postgresql">
+
+        <!-- Rimuove prima i prodotti inseriti con lo_from_bytea (OID) -->
+        <sql>DELETE FROM prodotto;</sql>
+
+        <!-- Altera immagine_copertina: oid -> bytea -->
+        <sql>
+            ALTER TABLE prodotto
+                ALTER COLUMN immagine_copertina TYPE bytea
+                USING lo_get(immagine_copertina::oid);
+        </sql>
+
+        <!-- Altera immagine_prodotto: oid -> bytea (nullable) -->
+        <sql>
+            ALTER TABLE prodotto
+                ALTER COLUMN immagine_prodotto TYPE bytea
+                USING CASE
+                    WHEN immagine_prodotto IS NULL THEN NULL
+                    ELSE lo_get(immagine_prodotto::oid)
+                END;
+        </sql>
+
+    </changeSet>
+
+</databaseChangeLog>

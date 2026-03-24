@@ -41,7 +41,6 @@ public class Prodotto implements Serializable {
     @Column(name = "nome", length = 200, nullable = false)
     private String nome;
 
-    @Lob
     @Column(name = "descrizione", nullable = false)
     private String descrizione;
 
@@ -54,16 +53,15 @@ public class Prodotto implements Serializable {
     @Column(name = "aliquota_iva", nullable = false)
     private Integer aliquotaIva;
 
-    @Lob
-    @Column(name = "immagine_copertina", nullable = false)
+
+    @Column(name = "immagine_copertina", columnDefinition = "bytea")
     private byte[] immagineCopertina;
 
     @NotNull
     @Column(name = "immagine_copertina_content_type", nullable = false)
     private String immagineCopertinaContentType;
 
-    @Lob
-    @Column(name = "immagine_prodotto")
+    @Column(name = "immagine_prodotto", columnDefinition = "bytea")
     private byte[] immagineProdotto;
 
     @Column(name = "immagine_prodotto_content_type")

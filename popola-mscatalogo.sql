@@ -1,0 +1,35 @@
+﻿-- Cancella i prodotti inseriti male
+DELETE FROM prodotto;
+
+-- Inserisci con immagine_copertina come bytea vuoto usando lo_from_bytea
+INSERT INTO prodotto (id, nome, descrizione, prezzo, aliquota_iva, immagine_copertina, immagine_copertina_content_type, disponibile, quantita_disponibile, in_evidenza, totale_purchased, categoria_id) VALUES
+(gen_random_uuid(), 'iPhone 15 Pro', 'Smartphone Apple con chip A17 Pro fotocamera 48MP', 1299.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 50, true, 120, 1001),
+(gen_random_uuid(), 'MacBook Air M3', 'Laptop ultrasottile con chip Apple M3 8 core', 1499.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 30, true, 85, 1001),
+(gen_random_uuid(), 'Samsung Galaxy S24', 'Smartphone Android top di gamma 256GB', 999.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 45, false, 95, 1001),
+(gen_random_uuid(), 'AirPods Pro 2', 'Auricolari wireless con cancellazione attiva del rumore', 279.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 100, true, 200, 1001),
+(gen_random_uuid(), 'iPad Air M2', 'Tablet versatile con chip M2 per lavoro e svago', 749.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 25, false, 60, 1001),
+(gen_random_uuid(), 'Sony WH-1000XM5', 'Cuffie over-ear premium con ANC adattivo', 349.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 60, false, 75, 1001),
+(gen_random_uuid(), 'Apple Watch Series 9', 'Smartwatch con GPS e cardiofrequenzimetro avanzato', 449.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 40, true, 110, 1001),
+(gen_random_uuid(), 'Dell XPS 15', 'Laptop Windows premium con display OLED 4K', 1899.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 15, false, 30, 1001),
+(gen_random_uuid(), 'Nintendo Switch OLED', 'Console ibrida con schermo OLED 7 pollici', 349.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 35, false, 145, 1001),
+(gen_random_uuid(), 'GoPro Hero 12', 'Action camera 5.3K ultra resistente acqua', 399.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 55, false, 55, 1001),
+(gen_random_uuid(), 'Giacca in Pelle Uomo', 'Giacca vera pelle italiana lavorata a mano', 299.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 20, true, 40, 1002),
+(gen_random_uuid(), 'Vestito Elegante Donna', 'Abito da sera in seta naturale made in Italy', 189.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 15, true, 35, 1002),
+(gen_random_uuid(), 'Sneakers Running Nike', 'Scarpe da corsa con tecnologia Air Max', 129.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 80, false, 180, 1002),
+(gen_random_uuid(), 'Jeans Slim Fit', 'Jeans elasticizzati comfort per tutto il giorno', 79.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 100, false, 220, 1002),
+(gen_random_uuid(), 'Cappotto Invernale', 'Cappotto in lana merino caldo e leggero', 249.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 25, true, 50, 1002),
+(gen_random_uuid(), 'T-Shirt Premium Cotton', 'T-shirt 100% cotone biologico certificato', 39.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 200, false, 310, 1002),
+(gen_random_uuid(), 'Borsa Tote Canvas', 'Borsa capiente in canvas rinforzato per uso quotidiano', 59.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 50, false, 90, 1002),
+(gen_random_uuid(), 'Occhiali da Sole Polarizzati', 'Occhiali UV400 con lenti polarizzate protezione totale', 169.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 40, false, 65, 1002),
+(gen_random_uuid(), 'Orologio Classico', 'Orologio analogico con cinturino in pelle italiana', 199.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 30, true, 45, 1002),
+(gen_random_uuid(), 'Sciarpa in Cashmere', 'Sciarpa morbida 100% cashmere scozzese', 89.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 60, false, 80, 1002),
+(gen_random_uuid(), 'Robot da Cucina KitchenAid', 'Mixer planetario professionale 5 litri', 549.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 10, true, 25, 1003),
+(gen_random_uuid(), 'Set Coltelli Professionali', 'Set 6 coltelli da chef in acciaio tedesco', 299.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 20, true, 38, 1003),
+(gen_random_uuid(), 'Macchina Caffe Automatica', 'Macchina espresso con macinacaffe integrato', 799.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 15, false, 42, 1003),
+(gen_random_uuid(), 'Pentola Pressione Elettrica', 'Multicooker 7 in 1 da 6 litri programmabile', 129.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 35, false, 70, 1003),
+(gen_random_uuid(), 'Friggitrice ad Aria XXL', 'Friggitrice 4.1L senza olio con display digitale', 199.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 40, true, 95, 1003),
+(gen_random_uuid(), 'Set Posate 24 Pezzi', 'Posate in acciaio inossidabile 18/10 lucidato', 89.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 25, false, 55, 1003),
+(gen_random_uuid(), 'Lampada da Tavolo LED', 'Lampada smart con controllo via app e dimmer', 79.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 50, false, 48, 1003),
+(gen_random_uuid(), 'Coperta Termica Sherpa', 'Coperta in sherpa double face 150x200cm', 59.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 80, false, 115, 1003),
+(gen_random_uuid(), 'Robot Aspirapolvere Laser', 'Robot aspirapolvere con mappatura laser LiDAR', 599.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 12, true, 28, 1003),
+(gen_random_uuid(), 'Diffusore Aromi Ultrasonico', 'Diffusore 500ml con luci LED RGB multicolore', 45.99, 22, lo_from_bytea(0, ''::bytea), 'image/jpeg', true, 100, false, 160, 1003);

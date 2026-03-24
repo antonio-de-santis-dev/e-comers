@@ -25,4 +25,5 @@
     <include file="config/liquibase/changelog/20260318101256_added_entity_constraints_Prodotto.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
+  <include file="config/liquibase/changelog/20260324_fix_blob_oid_to_bytea.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>
