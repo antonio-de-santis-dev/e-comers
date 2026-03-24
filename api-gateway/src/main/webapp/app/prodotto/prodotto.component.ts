@@ -16,11 +16,12 @@ import { FilterComponent, FilterOptions, IFilterOption, IFilterOptions } from 'a
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
 
-import { EntityArrayResponseType, ProdottoService } from '../service/prodotto.service';
-import { CategoriaService } from '../../categoria/service/categoria.service';
-import { ProdottoDeleteDialogComponent } from '../delete/prodotto-delete-dialog.component';
-import { IProdotto } from '../prodotto.model';
-import { ICategoria } from '../../categoria/categoria.model';
+// ✅ PERCORSI CORRETTI — i file sono in entities/mscatalogo/
+import { EntityArrayResponseType, ProdottoService } from '../entities/mscatalogo/prodotto/service/prodotto.service';
+import { CategoriaService } from '../entities/mscatalogo/categoria/service/categoria.service';
+import { ProdottoDeleteDialogComponent } from '../entities/mscatalogo/prodotto/delete/prodotto-delete-dialog.component';
+import { IProdotto } from '../entities/mscatalogo/prodotto/prodotto.model';
+import { ICategoria } from '../entities/mscatalogo/categoria/categoria.model';
 
 // -------------------------------------------------------
 // Numero di prodotti per pagina nel catalogo
@@ -104,7 +105,7 @@ export class ProdottoComponent implements OnInit {
 
   private loadCategorie(): void {
     this.categoriaService.query({ size: 200 }).subscribe({
-      next: res => this.categorie.set(res.body ?? []),
+      next: (res: any) => this.categorie.set(res.body ?? []),
     });
   }
 
@@ -173,37 +174,23 @@ export class ProdottoComponent implements OnInit {
   }
 
   // -------------------------------------------------------
-  // Utility helpers (compatibili con la home)
+  // Utility helpers
   // -------------------------------------------------------
-
-  /**
-   * Formatta un prezzo in Euro con localizzazione italiana.
-   * Usato anche nella home — mantieni la stessa firma.
-   */
   formatPrice(price: number | null | undefined): string {
     if (price == null) return '—';
     return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(price);
   }
 
-  /**
-   * Restituisce un array di 5 booleani per renderizzare le stelle.
-   * true = stella piena, false = stella vuota.
-   */
   getStarsArray(voto: number | null | undefined): boolean[] {
     const v = Math.round(voto ?? 0);
     return Array.from({ length: 5 }, (_, i) => i < v);
   }
 
-  /**
-   * URL immagine con fallback al placeholder.
-   * Cambia il percorso del placeholder secondo le esigenze del cliente.
-   */
   getImmagine(prodotto: IProdotto): string {
     if (prodotto.immagineUrl) return prodotto.immagineUrl;
     return '/content/images/prodotto-placeholder.svg';
   }
 
-  /** Il prodotto è disponibile se quantitaDisponibile > 0 (o se il campo è null = non gestito) */
   isDisponibile(prodotto: IProdotto): boolean {
     return prodotto.quantitaDisponibile == null || prodotto.quantitaDisponibile > 0;
   }
@@ -216,7 +203,6 @@ export class ProdottoComponent implements OnInit {
     this.page = +(page ?? 1);
     this.sortState.set(this.sortService.parseSortParam(params.get(SORT) ?? data[DEFAULT_SORT_DATA]));
     this.filters.initializeFromParams(params);
-    // Ripristina il sort select dall'URL
     const sortParam = params.get(SORT);
     if (sortParam) this.currentSort = sortParam;
   }
@@ -226,9 +212,8 @@ export class ProdottoComponent implements OnInit {
     const data = response.body ?? [];
     this.prodottos.set(data);
 
-    // Aggiorna il prezzo massimo dello slider al primo caricamento
     if (this.prezzoMax === 500 && data.length > 0) {
-      const maxFound = Math.max(...data.map(p => p.prezzo ?? 0));
+      const maxFound = Math.max(...data.map((p: IProdotto) => p.prezzo ?? 0));
       if (maxFound > 0) {
         this.prezzoMax = Math.ceil(maxFound / 10) * 10;
         this.prezzoFiltro = this.prezzoMax;
@@ -252,7 +237,6 @@ export class ProdottoComponent implements OnInit {
       sort: [`${predicate},${order}`],
     };
 
-    // Filtri server-side supportati da JHipster (jpaMetamodelFiltering = true)
     if (this.searchNome) {
       queryObject['nome.contains'] = this.searchNome;
     }
@@ -273,7 +257,7 @@ export class ProdottoComponent implements OnInit {
       queryObject[fo.name] = fo.values;
     });
 
-    return this.prodottoService.query(queryObject).pipe(tap(() => (this.isLoading = false)));
+    return (this.prodottoService as any).query(queryObject).pipe(tap(() => (this.isLoading = false)));
   }
 
   protected handleNavigation(page: number, sortState: SortState, filterOptions?: IFilterOption[]): void {
@@ -293,9 +277,6 @@ export class ProdottoComponent implements OnInit {
     });
   }
 
-  // -------------------------------------------------------
-  // Costruisce i FilterOption per la navigazione URL
-  // -------------------------------------------------------
   private buildFilterOptions(): IFilterOption[] {
     return this.filters.filterOptions;
   }
