@@ -149,10 +149,10 @@
       @if (!isLoading && prodottos().length > 0) {
         <div class="products-grid" id="entities">
           @for (prodotto of prodottos(); track trackId(prodotto)) {
-            <div class="product-card" [class.esaurito]="!isDisponibile(prodotto)" data-cy="entityTable">
+            <a class="product-card" [class.esaurito]="!isDisponibile(prodotto)" [routerLink]="['/prodotto', prodotto.id]" data-cy="entityTable">
 
-              <!-- Immagine — clic va alla pagina dettaglio -->
-              <a [routerLink]="['/prodotto', prodotto.id]" class="card-img-link">
+              <!-- Immagine -->
+              <div class="card-img-link">
                 <img
                   [src]="getImmagine(prodotto)"
                   [alt]="prodotto.nome"
@@ -162,7 +162,7 @@
                 @if (!isDisponibile(prodotto)) {
                   <span class="badge-esaurito">Esaurito</span>
                 }
-              </a>
+              </div>
 
               <!-- Body -->
               <div class="card-body">
@@ -170,9 +170,7 @@
                   <span class="card-category">{{ prodotto.categoria.nome }}</span>
                 }
 
-                <h3 class="card-name">
-                  <a [routerLink]="['/prodotto', prodotto.id]">{{ prodotto.nome }}</a>
-                </h3>
+                <h3 class="card-name">{{ prodotto.nome }}</h3>
 
                 <div class="card-stars">
                   @for (star of getStarsArray(prodotto.votaMedio); track $index) {
@@ -200,12 +198,13 @@
                     <a
                       [routerLink]="['/prodotto', prodotto.id]"
                       class="btn-acquista"
+                      (click)="$event.stopPropagation()"
                     >
                       Acquista
                     </a>
                     <button
                       class="btn-carrello"
-                      (click)="aggiungiAlCarrello(prodotto)"
+                      (click)="$event.stopPropagation(); aggiungiAlCarrello(prodotto)"
                       title="Aggiungi al carrello"
                     >
                       🛒 Aggiungi al carrello
@@ -224,10 +223,11 @@
                         class="btn-card-edit"
                         data-cy="entityEditButton"
                         title="Modifica"
+                        (click)="$event.stopPropagation()"
                       >✏️</a>
                       <button
                         class="btn-card-delete"
-                        (click)="delete(prodotto)"
+                        (click)="$event.stopPropagation(); delete(prodotto)"
                         data-cy="entityDeleteButton"
                         title="Elimina"
                       >🗑</button>
@@ -236,7 +236,7 @@
                 </div>
 
               </div>
-            </div>
+            </a>
           }
         </div>
       }
