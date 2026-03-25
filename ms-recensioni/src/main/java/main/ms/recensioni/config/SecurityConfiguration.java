@@ -31,10 +31,12 @@ public class SecurityConfiguration {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authz ->
-                // prettier-ignore
                 authz
                     .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/authenticate")).permitAll()
                     .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/authenticate")).permitAll()
+                    // GET pubbliche — recensioni leggibili senza login
+                    .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/recensiones")).permitAll()
+                    .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/recensiones/**")).permitAll()
                     .requestMatchers(mvc.pattern("/api/admin/**")).hasAuthority(AuthoritiesConstants.ADMIN)
                     .requestMatchers(mvc.pattern("/api/**")).authenticated()
                     .requestMatchers(mvc.pattern("/v3/api-docs/**")).hasAuthority(AuthoritiesConstants.ADMIN)

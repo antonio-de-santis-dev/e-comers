@@ -1,7 +1,7 @@
 package main.ms.catalogo.service;
 
 import jakarta.persistence.criteria.JoinType;
-import main.ms.catalogo.domain.*; // for static metamodels
+import main.ms.catalogo.domain.*;
 import main.ms.catalogo.domain.Prodotto;
 import main.ms.catalogo.repository.ProdottoRepository;
 import main.ms.catalogo.service.criteria.ProdottoCriteria;
@@ -15,15 +15,16 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tech.jhipster.service.QueryService;
+import tech.jhipster.service.filter.StringFilter;
 
 /**
  * Service for executing complex queries for {@link Prodotto} entities in the database.
- * The main input is a {@link ProdottoCriteria} which gets converted to {@link Specification},
- * in a way that all the filters must apply.
- * It returns a {@link Page} of {@link ProdottoDTO} which fulfills the criteria.
  *
- * MODIFICA: id gestito come UUIDFilter + Prodotto_.prodottoUuid
- * per allineamento con l'entità Prodotto.java.
+ * MODIFICA:
+ * - id gestito come UUIDFilter + Prodotto_.prodottoUuid
+ * - ricerca per nome CASE-INSENSITIVE: usa LOWER() su entrambi i lati
+ *   cosi "airpods" trova "AirPods Pro 2", "AIRPODS", "Airpods" ecc.
+ *   Ispirata dal pattern .toLowerCase() di ng2-ui/auto-complete.
  */
 @Service
 @Transactional(readOnly = true)
@@ -58,9 +59,11 @@ public class ProdottoQueryService extends QueryService<Prodotto> {
         if (criteria != null) {
             specification = Specification.allOf(
                 Boolean.TRUE.equals(criteria.getDistinct()) ? distinct(criteria.getDistinct()) : null,
-                // FIX: UUIDFilter + prodottoUuid — buildSpecification è corretto per UUID
                 buildSpecification(criteria.getId(), Prodotto_.prodottoUuid),
-                buildStringSpecification(criteria.getNome(), Prodotto_.nome),
+                // Ricerca nome CASE-INSENSITIVE
+                // buildStringSpecification usa LIKE case-sensitive su PostgreSQL.
+                // Sostituito con specifica manuale che fa LOWER(nome) LIKE LOWER('%valore%')
+                nomeContainsCaseInsensitive(criteria.getNome()),
                 buildRangeSpecification(criteria.getPrezzo(), Prodotto_.prezzo),
                 buildRangeSpecification(criteria.getAliquotaIva(), Prodotto_.aliquotaIva),
                 buildSpecification(criteria.getDisponibile(), Prodotto_.disponibile),
@@ -75,5 +78,44 @@ public class ProdottoQueryService extends QueryService<Prodotto> {
             );
         }
         return specification;
+    }
+
+    /**
+     * Specifica JPA per ricerca case-insensitive sul campo nome.
+     *
+     * Genera: LOWER(nome) LIKE LOWER('%keyword%')
+     *
+     * Funziona sia con StringFilter.contains che con StringFilter.equals,
+     * ignorando completamente maiuscole/minuscole su entrambi i lati.
+     * Se il filtro e' null o vuoto, restituisce null (nessuna condizione aggiunta).
+     */
+    private Specification<Prodotto> nomeContainsCaseInsensitive(StringFilter filter) {
+        if (filter == null) {
+            return null;
+        }
+
+        // contains: "airpods" → LOWER(nome) LIKE '%airpods%'
+        if (filter.getContains() != null) {
+            String pattern = "%" + filter.getContains().toLowerCase() + "%";
+            return (root, query, cb) ->
+                cb.like(cb.lower(root.get(Prodotto_.nome)), pattern);
+        }
+
+        // equals: "AirPods Pro 2" → LOWER(nome) = 'airpods pro 2'
+        if (filter.getEquals() != null) {
+            String value = filter.getEquals().toLowerCase();
+            return (root, query, cb) ->
+                cb.equal(cb.lower(root.get(Prodotto_.nome)), value);
+        }
+
+        // doesNotContain: esclude i risultati che contengono il testo
+        if (filter.getDoesNotContain() != null) {
+            String pattern = "%" + filter.getDoesNotContain().toLowerCase() + "%";
+            return (root, query, cb) ->
+                cb.notLike(cb.lower(root.get(Prodotto_.nome)), pattern);
+        }
+
+        // Per tutti gli altri operatori (in, notIn, specified) usa il comportamento standard
+        return buildStringSpecification(filter, Prodotto_.nome);
     }
 }

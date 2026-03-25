@@ -44,11 +44,8 @@ public class ProdottoResource {
     private String applicationName;
 
     private final ProdottoService prodottoService;
-
     private final ProdottoRepository prodottoRepository;
-
     private final ProdottoQueryService prodottoQueryService;
-
     private final ProdottoMapper prodottoMapper;
 
     public ProdottoResource(
@@ -63,13 +60,6 @@ public class ProdottoResource {
         this.prodottoMapper = prodottoMapper;
     }
 
-    /**
-     * {@code POST  /prodottos} : Create a new prodotto.
-     *
-     * @param prodottoDTO the prodottoDTO to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new prodottoDTO, or with status {@code 400 (Bad Request)} if the prodotto has already an ID.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PostMapping("")
     public ResponseEntity<ProdottoDTO> createProdotto(@Valid @RequestBody ProdottoDTO prodottoDTO) throws URISyntaxException {
         LOG.debug("REST request to save Prodotto : {}", prodottoDTO);
@@ -82,16 +72,6 @@ public class ProdottoResource {
             .body(prodottoDTO);
     }
 
-    /**
-     * {@code PUT  /prodottos/:id} : Updates an existing prodotto.
-     *
-     * @param id the id of the prodottoDTO to save.
-     * @param prodottoDTO the prodottoDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated prodottoDTO,
-     * or with status {@code 400 (Bad Request)} if the prodottoDTO is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the prodottoDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PutMapping("/{id}")
     public ResponseEntity<ProdottoDTO> updateProdotto(
         @PathVariable(value = "id", required = false) final UUID id,
@@ -104,28 +84,15 @@ public class ProdottoResource {
         if (!Objects.equals(id, prodottoDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
-
         if (!prodottoRepository.findByProdottoUuid(id).isPresent()) {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
-
         prodottoDTO = prodottoService.update(prodottoDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, prodottoDTO.getId().toString()))
             .body(prodottoDTO);
     }
 
-    /**
-     * {@code PATCH  /prodottos/:id} : Partial updates given fields of an existing prodotto, field will ignore if it is null
-     *
-     * @param id the id of the prodottoDTO to save.
-     * @param prodottoDTO the prodottoDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated prodottoDTO,
-     * or with status {@code 400 (Bad Request)} if the prodottoDTO is not valid,
-     * or with status {@code 404 (Not Found)} if the prodottoDTO is not found,
-     * or with status {@code 500 (Internal Server Error)} if the prodottoDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<ProdottoDTO> partialUpdateProdotto(
         @PathVariable(value = "id", required = false) final UUID id,
@@ -138,13 +105,10 @@ public class ProdottoResource {
         if (!Objects.equals(id, prodottoDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
-
         if (!prodottoRepository.findByProdottoUuid(id).isPresent()) {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
-
         Optional<ProdottoDTO> result = prodottoService.partialUpdate(prodottoDTO);
-
         return ResponseUtil.wrapOrNotFound(
             result,
             HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, prodottoDTO.getId().toString())
@@ -152,11 +116,12 @@ public class ProdottoResource {
     }
 
     /**
-     * {@code GET  /prodottos} : get all the prodottos.
+     * GET /prodottos : restituisce la lista paginata con tutti i filtri applicati.
      *
-     * @param pageable the pagination information.
-     * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of prodottos in body.
+     * FIX: il parametro eagerload non bypassa più i criteri.
+     * Prima con eagerload=true si chiamava findAllWithEagerRelationships()
+     * che ignorava completamente ProdottoCriteria (nome, categoria, prezzo, ecc.).
+     * Ora si usa sempre findByCriteria() che applica tutti i filtri correttamente.
      */
     @GetMapping("")
     public ResponseEntity<List<ProdottoDTO>> getAllProdottos(
@@ -166,15 +131,8 @@ public class ProdottoResource {
     ) {
         LOG.debug("REST request to get Prodottos by criteria: {}", criteria);
 
-        Page<ProdottoDTO> page;
-        if (eagerload) {
-            // Carica prodotti con categoria in JOIN FETCH — evita N+1 queries
-            page = prodottoRepository
-                .findAllWithEagerRelationships(pageable)
-                .map(prodottoMapper::toDto);
-        } else {
-            page = prodottoQueryService.findByCriteria(criteria, pageable);
-        }
+        // Applica sempre i criteri — eagerload non bypassa più i filtri
+        Page<ProdottoDTO> page = prodottoQueryService.findByCriteria(criteria, pageable);
 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
             ServletUriComponentsBuilder.fromCurrentRequest(), page
@@ -182,24 +140,12 @@ public class ProdottoResource {
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
-    /**
-     * {@code GET  /prodottos/count} : count all the prodottos.
-     *
-     * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
-     */
     @GetMapping("/count")
     public ResponseEntity<Long> countProdottos(ProdottoCriteria criteria) {
         LOG.debug("REST request to count Prodottos by criteria: {}", criteria);
         return ResponseEntity.ok().body(prodottoQueryService.countByCriteria(criteria));
     }
 
-    /**
-     * {@code GET  /prodottos/:id} : get the "id" prodotto.
-     *
-     * @param id the id of the prodottoDTO to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the prodottoDTO, or with status {@code 404 (Not Found)}.
-     */
     @GetMapping("/{id}")
     public ResponseEntity<ProdottoDTO> getProdotto(@PathVariable("id") UUID id) {
         LOG.debug("REST request to get Prodotto : {}", id);
@@ -207,12 +153,6 @@ public class ProdottoResource {
         return ResponseUtil.wrapOrNotFound(prodottoDTO);
     }
 
-    /**
-     * {@code DELETE  /prodottos/:id} : delete the "id" prodotto.
-     *
-     * @param id the id of the prodottoDTO to delete.
-     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProdotto(@PathVariable("id") UUID id) {
         LOG.debug("REST request to delete Prodotto : {}", id);
@@ -222,29 +162,26 @@ public class ProdottoResource {
             .build();
     }
 
-    // EndPoint castom
+    // ── Endpoint custom ──────────────────────────────────────────────────────
 
-    // Carosello home — prodotti marcati inEvidenza=true
+    /** Prodotti marcati inEvidenza=true — usato dal carosello home */
     @GetMapping("/in-evidenza")
     public ResponseEntity<List<ProdottoDTO>> getProdottiInEvidenza() {
         LOG.debug("GET /api/prodottos/in-evidenza");
-        List<ProdottoDTO> result = prodottoService.findInEvidenza();
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(prodottoService.findInEvidenza());
     }
 
-    // Carosello home — top 10 per totalePurchased
+    /** Top 10 per totalePurchased — usato dal carosello home */
     @GetMapping("/top-venduti")
     public ResponseEntity<List<ProdottoDTO>> getTopVenduti() {
         LOG.debug("GET /api/prodottos/top-venduti");
-        List<ProdottoDTO> result = prodottoService.findTopVenduti();
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(prodottoService.findTopVenduti());
     }
 
-    // Dettaglio prodotto — "Ti potrebbe interessare"
+    /** Prodotti correlati per la pagina dettaglio */
     @GetMapping("/{id}/correlati")
     public ResponseEntity<List<ProdottoDTO>> getCorrelati(@PathVariable UUID id) {
         LOG.debug("GET /api/prodottos/{}/correlati", id);
-        List<ProdottoDTO> result = prodottoService.findCorrelati(id);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(prodottoService.findCorrelati(id));
     }
 }

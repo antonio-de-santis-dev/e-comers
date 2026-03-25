@@ -35,11 +35,17 @@
           <input
             type="text"
             class="search-input"
-            placeholder="Nome prodotto..."
+            placeholder="Cerca prodotto..."
             [(ngModel)]="searchNome"
             (input)="onSearchChange()"
+            (keydown.escape)="resetSearch()"
+            autocomplete="off"
           />
-          <span class="search-icon">🔍</span>
+          @if (searchNome) {
+            <button class="search-clear" (click)="resetSearch()" title="Cancella ricerca">✕</button>
+          } @else {
+            <span class="search-icon">🔍</span>
+          }
         </div>
       </div>
 
@@ -148,11 +154,10 @@
               <!-- Immagine — clic va alla pagina dettaglio -->
               <a [routerLink]="['/prodotto', prodotto.id]" class="card-img-link">
                 <img
-                  src="https://www.italtras.us/575-large_default/batteria-stilo-aa-duracell-15v.jpg"
+                  [src]="getImmagine(prodotto)"
                   [alt]="prodotto.nome"
                   class="card-img"
                   loading="lazy"
-                  onerror="this.onerror=null;this.src='https://placehold.co/400x400/f0f0f0/888?text=Prodotto'"
                 />
                 @if (!isDisponibile(prodotto)) {
                   <span class="badge-esaurito">Esaurito</span>

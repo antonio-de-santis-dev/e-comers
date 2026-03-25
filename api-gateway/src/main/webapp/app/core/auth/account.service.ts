@@ -1,6 +1,6 @@
 import { Injectable, Signal, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, ReplaySubject, of } from 'rxjs';
 import { catchError, shareReplay, tap } from 'rxjs/operators';
@@ -13,7 +13,7 @@ import { ApplicationConfigService } from '../config/application-config.service';
 export class AccountService {
   private readonly userIdentity = signal<Account | null>(null);
   private readonly authenticationState = new ReplaySubject<Account | null>(1);
-  private accountCache$?: Observable<Account> | null;
+  private accountCache$?: Observable<Account | null> | null;
 
   private readonly translateService = inject(TranslateService);
   private readonly http = inject(HttpClient);
@@ -51,16 +51,12 @@ export class AccountService {
   identity(force?: boolean): Observable<Account | null> {
     if (!this.accountCache$ || force) {
       this.accountCache$ = this.fetch().pipe(
-        tap((account: Account) => {
+        tap((account: Account | null) => {
+          if (!account) return;
           this.authenticate(account);
-
-          // After retrieve the account info, the language will be changed to
-          // the user's preferred language configured in the account setting
-          // unless user have chosen another language in the current session
           if (!this.stateStorageService.getLocale()) {
             this.translateService.use(account.langKey);
           }
-
           this.navigateToStoredUrl();
         }),
         shareReplay(),
@@ -77,13 +73,21 @@ export class AccountService {
     return this.authenticationState.asObservable();
   }
 
-  private fetch(): Observable<Account> {
-    return this.http.get<Account>(this.applicationConfigService.getEndpointFor('api/account'));
+  private fetch(): Observable<Account | null> {
+    return this.http.get<Account>(this.applicationConfigService.getEndpointFor('api/account')).pipe(
+      catchError((err: HttpErrorResponse) => {
+        // 401 = non loggato (normale per utenti anonimi)
+        // 500 = gateway crasha tentando di validare JWT inesistente
+        // In entrambi i casi l'utente e' semplicemente anonimo — nessun redirect al login
+        if (err.status === 401 || err.status === 500) {
+          return of(null);
+        }
+        throw err;
+      }),
+    );
   }
 
   private navigateToStoredUrl(): void {
-    // previousState can be set in the authExpiredInterceptor and in the userRouteAccessService
-    // if login is successful, go to stored previousState and clear previousState
     const previousUrl = this.stateStorageService.getUrl();
     if (previousUrl) {
       this.stateStorageService.clearUrl();
