@@ -14,9 +14,7 @@ $transition-speed: 0.25s;
   padding: 0.6rem 0;
 
   &__inner {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 0 1.5rem;
+    padding: 0 2rem;
     display: flex;
     align-items: center;
     gap: 0.4rem;
@@ -45,9 +43,8 @@ $transition-speed: 0.25s;
 // ===== WRAPPER PAGINA =====
 
 .det-page {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem 4rem;
+  // Nessun max-width — occupa tutta la larghezza
+  padding: 2rem 2rem 3rem;
   background: #f8f9fa;
   min-height: 60vh;
 }
@@ -57,7 +54,7 @@ $transition-speed: 0.25s;
 .det-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 3rem;
+  gap: 2.5rem;
   align-items: start;
   margin-bottom: 3rem;
 
@@ -70,8 +67,13 @@ $transition-speed: 0.25s;
 // ===== COLONNA IMMAGINE =====
 
 .det-img-col {
+  // Sticky: rimane ferma mentre si scrolla la colonna destra
   position: sticky;
-  top: 1.5rem;
+  top: 1rem;
+  // z-index per stare sopra eventuali elementi sovrapposti
+  z-index: 1;
+  // align-self: start e' fondamentale per sticky in un grid
+  align-self: start;
 
   @media (max-width: 768px) {
     position: static;

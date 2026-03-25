@@ -16,8 +16,7 @@ $gap: 1.5rem;
   padding: 2rem 0;
 
   &__inner {
-    max-width: 1280px;
-    margin: 0 auto;
+    // Occupa tutta la larghezza — nessun max-width
     padding: 0 1.5rem;
     display: flex;
     align-items: center;
@@ -47,12 +46,11 @@ $gap: 1.5rem;
 }
 
 .catalogo-layout {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem;
+  // Nessun max-width: il layout occupa tutta la larghezza disponibile
+  padding: 1.5rem 1.5rem;
   display: grid;
   grid-template-columns: $sidebar-width 1fr;
-  gap: $gap * 1.5;
+  gap: $gap;
   align-items: start;
 
   @media (max-width: 900px) {
@@ -63,10 +61,10 @@ $gap: 1.5rem;
 // ===== SIDEBAR =====
 
 .catalogo-sidebar {
-  background: #fff;
+  background: #f8f9fa;
   border-radius: $card-radius;
   padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  // Nessun box-shadow — stessa superficie dello sfondo
   position: sticky;
   top: 1rem;
 
@@ -306,9 +304,9 @@ $gap: 1.5rem;
 // ===== CARD PRODOTTO — più grande =====
 
 .product-card {
-  background: #fff;
+  // Stesso colore dello sfondo pagina — card invisibile, solo contenuto
+  background: #f8f9fa;
   border-radius: $card-radius;
-  // Nessun contorno né box-shadow — card pulita e piatta
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -318,8 +316,8 @@ $gap: 1.5rem;
   transition: transform $transition-speed, background $transition-speed;
 
   &:hover {
-    transform: translateY(-4px);
-    background: #fafafa;
+    transform: translateY(-3px);
+    background: #eef0f2;
     text-decoration: none;
     color: inherit;
   }
@@ -540,9 +538,8 @@ $gap: 1.5rem;
 }
 
 .skeleton-card {
-  background: #fff;
+  background: #f8f9fa;
   border-radius: $card-radius;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   overflow: hidden;
 }
 
