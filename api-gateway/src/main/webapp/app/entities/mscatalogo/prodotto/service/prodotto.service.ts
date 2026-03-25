@@ -31,7 +31,7 @@ export class ProdottoService {
     return this.http.patch<IProdotto>(`${this.resourceUrl}/${this.getProdottoIdentifier(prodotto)}`, prodotto, { observe: 'response' });
   }
 
-  find(id: number): Observable<EntityResponseType> {
+  find(id: string): Observable<EntityResponseType> {
     return this.http.get<IProdotto>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
@@ -40,11 +40,11 @@ export class ProdottoService {
     return this.http.get<IProdotto[]>(this.resourceUrl, { params: options, observe: 'response' });
   }
 
-  delete(id: number): Observable<HttpResponse<{}>> {
+  delete(id: string): Observable<HttpResponse<{}>> {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
-  getProdottoIdentifier(prodotto: Pick<IProdotto, 'id'>): number {
+  getProdottoIdentifier(prodotto: Pick<IProdotto, 'id'>): string {
     return prodotto.id;
   }
 

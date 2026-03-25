@@ -26,7 +26,7 @@ describe('Prodotto Form Service', () => {
             quantitaDisponibile: expect.any(Object),
             inEvidenza: expect.any(Object),
             immagineUrl: expect.any(Object),
-            votaMedio: expect.any(Object),
+            votoTotale: expect.any(Object),
             categoria: expect.any(Object),
           }),
         );
@@ -44,7 +44,7 @@ describe('Prodotto Form Service', () => {
             quantitaDisponibile: expect.any(Object),
             inEvidenza: expect.any(Object),
             immagineUrl: expect.any(Object),
-            votaMedio: expect.any(Object),
+            votoTotale: expect.any(Object),
             categoria: expect.any(Object),
           }),
         );

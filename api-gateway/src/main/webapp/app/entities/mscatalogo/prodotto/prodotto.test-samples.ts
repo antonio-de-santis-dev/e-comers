@@ -22,7 +22,7 @@ export const sampleWithFullData: IProdotto = {
   quantitaDisponibile: 29111,
   inEvidenza: true,
   immagineUrl: 'uh-huh sandbar times',
-  votaMedio: 9472.91,
+  votoTotale: 9472.91,
 };
 
 export const sampleWithNewData: NewProdotto = {

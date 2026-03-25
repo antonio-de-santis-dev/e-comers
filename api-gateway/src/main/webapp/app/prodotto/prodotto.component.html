@@ -122,7 +122,7 @@
             <option value="nome,desc">Nome Z-A</option>
             <option value="prezzo,asc">Prezzo crescente</option>
             <option value="prezzo,desc">Prezzo decrescente</option>
-            <option value="votaMedio,desc">Valutazione</option>
+            <option value="votoTotale,desc">Valutazione</option>
             <option value="inEvidenza,desc">In evidenza prima</option>
           </select>
         </div>
@@ -173,11 +173,11 @@
                 <h3 class="card-name">{{ prodotto.nome }}</h3>
 
                 <div class="card-stars">
-                  @for (star of getStarsArray(prodotto.votaMedio); track $index) {
+                  @for (star of getStarsArray(prodotto.votoTotale); track $index) {
                     <span [class.filled]="star">★</span>
                   }
-                  @if (prodotto.votaMedio) {
-                    <span class="star-value">({{ prodotto.votaMedio | number: '1.1-1' }})</span>
+                  @if (prodotto.votoTotale) {
+                    <span class="star-value">({{ prodotto.votoTotale | number: '1.1-1' }})</span>
                   }
                 </div>
 

@@ -4,7 +4,7 @@ import { Injectable, signal, computed } from '@angular/core';
 //  Interfaccia item carrello
 // -------------------------------------------------------
 export interface CarrelloItem {
-  id: number;
+  id: string;
   nome: string;
   prezzo: number;
   quantita: number;
@@ -35,7 +35,7 @@ export class CarrelloService {
 
   // ---- Metodi ----
 
-  aggiungi(prodotto: { id: number; nome?: string | null; prezzo?: number | null; immagineUrl?: string | null; categoriaId?: number | null }): void {
+  aggiungi(prodotto: { id: string; nome?: string | null; prezzo?: number | null; immagineUrl?: string | null; categoriaId?: number | null }): void {
     this._items.update(items => {
       const existing = items.find(i => i.id === prodotto.id);
       if (existing) {
@@ -57,11 +57,11 @@ export class CarrelloService {
     });
   }
 
-  rimuovi(id: number): void {
+  rimuovi(id: string): void {
     this._items.update(items => items.filter(i => i.id !== id));
   }
 
-  modificaQuantita(id: number, quantita: number): void {
+  modificaQuantita(id: string, quantita: number): void {
     if (quantita <= 0) {
       this.rimuovi(id);
       return;

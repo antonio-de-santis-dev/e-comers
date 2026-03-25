@@ -34,71 +34,71 @@
     <div class="table-responsive table-entities" id="entities">
       <table class="table table-striped" aria-describedby="page-heading">
         <thead>
-          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
-            <th scope="col" jhiSortBy="id">
-              <div class="d-flex">
-                <span jhiTranslate="global.field.id">ID</span>
+        <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+          <th scope="col" jhiSortBy="id">
+            <div class="d-flex">
+              <span jhiTranslate="global.field.id">ID</span>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="nome">
-              <div class="d-flex">
-                <span jhiTranslate="apiGatewayApp.mscatalogoProdotto.nome">Nome</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="nome">
+            <div class="d-flex">
+              <span jhiTranslate="apiGatewayApp.mscatalogoProdotto.nome">Nome</span>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="descrizione">
-              <div class="d-flex">
-                <span jhiTranslate="apiGatewayApp.mscatalogoProdotto.descrizione">Descrizione</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="descrizione">
+            <div class="d-flex">
+              <span jhiTranslate="apiGatewayApp.mscatalogoProdotto.descrizione">Descrizione</span>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="prezzo">
-              <div class="d-flex">
-                <span jhiTranslate="apiGatewayApp.mscatalogoProdotto.prezzo">Prezzo</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="prezzo">
+            <div class="d-flex">
+              <span jhiTranslate="apiGatewayApp.mscatalogoProdotto.prezzo">Prezzo</span>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="quantitaDisponibile">
-              <div class="d-flex">
-                <span jhiTranslate="apiGatewayApp.mscatalogoProdotto.quantitaDisponibile">Quantita Disponibile</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="quantitaDisponibile">
+            <div class="d-flex">
+              <span jhiTranslate="apiGatewayApp.mscatalogoProdotto.quantitaDisponibile">Quantita Disponibile</span>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="inEvidenza">
-              <div class="d-flex">
-                <span jhiTranslate="apiGatewayApp.mscatalogoProdotto.inEvidenza">In Evidenza</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="inEvidenza">
+            <div class="d-flex">
+              <span jhiTranslate="apiGatewayApp.mscatalogoProdotto.inEvidenza">In Evidenza</span>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="immagineUrl">
-              <div class="d-flex">
-                <span jhiTranslate="apiGatewayApp.mscatalogoProdotto.immagineUrl">Immagine Url</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="immagineUrl">
+            <div class="d-flex">
+              <span jhiTranslate="apiGatewayApp.mscatalogoProdotto.immagineUrl">Immagine Url</span>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="votaMedio">
-              <div class="d-flex">
-                <span jhiTranslate="apiGatewayApp.mscatalogoProdotto.votaMedio">Vota Medio</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="votoTotale">
+            <div class="d-flex">
+              <span jhiTranslate="apiGatewayApp.mscatalogoProdotto.votoTotale">Vota Medio</span>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="categoria.nome">
-              <div class="d-flex">
-                <span jhiTranslate="apiGatewayApp.mscatalogoProdotto.categoria">Categoria</span>
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col"></th>
-          </tr>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="categoria.nome">
+            <div class="d-flex">
+              <span jhiTranslate="apiGatewayApp.mscatalogoProdotto.categoria">Categoria</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col"></th>
+        </tr>
         </thead>
         <tbody>
           @for (prodotto of prodottos(); track trackId(prodotto)) {
@@ -112,7 +112,7 @@
               <td>{{ prodotto.quantitaDisponibile }}</td>
               <td>{{ prodotto.inEvidenza }}</td>
               <td>{{ prodotto.immagineUrl }}</td>
-              <td>{{ prodotto.votaMedio }}</td>
+              <td>{{ prodotto.votoTotale }}</td>
               <td>
                 @if (prodotto.categoria) {
                   <div>

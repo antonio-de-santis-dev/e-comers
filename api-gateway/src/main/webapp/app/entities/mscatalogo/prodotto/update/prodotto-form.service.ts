@@ -24,7 +24,7 @@ type ProdottoFormGroupContent = {
   quantitaDisponibile: FormControl<IProdotto['quantitaDisponibile']>;
   inEvidenza: FormControl<IProdotto['inEvidenza']>;
   immagineUrl: FormControl<IProdotto['immagineUrl']>;
-  votaMedio: FormControl<IProdotto['votaMedio']>;
+  votoTotale: FormControl<IProdotto['votoTotale']>;
   categoria: FormControl<IProdotto['categoria']>;
 };
 
@@ -59,7 +59,7 @@ export class ProdottoFormService {
       immagineUrl: new FormControl(prodottoRawValue.immagineUrl, {
         validators: [Validators.maxLength(500)],
       }),
-      votaMedio: new FormControl(prodottoRawValue.votaMedio),
+      votoTotale: new FormControl(prodottoRawValue.votoTotale),
       categoria: new FormControl(prodottoRawValue.categoria),
     });
   }

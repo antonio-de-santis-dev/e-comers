@@ -42,7 +42,7 @@ export class ProdottoComponent implements OnInit {
   protected modalService = inject(NgbModal);
   protected ngZone = inject(NgZone);
 
-  trackId = (item: IProdotto): number => this.prodottoService.getProdottoIdentifier(item);
+  trackId = (item: IProdotto): string => this.prodottoService.getProdottoIdentifier(item);
 
   ngOnInit(): void {
     this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])

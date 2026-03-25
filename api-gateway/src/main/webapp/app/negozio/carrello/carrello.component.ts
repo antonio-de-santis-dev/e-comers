@@ -41,12 +41,12 @@ export default class CarrelloComponent implements OnInit, OnDestroy {
   }
 
   // ---- Azioni ----
-  rimuovi(id: number): void {
+  rimuovi(id: string): void {
     this.carrelloService.rimuovi(id);
     this.items.set(this.carrelloService.getItems());
   }
 
-  modificaQuantita(id: number, nuovaQta: number): void {
+  modificaQuantita(id: string, nuovaQta: number): void {
     if (nuovaQta <= 0) {
       this.rimuovi(id);
     } else {
