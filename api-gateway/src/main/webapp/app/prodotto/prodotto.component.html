@@ -10,7 +10,6 @@
         </p>
       </div>
       <div class="catalogo-header__actions">
-        <!-- Vedi azioni solo se admin -->
         @if (account()?.authorities?.includes('ROLE_ADMIN')) {
           <a
             id="jh-create-entity"
@@ -30,7 +29,6 @@
     <!-- ===== SIDEBAR FILTRI ===== -->
     <aside class="catalogo-sidebar">
 
-      <!-- Cerca per nome -->
       <div class="filter-block">
         <h3 class="filter-title">Cerca</h3>
         <div class="search-input-wrap">
@@ -45,7 +43,6 @@
         </div>
       </div>
 
-      <!-- Filtro per categoria -->
       <div class="filter-block">
         <h3 class="filter-title">Categoria</h3>
         <div class="filter-options">
@@ -62,7 +59,6 @@
         </div>
       </div>
 
-      <!-- Filtro In Evidenza -->
       <div class="filter-block">
         <h3 class="filter-title">Filtri rapidi</h3>
         <label class="filter-toggle">
@@ -81,7 +77,6 @@
         </label>
       </div>
 
-      <!-- Range prezzo -->
       <div class="filter-block">
         <h3 class="filter-title">Prezzo massimo</h3>
         <div class="price-range">
@@ -98,7 +93,6 @@
         </div>
       </div>
 
-      <!-- Reset filtri -->
       @if (hasActiveFilters()) {
         <button class="btn-reset-filters" (click)="resetFilters()">
           ✕ Azzera filtri
@@ -110,7 +104,6 @@
     <!-- ===== AREA PRINCIPALE ===== -->
     <main class="catalogo-main">
 
-      <!-- Toolbar (ordinamento + contatore) -->
       <div class="catalogo-toolbar">
         <span class="results-count">
           @if (!isLoading) {
@@ -132,7 +125,7 @@
       <!-- ===== SKELETON LOADING ===== -->
       @if (isLoading) {
         <div class="products-grid">
-          @for (n of [1,2,3,4,5,6,7,8]; track n) {
+          @for (n of [1,2,3,4,5,6]; track n) {
             <div class="skeleton-card">
               <div class="skeleton-img"></div>
               <div class="skeleton-body">
@@ -152,17 +145,15 @@
           @for (prodotto of prodottos(); track trackId(prodotto)) {
             <div class="product-card" [class.esaurito]="!isDisponibile(prodotto)" data-cy="entityTable">
 
-              <!-- Immagine -->
-              <a [routerLink]="['/mscatalogo/prodotto', prodotto.id, 'view']" class="card-img-link">
+              <!-- Immagine — clic va alla pagina dettaglio -->
+              <a [routerLink]="['/prodotto', prodotto.id]" class="card-img-link">
                 <img
-                  [src]="getImmagine(prodotto)"
+                  src="https://www.italtras.us/575-large_default/batteria-stilo-aa-duracell-15v.jpg"
                   [alt]="prodotto.nome"
                   class="card-img"
                   loading="lazy"
+                  onerror="this.onerror=null;this.src='https://placehold.co/400x400/f0f0f0/888?text=Prodotto'"
                 />
-                @if (prodotto.inEvidenza) {
-                  <span class="badge-evidenza">⭐ In evidenza</span>
-                }
                 @if (!isDisponibile(prodotto)) {
                   <span class="badge-esaurito">Esaurito</span>
                 }
@@ -175,10 +166,9 @@
                 }
 
                 <h3 class="card-name">
-                  <a [routerLink]="['/mscatalogo/prodotto', prodotto.id, 'view']">{{ prodotto.nome }}</a>
+                  <a [routerLink]="['/prodotto', prodotto.id]">{{ prodotto.nome }}</a>
                 </h3>
 
-                <!-- Stelle voto medio -->
                 <div class="card-stars">
                   @for (star of getStarsArray(prodotto.votaMedio); track $index) {
                     <span [class.filled]="star">★</span>
@@ -188,7 +178,6 @@
                   }
                 </div>
 
-                <!-- Disponibilità -->
                 <div class="card-disponibilita">
                   @if (isDisponibile(prodotto)) {
                     <span class="disponibile">✓ Disponibile ({{ prodotto.quantitaDisponibile }})</span>
@@ -197,39 +186,51 @@
                   }
                 </div>
 
-                <!-- Footer: prezzo + azioni -->
-                <div class="card-footer">
-                  <span class="card-price">{{ formatPrice(prodotto.prezzo) }}</span>
-                  <div class="card-actions">
+                <!-- Prezzo -->
+                <div class="card-price">{{ formatPrice(prodotto.prezzo) }}</div>
+
+                <!-- Azioni impilate verticalmente -->
+                <div class="card-actions-stack">
+                  @if (isDisponibile(prodotto)) {
                     <a
-                      [routerLink]="['/mscatalogo/prodotto', prodotto.id, 'view']"
-                      class="btn-card-view"
-                      title="Visualizza"
+                      [routerLink]="['/prodotto', prodotto.id]"
+                      class="btn-acquista"
                     >
-                      👁
+                      Acquista
                     </a>
-                    @if (account()?.authorities?.includes('ROLE_ADMIN')) {
+                    <button
+                      class="btn-carrello"
+                      (click)="aggiungiAlCarrello(prodotto)"
+                      title="Aggiungi al carrello"
+                    >
+                      🛒 Aggiungi al carrello
+                    </button>
+                  } @else {
+                    <button class="btn-acquista btn-acquista--disabled" disabled>
+                      Non disponibile
+                    </button>
+                  }
+
+                  <!-- Azioni admin in fondo -->
+                  @if (account()?.authorities?.includes('ROLE_ADMIN')) {
+                    <div class="card-admin-row">
                       <a
                         [routerLink]="['/mscatalogo/prodotto', prodotto.id, 'edit']"
                         class="btn-card-edit"
                         data-cy="entityEditButton"
                         title="Modifica"
-                      >
-                        ✏️
-                      </a>
+                      >✏️</a>
                       <button
                         class="btn-card-delete"
                         (click)="delete(prodotto)"
                         data-cy="entityDeleteButton"
                         title="Elimina"
-                      >
-                        🗑
-                      </button>
-                    }
-                  </div>
+                      >🗑</button>
+                    </div>
+                  }
                 </div>
-              </div>
 
+              </div>
             </div>
           }
         </div>

@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { DecimalPipe } from '@angular/common';
-import { Subject, of, forkJoin } from 'rxjs';
+import { Subject, of } from 'rxjs';
 import { takeUntil, catchError } from 'rxjs/operators';
 
 import SharedModule from 'app/shared/shared.module';
@@ -10,10 +10,14 @@ import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
 
 // -------------------------------------------------------
-// Interfacce locali — rispecchiano il modello JHipster
+// NOTA: l'id è UUID (stringa), NON un numero intero.
+// Il vecchio codice faceva +id (conversione a Number)
+// che produceva NaN → GET /prodottos/NaN → 400.
+// Ora si usa l'id come stringa pura.
 // -------------------------------------------------------
+
 interface Prodotto {
-  id: number;
+  id: string;                          // UUID — stringa
   nome?: string | null;
   descrizione?: string | null;
   prezzo?: number | null;
@@ -21,11 +25,12 @@ interface Prodotto {
   inEvidenza?: boolean | null;
   immagineUrl?: string | null;
   votaMedio?: number | null;
-  categoria?: { id: number; nome: string } | null;
+  votoTotale?: number | null;
+  categoria?: { id: string | number; nome: string } | null;
 }
 
 interface Recensione {
-  id: number;
+  id: string;
   prodottoId?: string | null;
   nomeCliente?: string | null;
   descrizione?: string | null;
@@ -51,11 +56,11 @@ export default class ProdottoDettaglioComponent implements OnInit, OnDestroy {
   loadingRecensioni = signal(true);
   errore = signal(false);
 
-  // Quantità selezionata per il carrello
   quantita = signal(1);
-
-  // Immagine ingrandita (lightbox minimale)
   imgZoom = signal(false);
+
+  // Immagine placeholder fino a quando non arriva dal backend
+  readonly PLACEHOLDER = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIiB2aWV3Qm94PSIwIDAgNDAwIDQwMCI+CiAgPHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSI0MDAiIGZpbGw9IiNmNWY1ZjUiLz4KICA8cmVjdCB4PSIxMjAiIHk9IjEwMCIgd2lkdGg9IjE2MCIgaGVpZ2h0PSIxMjAiIHJ4PSIxMiIgZmlsbD0iI2UwZTBlMCIvPgogIDxjaXJjbGUgY3g9IjIwMCIgY3k9IjI4MCIgcj0iNDAiIGZpbGw9IiNlMGUwZTAiLz4KICA8dGV4dCB4PSIyMDAiIHk9IjM3MCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiNiYmIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltbWFnaW5lIHByb2RvdHRvPC90ZXh0Pgo8L3N2Zz4=';
 
   // ---- Dipendenze ----
   private readonly destroy$ = new Subject<void>();
@@ -74,9 +79,13 @@ export default class ProdottoDettaglioComponent implements OnInit, OnDestroy {
     this.route.paramMap
       .pipe(takeUntil(this.destroy$))
       .subscribe(params => {
+        // ✅ FIX: id è UUID stringa — NON convertire con +id
         const id = params.get('id');
         if (id) {
-          this.loadProdotto(+id);
+          this.loadProdotto(id);
+        } else {
+          this.errore.set(true);
+          this.loadingProdotto.set(false);
         }
       });
   }
@@ -87,7 +96,7 @@ export default class ProdottoDettaglioComponent implements OnInit, OnDestroy {
   }
 
   // ---- Caricamento dati ----
-  private loadProdotto(id: number): void {
+  private loadProdotto(id: string): void {
     this.loadingProdotto.set(true);
     this.errore.set(false);
 
@@ -109,13 +118,13 @@ export default class ProdottoDettaglioComponent implements OnInit, OnDestroy {
       });
   }
 
-  private loadRecensioni(prodottoId: number): void {
+  private loadRecensioni(prodottoId: string): void {
     this.loadingRecensioni.set(true);
 
     this.http
       .get<Recensione[]>(`/services/msrecensioni/api/recensiones`, {
         params: {
-          'prodottoId.equals': prodottoId.toString(),
+          'prodottoId.equals': prodottoId,
           'approvata.equals': 'true',
           size: '20',
           sort: 'dataRecensione,desc',
@@ -133,7 +142,7 @@ export default class ProdottoDettaglioComponent implements OnInit, OnDestroy {
 
   // ---- Azioni ----
   tornaAlCatalogo(): void {
-    this.router.navigate(['/catalogo']);
+    this.router.navigate(['/catalogo/prodotti']);
   }
 
   incrementaQuantita(): void {
@@ -147,8 +156,20 @@ export default class ProdottoDettaglioComponent implements OnInit, OnDestroy {
   }
 
   aggiungiAlCarrello(): void {
-    // TODO: collegare al servizio carrello quando implementato
-    console.log('Aggiungi al carrello:', this.prodotto()?.id, 'x', this.quantita());
+    const p = this.prodotto();
+    if (!p) return;
+    // TODO: collegare al CarrelloService
+    console.log('Aggiungi al carrello:', p.id, 'x', this.quantita());
+  }
+
+  acquistaOra(): void {
+    const p = this.prodotto();
+    if (!p) return;
+    // TODO: navigare al checkout con questo prodotto
+    console.log('Acquista ora:', p.id, 'x', this.quantita());
+    this.router.navigate(['/checkout'], {
+      queryParams: { prodottoId: p.id, quantita: this.quantita() }
+    });
   }
 
   toggleZoom(): void {
@@ -167,8 +188,8 @@ export default class ProdottoDettaglioComponent implements OnInit, OnDestroy {
   }
 
   getImmagine(prodotto: Prodotto | null): string {
-    if (prodotto?.immagineUrl) return prodotto.immagineUrl;
-    return '/content/images/prodotto-placeholder.svg';
+    // Per ora usa sempre il placeholder — sostituire con la vera immagine dal backend
+    return this.PLACEHOLDER;
   }
 
   isDisponibile(prodotto: Prodotto | null): boolean {

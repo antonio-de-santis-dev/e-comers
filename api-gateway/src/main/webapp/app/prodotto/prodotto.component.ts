@@ -16,17 +16,12 @@ import { FilterComponent, FilterOptions, IFilterOption, IFilterOptions } from 'a
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
 
-// ✅ PERCORSI CORRETTI — i file sono in entities/mscatalogo/
 import { EntityArrayResponseType, ProdottoService } from '../entities/mscatalogo/prodotto/service/prodotto.service';
 import { CategoriaService } from '../entities/mscatalogo/categoria/service/categoria.service';
 import { ProdottoDeleteDialogComponent } from '../entities/mscatalogo/prodotto/delete/prodotto-delete-dialog.component';
 import { IProdotto } from '../entities/mscatalogo/prodotto/prodotto.model';
 import { ICategoria } from '../entities/mscatalogo/categoria/categoria.model';
 
-// -------------------------------------------------------
-// Numero di prodotti per pagina nel catalogo
-// Cambia questo valore per adattarlo alle esigenze del cliente
-// -------------------------------------------------------
 const CATALOGO_PAGE_SIZE = 12;
 
 @Component({
@@ -56,8 +51,8 @@ export class ProdottoComponent implements OnInit {
   selectedCategoriaId: number | null = null;
   soloInEvidenza = false;
   soloDisponibili = false;
-  prezzoFiltro = 500;         // valore iniziale slider
-  prezzoMax = 500;            // aggiornato dopo il primo caricamento
+  prezzoFiltro = 500;
+  prezzoMax = 500;
   currentSort = 'nome,asc';
 
   // ---- Dipendenze ----
@@ -71,19 +66,13 @@ export class ProdottoComponent implements OnInit {
   protected ngZone = inject(NgZone);
   private readonly accountService = inject(AccountService);
 
-  trackId = (item: IProdotto): number => this.prodottoService.getProdottoIdentifier(item);
+  trackId = (item: IProdotto): any => this.prodottoService.getProdottoIdentifier(item);
 
-  // -------------------------------------------------------
-  // Lifecycle
-  // -------------------------------------------------------
+  // ---- Lifecycle ----
   ngOnInit(): void {
-    // Autenticazione (per mostrare i pulsanti admin)
     this.accountService.getAuthenticationState().subscribe(acc => this.account.set(acc));
-
-    // Carica le categorie per la sidebar
     this.loadCategorie();
 
-    // Lettura parametri URL → caricamento prodotti (JHipster standard)
     this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
       .pipe(
         tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
@@ -94,9 +83,7 @@ export class ProdottoComponent implements OnInit {
     this.filters.filterChanges.subscribe(filterOptions => this.handleNavigation(1, this.sortState(), filterOptions));
   }
 
-  // -------------------------------------------------------
-  // Caricamento dati
-  // -------------------------------------------------------
+  // ---- Caricamento ----
   load(): void {
     this.queryBackend().subscribe({
       next: (res: EntityArrayResponseType) => this.onResponseSuccess(res),
@@ -109,11 +96,7 @@ export class ProdottoComponent implements OnInit {
     });
   }
 
-  // -------------------------------------------------------
-  // Filtri sidebar
-  // -------------------------------------------------------
-
-  /** Chiamato dal campo di ricerca (con debounce minimale) */
+  // ---- Filtri ----
   private searchTimeout: ReturnType<typeof setTimeout> | null = null;
   onSearchChange(): void {
     if (this.searchTimeout) clearTimeout(this.searchTimeout);
@@ -148,9 +131,13 @@ export class ProdottoComponent implements OnInit {
     );
   }
 
-  // -------------------------------------------------------
-  // Delete (JHipster standard)
-  // -------------------------------------------------------
+  // ---- Azioni carrello ----
+  aggiungiAlCarrello(prodotto: IProdotto): void {
+    // TODO: collegare al CarrelloService quando implementato
+    console.log('Aggiungi al carrello:', prodotto.id, prodotto.nome);
+  }
+
+  // ---- Delete admin ----
   delete(prodotto: IProdotto): void {
     const modalRef = this.modalService.open(ProdottoDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.prodotto = prodotto;
@@ -162,9 +149,7 @@ export class ProdottoComponent implements OnInit {
       .subscribe();
   }
 
-  // -------------------------------------------------------
-  // Navigazione paginazione
-  // -------------------------------------------------------
+  // ---- Navigazione paginazione ----
   navigateToWithComponentValues(event: SortState): void {
     this.handleNavigation(this.page, event, this.filters.filterOptions);
   }
@@ -173,9 +158,7 @@ export class ProdottoComponent implements OnInit {
     this.handleNavigation(page, this.sortState(), this.filters.filterOptions);
   }
 
-  // -------------------------------------------------------
-  // Utility helpers
-  // -------------------------------------------------------
+  // ---- Utility ----
   formatPrice(price: number | null | undefined): string {
     if (price == null) return '—';
     return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(price);
@@ -187,17 +170,15 @@ export class ProdottoComponent implements OnInit {
   }
 
   getImmagine(prodotto: IProdotto): string {
-    if (prodotto.immagineUrl) return prodotto.immagineUrl;
-    return '/content/images/prodotto-placeholder.svg';
+    // Placeholder temporaneo — sostituire con la vera immagine dal backend
+    return 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIiB2aWV3Qm94PSIwIDAgNDAwIDQwMCI+CiAgPHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSI0MDAiIGZpbGw9IiNmNWY1ZjUiLz4KICA8cmVjdCB4PSIxMjAiIHk9IjEwMCIgd2lkdGg9IjE2MCIgaGVpZ2h0PSIxMjAiIHJ4PSIxMiIgZmlsbD0iI2UwZTBlMCIvPgogIDxjaXJjbGUgY3g9IjIwMCIgY3k9IjI4MCIgcj0iNDAiIGZpbGw9IiNlMGUwZTAiLz4KICA8dGV4dCB4PSIyMDAiIHk9IjM3MCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiNiYmIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltbWFnaW5lIHByb2RvdHRvPC90ZXh0Pgo8L3N2Zz4=';
   }
 
   isDisponibile(prodotto: IProdotto): boolean {
     return prodotto.quantitaDisponibile == null || prodotto.quantitaDisponibile > 0;
   }
 
-  // -------------------------------------------------------
-  // Metodi JHipster (non modificare)
-  // -------------------------------------------------------
+  // ---- Metodi JHipster (non modificare) ----
   protected fillComponentAttributeFromRoute(params: ParamMap, data: Data): void {
     const page = params.get(PAGE_HEADER);
     this.page = +(page ?? 1);

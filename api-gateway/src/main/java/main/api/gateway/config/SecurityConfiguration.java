@@ -1,4 +1,4 @@
-package main.api.gateway.config;
+﻿package main.api.gateway.config;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers.pathMatchers;
@@ -40,9 +40,8 @@ public class SecurityConfiguration {
 
     @Bean
     public ReactiveAuthenticationManager reactiveAuthenticationManager(ReactiveUserDetailsService userDetailsService) {
-        UserDetailsRepositoryReactiveAuthenticationManager authenticationManager = new UserDetailsRepositoryReactiveAuthenticationManager(
-            userDetailsService
-        );
+        UserDetailsRepositoryReactiveAuthenticationManager authenticationManager =
+            new UserDetailsRepositoryReactiveAuthenticationManager(userDetailsService);
         authenticationManager.setPasswordEncoder(passwordEncoder());
         return authenticationManager;
     }
@@ -72,24 +71,40 @@ public class SecurityConfiguration {
                     )
             )
             .authorizeExchange(authz ->
-                // prettier-ignore
                 authz
+                    // -- Risorse statiche e SPA --
                     .pathMatchers("/").permitAll()
                     .pathMatchers("/*.*").permitAll()
+
+                    // -- Auth --
                     .pathMatchers("/api/authenticate").permitAll()
                     .pathMatchers("/api/register").permitAll()
                     .pathMatchers("/api/activate").permitAll()
                     .pathMatchers("/api/account/reset-password/init").permitAll()
                     .pathMatchers("/api/account/reset-password/finish").permitAll()
+
+                    // -- /api/account in GET e' pubblico: restituisce null se non loggato
+                    //    senza questo la navbar crasha con 401 per gli utenti anonimi
+                    .pathMatchers(HttpMethod.GET, "/api/account").permitAll()
+
+                    // -- Admin --
                     .pathMatchers("/api/admin/**").hasAuthority(AuthoritiesConstants.ADMIN)
                     .pathMatchers("/api/**").authenticated()
+
+                    // -- Health / docs --
                     .pathMatchers("/services/*/management/health/readiness").permitAll()
                     .pathMatchers("/services/*/v3/api-docs").hasAuthority(AuthoritiesConstants.ADMIN)
-                    // API pubbliche ms-catalogo — PRIMA di /services/** authenticated
-                    .pathMatchers(HttpMethod.GET, "/services/mscatalogo/api/prodottos/**").permitAll()
-                    .pathMatchers(HttpMethod.GET, "/services/mscatalogo/api/categorias/**").permitAll()
-                    .pathMatchers(HttpMethod.GET, "/services/mscatalogo/api/categorias").permitAll()
+
+                    // -- Vetrina pubblica --
+                    .pathMatchers(HttpMethod.GET, "/services/mscatalogo/**").permitAll()
+                    .pathMatchers(HttpMethod.GET, "/services/msrecensioni/**").permitAll()
+                    .pathMatchers(HttpMethod.POST, "/services/msordini/**").permitAll()
+                    .pathMatchers(HttpMethod.POST, "/services/mspagamenti/**").permitAll()
+
+                    // -- Tutto il resto richiede login --
                     .pathMatchers("/services/**").authenticated()
+
+                    // -- Management --
                     .pathMatchers("/v3/api-docs/**").hasAuthority(AuthoritiesConstants.ADMIN)
                     .pathMatchers("/management/health").permitAll()
                     .pathMatchers("/management/health/**").permitAll()

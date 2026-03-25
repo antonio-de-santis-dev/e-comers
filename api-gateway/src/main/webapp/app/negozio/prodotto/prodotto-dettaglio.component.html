@@ -1,9 +1,9 @@
-<!-- ===== BREADCRUMB ===== -->
+﻿<!-- ===== BREADCRUMB ===== -->
 <nav class="det-breadcrumb">
   <div class="det-breadcrumb__inner">
     <a routerLink="/" class="crumb">Home</a>
     <span class="crumb-sep">›</span>
-    <a routerLink="/catalogo" class="crumb">Catalogo</a>
+    <a routerLink="/catalogo/prodotti" class="crumb">Prodotti</a>
     @if (prodotto()) {
       <span class="crumb-sep">›</span>
       <span class="crumb crumb--current">{{ prodotto()!.nome }}</span>
@@ -26,7 +26,8 @@
         <div class="skeleton-line w-100" style="height:14px;margin-bottom:.4rem;"></div>
         <div class="skeleton-line w-100" style="height:14px;margin-bottom:.4rem;"></div>
         <div class="skeleton-line w-70" style="height:14px;margin-bottom:2rem;"></div>
-        <div class="skeleton-line w-60" style="height:48px;border-radius:12px;"></div>
+        <div class="skeleton-line w-60" style="height:52px;border-radius:12px;"></div>
+        <div class="skeleton-line w-60" style="height:52px;border-radius:12px;margin-top:.75rem;"></div>
       </div>
     </div>
   </div>
@@ -39,7 +40,7 @@
       <div class="empty-icon">😕</div>
       <h3>Prodotto non trovato</h3>
       <p>Il prodotto che cerchi non è disponibile o è stato rimosso.</p>
-      <button class="btn-primary-sm" (click)="tornaAlCatalogo()">← Torna al catalogo</button>
+      <button class="btn-primary-sm" (click)="tornaAlCatalogo()">← Torna ai prodotti</button>
     </div>
   </div>
 }
@@ -62,10 +63,8 @@
             [alt]="p.nome"
             class="det-img"
             loading="eager"
+            onerror="this.onerror=null"
           />
-          @if (p.inEvidenza) {
-            <span class="badge-evidenza">⭐ In evidenza</span>
-          }
           @if (!isDisponibile(p)) {
             <span class="badge-esaurito">Esaurito</span>
           }
@@ -76,37 +75,32 @@
       <!-- COLONNA INFO -->
       <div class="det-info-col">
 
-        <!-- Categoria -->
         @if (p.categoria) {
           <a
-            routerLink="/catalogo"
+            routerLink="/catalogo/prodotti"
             [queryParams]="{'categoriaId.equals': p.categoria.id}"
             class="det-categoria"
           >{{ p.categoria.nome }}</a>
         }
 
-        <!-- Nome -->
         <h1 class="det-nome">{{ p.nome }}</h1>
 
-        <!-- Stelle + voto -->
         <div class="det-stars-row">
           <div class="det-stars">
-            @for (star of getStarsArray(p.votaMedio); track $index) {
+            @for (star of getStarsArray(p.votoTotale); track $index) {
               <span [class.filled]="star">★</span>
             }
           </div>
-          @if (p.votaMedio) {
-            <span class="det-voto">{{ p.votaMedio | number:'1.1-1' }} / 5</span>
+          @if (p.votoTotale) {
+            <span class="det-voto">{{ p.votoTotale | number:'1.1-1' }} / 5</span>
           }
           <span class="det-rec-count">
             ({{ recensioniApprovate().length }} recension{{ recensioniApprovate().length === 1 ? 'e' : 'i' }})
           </span>
         </div>
 
-        <!-- Prezzo -->
         <div class="det-prezzo">{{ formatPrice(p.prezzo) }}</div>
 
-        <!-- Disponibilità -->
         <div class="det-disponibilita">
           @if (isDisponibile(p)) {
             <span class="disponibile">
@@ -120,48 +114,41 @@
           }
         </div>
 
-        <!-- Descrizione -->
         @if (p.descrizione) {
           <p class="det-descrizione">{{ p.descrizione }}</p>
         }
 
-        <!-- Selettore quantità + CTA carrello -->
         @if (isDisponibile(p)) {
           <div class="det-cta">
-            <div class="qty-selector">
-              <button class="qty-btn" (click)="decrementaQuantita()" [disabled]="quantita() <= 1">−</button>
-              <span class="qty-value">{{ quantita() }}</span>
-              <button class="qty-btn" (click)="incrementaQuantita()" [disabled]="quantita() >= (p.quantitaDisponibile ?? 99)">+</button>
+            <div class="qty-row">
+              <span class="qty-label">Quantità:</span>
+              <div class="qty-selector">
+                <button class="qty-btn" (click)="decrementaQuantita()" [disabled]="quantita() <= 1">−</button>
+                <span class="qty-value">{{ quantita() }}</span>
+                <button class="qty-btn" (click)="incrementaQuantita()" [disabled]="quantita() >= (p.quantitaDisponibile ?? 99)">+</button>
+              </div>
             </div>
-            <button class="btn-cart" (click)="aggiungiAlCarrello()">
+            <button class="btn-acquista" (click)="acquistaOra()">
+              Acquista ora
+            </button>
+            <button class="btn-carrello" (click)="aggiungiAlCarrello()">
               🛒 Aggiungi al carrello
             </button>
           </div>
         } @else {
           <div class="det-cta">
-            <button class="btn-cart btn-cart--disabled" disabled>
+            <button class="btn-acquista btn-acquista--disabled" disabled>
               Prodotto non disponibile
             </button>
           </div>
         }
 
-        <!-- Garanzie -->
         <div class="det-garanzie">
-          <div class="garanzia-item">
-            <span>🚚</span>
-            <span>Spedizione gratuita sopra €49</span>
-          </div>
-          <div class="garanzia-item">
-            <span>↩️</span>
-            <span>Reso entro 30 giorni</span>
-          </div>
-          <div class="garanzia-item">
-            <span>🔒</span>
-            <span>Pagamento sicuro</span>
-          </div>
+          <div class="garanzia-item"><span>🚚</span><span>Spedizione gratuita sopra €49</span></div>
+          <div class="garanzia-item"><span>↩️</span><span>Reso entro 30 giorni</span></div>
+          <div class="garanzia-item"><span>🔒</span><span>Pagamento sicuro</span></div>
         </div>
 
-        <!-- Azioni admin -->
         @if (account()?.authorities?.includes('ROLE_ADMIN')) {
           <div class="det-admin-actions">
             <a [routerLink]="['/mscatalogo/prodotto', p.id, 'edit']" class="btn-admin-edit">
@@ -177,11 +164,11 @@
     <section class="recensioni-section">
       <div class="recensioni-header">
         <h2 class="recensioni-title">Recensioni dei clienti</h2>
-        @if (p.votaMedio) {
+        @if (p.votoTotale) {
           <div class="recensioni-summary">
-            <span class="summary-voto">{{ p.votaMedio | number:'1.1-1' }}</span>
+            <span class="summary-voto">{{ p.votoTotale | number:'1.1-1' }}</span>
             <div class="summary-stars">
-              @for (star of getStarsArray(p.votaMedio); track $index) {
+              @for (star of getStarsArray(p.votoTotale); track $index) {
                 <span [class.filled]="star">★</span>
               }
             </div>
@@ -190,7 +177,6 @@
         }
       </div>
 
-      <!-- Skeleton recensioni -->
       @if (loadingRecensioni()) {
         <div class="recensioni-grid">
           @for (n of [1,2,3]; track n) {
@@ -204,7 +190,6 @@
         </div>
       }
 
-      <!-- Lista recensioni -->
       @if (!loadingRecensioni() && recensioniApprovate().length > 0) {
         <div class="recensioni-grid">
           @for (rec of recensioniApprovate(); track rec.id) {
@@ -226,7 +211,6 @@
         </div>
       }
 
-      <!-- Empty recensioni -->
       @if (!loadingRecensioni() && recensioniApprovate().length === 0) {
         <div class="recensioni-empty">
           <p>Nessuna recensione ancora. Acquista questo prodotto e lascia la tua opinione!</p>
@@ -234,9 +218,8 @@
       }
     </section>
 
-    <!-- Back button -->
     <div class="det-back-wrap">
-      <button class="btn-back" (click)="tornaAlCatalogo()">← Torna al catalogo</button>
+      <button class="btn-back" (click)="tornaAlCatalogo()">← Torna ai prodotti</button>
     </div>
 
   </div>

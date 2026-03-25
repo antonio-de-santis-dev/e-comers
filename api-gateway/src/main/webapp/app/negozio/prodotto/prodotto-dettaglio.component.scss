@@ -1,7 +1,6 @@
 // -------------------------------------------------------
-// prodotto-dettaglio.component.scss
-// Stile pagina dettaglio prodotto
-// Coerente con home.component.scss e prodotto.component.scss
+// prodotto-dettaglio.component.scss  —  AGGIORNATO
+// Bottoni Acquista e Carrello impilati verticalmente
 // -------------------------------------------------------
 
 $card-radius: 12px;
@@ -53,7 +52,7 @@ $transition-speed: 0.25s;
   min-height: 60vh;
 }
 
-// ===== LAYOUT PRINCIPALE (img sx, info dx) =====
+// ===== LAYOUT PRINCIPALE =====
 
 .det-layout {
   display: grid;
@@ -142,21 +141,7 @@ $transition-speed: 0.25s;
   transition: opacity $transition-speed;
 }
 
-// Badges immagine
-.badge-evidenza {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  background: rgba(255, 193, 7, 0.92);
-  color: #5a4000;
-  font-size: 0.7rem;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-}
-
+// Solo badge esaurito (evidenza rimosso)
 .badge-esaurito {
   position: absolute;
   top: 12px;
@@ -200,7 +185,6 @@ $transition-speed: 0.25s;
   line-height: 1.2;
 }
 
-// Stelle
 .det-stars-row {
   display: flex;
   align-items: center;
@@ -228,7 +212,6 @@ $transition-speed: 0.25s;
   color: #888;
 }
 
-// Prezzo
 .det-prezzo {
   font-size: 2rem;
   font-weight: 800;
@@ -237,7 +220,6 @@ $transition-speed: 0.25s;
   letter-spacing: -0.5px;
 }
 
-// Disponibilità
 .det-disponibilita {
   font-size: 0.9rem;
   font-weight: 500;
@@ -254,7 +236,6 @@ $transition-speed: 0.25s;
 .disponibile { color: #28a745; }
 .non-disponibile { color: #dc3545; }
 
-// Descrizione
 .det-descrizione {
   font-size: 0.95rem;
   color: #555;
@@ -264,21 +245,32 @@ $transition-speed: 0.25s;
   padding-top: 1rem;
 }
 
-// ===== CTA CARRELLO =====
+// ===== CTA — bottoni impilati verticalmente =====
 
 .det-cta {
   display: flex;
-  align-items: center;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.6rem;
   margin-bottom: 1.5rem;
-  flex-wrap: wrap;
 }
 
-// Selettore quantità
+// Riga quantità
+.qty-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.qty-label {
+  font-size: 0.9rem;
+  color: #555;
+  font-weight: 500;
+}
+
 .qty-selector {
   display: flex;
   align-items: center;
-  gap: 0;
   border: 1px solid #dee2e6;
   border-radius: 8px;
   overflow: hidden;
@@ -286,7 +278,7 @@ $transition-speed: 0.25s;
 
 .qty-btn {
   width: 38px;
-  height: 44px;
+  height: 40px;
   background: #f8f9fa;
   border: none;
   font-size: 1.2rem;
@@ -307,18 +299,17 @@ $transition-speed: 0.25s;
   padding: 0 0.75rem;
   border-left: 1px solid #dee2e6;
   border-right: 1px solid #dee2e6;
-  line-height: 44px;
+  line-height: 40px;
 }
 
-// Bottone carrello
-.btn-cart {
-  flex: 1;
-  min-width: 200px;
-  padding: 0.75rem 1.5rem;
+// Bottone Acquista (primario, pieno)
+.btn-acquista {
+  width: 100%;
+  padding: 0.85rem 1.5rem;
   background: var(--color-primary, #2c3e50);
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
@@ -326,7 +317,6 @@ $transition-speed: 0.25s;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
 
   &:hover { opacity: 0.88; transform: translateY(-2px); }
 
@@ -335,6 +325,29 @@ $transition-speed: 0.25s;
     cursor: not-allowed;
     transform: none;
     opacity: 1;
+  }
+}
+
+// Bottone Carrello (secondario, bordo)
+.btn-carrello {
+  width: 100%;
+  padding: 0.82rem 1.5rem;
+  background: #fff;
+  color: var(--color-primary, #2c3e50);
+  border: 2px solid var(--color-primary, #2c3e50);
+  border-radius: 10px;
+  font-size: 0.98rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background $transition-speed, color $transition-speed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  &:hover {
+    background: var(--color-primary, #2c3e50);
+    color: #fff;
   }
 }
 
@@ -438,7 +451,6 @@ $transition-speed: 0.25s;
   color: #888;
 }
 
-// Grid recensioni
 .recensioni-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -470,29 +482,10 @@ $transition-speed: 0.25s;
   span.filled { color: #ffc107; }
 }
 
-.rec-data {
-  font-size: 0.75rem;
-  color: #999;
-}
-
-.rec-autore {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #444;
-  margin: 0 0 0.4rem;
-}
-
-.rec-testo {
-  font-size: 0.88rem;
-  color: #555;
-  line-height: 1.6;
-  margin: 0;
-}
-
-// Skeleton recensioni
-.skeleton-rec {
-  background: #fff;
-}
+.rec-data { font-size: 0.75rem; color: #999; }
+.rec-autore { font-size: 0.85rem; font-weight: 700; color: #444; margin: 0 0 0.4rem; }
+.rec-testo { font-size: 0.88rem; color: #555; line-height: 1.6; margin: 0; }
+.skeleton-rec { background: #fff; }
 
 .recensioni-empty {
   text-align: center;
@@ -501,7 +494,7 @@ $transition-speed: 0.25s;
   font-size: 0.9rem;
 }
 
-// ===== BACK BUTTON =====
+// ===== BACK =====
 
 .det-back-wrap {
   margin-top: 1rem;
@@ -524,7 +517,7 @@ $transition-speed: 0.25s;
   }
 }
 
-// ===== SKELETON LOADING =====
+// ===== SKELETON =====
 
 .skeleton-img-lg {
   aspect-ratio: 1 / 1;

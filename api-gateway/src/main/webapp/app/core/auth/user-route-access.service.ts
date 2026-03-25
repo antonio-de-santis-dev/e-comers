@@ -1,4 +1,4 @@
-import { inject, isDevMode } from '@angular/core';
+﻿import { inject, isDevMode } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot } from '@angular/router';
 import { map } from 'rxjs/operators';
 
@@ -9,15 +9,22 @@ export const UserRouteAccessService: CanActivateFn = (next: ActivatedRouteSnapsh
   const accountService = inject(AccountService);
   const router = inject(Router);
   const stateStorageService = inject(StateStorageService);
+
+  const { authorities } = next.data;
+
+  // Se la route non richiede alcuna authority, e' pubblica:
+  // lascia passare sia utenti loggati che anonimi.
+  if (!authorities || authorities.length === 0) {
+    return true;
+  }
+
+  // La route richiede authority specifiche: verifica il login.
   return accountService.identity().pipe(
     map(account => {
       if (account) {
-        const { authorities } = next.data;
-
-        if (!authorities || authorities.length === 0 || accountService.hasAnyAuthority(authorities)) {
+        if (accountService.hasAnyAuthority(authorities)) {
           return true;
         }
-
         if (isDevMode()) {
           console.error('User does not have any of the required authorities:', authorities);
         }

@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+﻿import { Routes } from '@angular/router';
 
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
 import { ASC } from 'app/config/navigation.constants';
@@ -19,7 +19,7 @@ const prodottoRoute: Routes = [
     resolve: {
       prodotto: ProdottoResolve,
     },
-    canActivate: [UserRouteAccessService],
+    // Nessun canActivate — pagina dettaglio accessibile anche senza login
   },
   {
     path: 'new',
@@ -27,6 +27,7 @@ const prodottoRoute: Routes = [
     resolve: {
       prodotto: ProdottoResolve,
     },
+    data: { authorities: ['ROLE_ADMIN'] },
     canActivate: [UserRouteAccessService],
   },
   {
@@ -35,6 +36,7 @@ const prodottoRoute: Routes = [
     resolve: {
       prodotto: ProdottoResolve,
     },
+    data: { authorities: ['ROLE_ADMIN'] },
     canActivate: [UserRouteAccessService],
   },
 ];
