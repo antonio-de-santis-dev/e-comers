@@ -1,0 +1,116 @@
+<div class="cat-page">
+
+  <!-- HEADER -->
+  <div class="cat-header">
+    <div class="cat-breadcrumb">
+      <button class="btn-back" (click)="tornaAlCatalogo()">← Catalogo</button>
+      @if (nomeCategoria()) {
+        <span class="breadcrumb-sep">/</span>
+        <span class="breadcrumb-cat">{{ nomeCategoria() }}</span>
+      }
+    </div>
+
+    <h1 class="cat-title">
+      @if (nomeCategoria()) {
+        {{ nomeCategoria() }}
+      } @else {
+        Tutti i prodotti
+      }
+    </h1>
+
+    @if (!loading()) {
+      <p class="cat-count">{{ totale() }} prodott{{ totale() === 1 ? 'o' : 'i' }} trovat{{ totale() === 1 ? 'o' : 'i' }}</p>
+    }
+  </div>
+
+  <!-- FILTRI E ORDINAMENTO -->
+  <div class="cat-toolbar">
+    <div class="cat-search">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Cerca prodotto..."
+        [value]="ricerca()"
+        (input)="onRicercaChange($any($event.target).value)"
+      />
+    </div>
+
+    <div class="cat-sort">
+      <label>Ordina per:</label>
+      <select [value]="ordinamento()" (change)="onOrdinamentoChange($any($event.target).value)">
+        <option value="nome,asc">Nome A→Z</option>
+        <option value="nome,desc">Nome Z→A</option>
+        <option value="prezzo,asc">Prezzo crescente</option>
+        <option value="prezzo,desc">Prezzo decrescente</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- GRIGLIA PRODOTTI -->
+  @if (loading()) {
+    <div class="cat-grid">
+      @for (_ of [1,2,3,4,5,6,7,8]; track $index) {
+        <div class="prod-card skeleton-card">
+          <div class="skeleton-img"></div>
+          <div class="skeleton-body">
+            <div class="skeleton-line w-80"></div>
+            <div class="skeleton-line w-40"></div>
+            <div class="skeleton-line w-60"></div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  @if (!loading() && prodotti().length === 0) {
+    <div class="cat-empty">
+      <span>📦</span>
+      <p>Nessun prodotto trovato.</p>
+      @if (ricerca()) {
+        <button class="btn-reset" (click)="onRicercaChange('')">Rimuovi filtro ricerca</button>
+      }
+    </div>
+  }
+
+  @if (!loading() && prodotti().length > 0) {
+    <div class="cat-grid">
+      @for (p of prodotti(); track p.id) {
+        <a class="prod-card" [routerLink]="['/prodotto', p.id]">
+          <div class="prod-img-wrap">
+            <img [src]="getImmagine(p)" [alt]="p.nome" class="prod-img" />
+            @if (p.inEvidenza) {
+              <span class="badge-evidenza">⭐ In evidenza</span>
+            }
+            @if (!p.disponibile) {
+              <span class="badge-esaurito">Esaurito</span>
+            }
+          </div>
+          <div class="prod-body">
+            @if (p.categoria && !nomeCategoria()) {
+              <span class="prod-cat">{{ p.categoria.nome }}</span>
+            }
+            <h3 class="prod-nome">{{ p.nome }}</h3>
+            @if (p.descrizione) {
+              <p class="prod-desc">{{ p.descrizione }}</p>
+            }
+            <div class="prod-footer">
+              <span class="prod-prezzo">{{ formatPrezzo(p.prezzo) }}</span>
+              <span class="prod-cta">Vedi →</span>
+            </div>
+          </div>
+        </a>
+      }
+    </div>
+
+    <!-- PAGINAZIONE -->
+    @if (totalePagine > 1) {
+      <div class="cat-pagination">
+        <button class="btn-pag" [disabled]="!hasPrev" (click)="paginaPrecedente()">← Precedente</button>
+        <span class="pag-info">Pagina {{ paginaCorrente }} di {{ totalePagine }}</span>
+        <button class="btn-pag" [disabled]="!hasNext" (click)="paginaSuccessiva()">Successiva →</button>
+      </div>
+    }
+  }
+
+</div>

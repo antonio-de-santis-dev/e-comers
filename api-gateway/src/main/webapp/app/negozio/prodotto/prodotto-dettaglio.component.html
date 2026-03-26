@@ -113,7 +113,7 @@
             <span class="det-voto">{{ p.votoTotale | number:'1.1-1' }} / 5</span>
           }
           <span class="det-rec-count">
-            ({{ recensioniApprovate().length }} recension{{ recensioniApprovate().length === 1 ? 'e' : 'i' }})
+            ({{ recensioni().length }} recension{{ recensioni().length === 1 ? 'e' : 'i' }})
           </span>
         </div>
 
@@ -193,7 +193,7 @@
                 <span [class.filled]="star">★</span>
               }
             </div>
-            <span class="summary-count">su {{ recensioniApprovate().length }} recensioni</span>
+            <span class="summary-count">su {{ recensioni().length }} recensioni</span>
           </div>
         }
       </div>
@@ -211,9 +211,9 @@
         </div>
       }
 
-      @if (!loadingRecensioni() && recensioniApprovate().length > 0) {
+      @if (!loadingRecensioni() && recensioni().length > 0) {
         <div class="recensioni-grid">
-          @for (rec of recensioniApprovate(); track rec.id) {
+          @for (rec of recensioni(); track rec.id) {
             <div class="recensione-card">
               <div class="rec-header">
                 <div class="rec-stars">
@@ -222,6 +222,9 @@
                   }
                 </div>
                 <span class="rec-data">{{ formatData(rec.dataRecensione) }}</span>
+                @if (account()?.authorities?.includes('ROLE_ADMIN')) {
+                  <button class="btn-elimina-rec" (click)="eliminaRecensione(rec)" title="Elimina recensione">🗑️</button>
+                }
               </div>
               <p class="rec-autore">{{ rec.nomeCliente ?? 'Cliente verificato' }}</p>
               @if (rec.descrizione) {
@@ -232,7 +235,7 @@
         </div>
       }
 
-      @if (!loadingRecensioni() && recensioniApprovate().length === 0) {
+      @if (!loadingRecensioni() && recensioni().length === 0) {
         <div class="recensioni-empty">
           <p>Nessuna recensione ancora. Acquista questo prodotto e lascia la tua opinione!</p>
         </div>

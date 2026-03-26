@@ -167,8 +167,7 @@ export default class ProdottoDettaglioComponent implements OnInit, OnDestroy {
       .get<Recensione[]>(`/services/msrecensioni/api/recensiones`, {
         params: {
           'prodottoId.equals': prodottoId,
-          'approvata.equals': 'true',
-          size: '20',
+          size: '50',
           sort: 'dataRecensione,desc',
         },
       })
@@ -350,6 +349,7 @@ export default class ProdottoDettaglioComponent implements OnInit, OnDestroy {
         nomeCliente: nomeCliente.trim(),
         descrizione: descrizione.trim(),
         votoSingolo,
+        approvata: true,   // pubblicata immediatamente, nessuna moderazione
       })
       .pipe(
         catchError(err => {
@@ -365,8 +365,20 @@ export default class ProdottoDettaglioComponent implements OnInit, OnDestroy {
           this.invioRecensione.set(false);
           this.invioOk.set(true);
           this.formRecensione.set(false);
-          // Non ricarica: la recensione deve essere approvata prima di apparire
+          // Ricarica subito le recensioni per mostrare quella appena inviata
+          this.loadRecensioni(p.id);
         }
+      });
+  }
+
+  // ---- Moderazione recensioni (solo ROLE_ADMIN) ----
+  eliminaRecensione(recensione: Recensione): void {
+    if (!confirm(`Eliminare la recensione di "${recensione.nomeCliente}"?`)) return;
+
+    this.http.delete(`/services/msrecensioni/api/recensiones/${recensione.id}`)
+      .pipe(catchError(() => of(null)), takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.recensioni.update(list => list.filter(r => r.id !== recensione.id));
       });
   }
 
@@ -400,9 +412,5 @@ export default class ProdottoDettaglioComponent implements OnInit, OnDestroy {
       month: 'long',
       year: 'numeric',
     });
-  }
-
-  recensioniApprovate(): Recensione[] {
-    return this.recensioni().filter(r => r.approvata !== false);
   }
 }

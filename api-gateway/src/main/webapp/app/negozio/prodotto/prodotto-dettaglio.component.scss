@@ -849,3 +849,21 @@ $transition-speed: 0.25s;
 
   &:hover { background: #dbeafe; }
 }
+
+// Bottone admin elimina recensione
+.btn-elimina-rec {
+  margin-left: auto;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  opacity: 0.5;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: opacity 0.2s, background 0.2s;
+
+  &:hover {
+    opacity: 1;
+    background: #fef2f2;
+  }
+}

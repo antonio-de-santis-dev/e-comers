@@ -30,7 +30,7 @@ const routes: Routes = [
   },
   {
     path: 'catalogo/prodotti',
-    loadComponent: () => import('./prodotto/prodotto.component').then(m => m.ProdottoComponent),
+    loadComponent: () => import('./negozio/catalogo/prodotti/catalogo-prodotti.component'),
     title: 'negozio.prodotti',
   },
   {
