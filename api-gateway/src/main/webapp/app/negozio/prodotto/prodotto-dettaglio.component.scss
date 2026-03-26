@@ -1,7 +1,14 @@
 // -------------------------------------------------------
-// prodotto-dettaglio.component.scss  —  AGGIORNATO
-// Bottoni Acquista e Carrello impilati verticalmente
+// prodotto-dettaglio.component.scss
 // -------------------------------------------------------
+
+// Variabili colori
+$color-primary:    #1D4ED8;
+$color-text:       #111827;
+$color-text-muted: #6B7280;
+$color-border:     #E5E7EB;
+$color-bg:         #F9FAFB;
+$color-white:      #FFFFFF;
 
 $card-radius: 12px;
 $transition-speed: 0.25s;
@@ -24,7 +31,7 @@ $transition-speed: 0.25s;
 
 .crumb {
   font-size: 0.85rem;
-  color: var(--color-primary, #2c3e50);
+  color: $color-primary;
   text-decoration: none;
 
   &:hover { text-decoration: underline; }
@@ -43,7 +50,6 @@ $transition-speed: 0.25s;
 // ===== WRAPPER PAGINA =====
 
 .det-page {
-  // Nessun max-width — occupa tutta la larghezza
   padding: 2rem 2rem 3rem;
   background: #f8f9fa;
   min-height: 60vh;
@@ -67,12 +73,9 @@ $transition-speed: 0.25s;
 // ===== COLONNA IMMAGINE =====
 
 .det-img-col {
-  // Sticky: rimane ferma mentre si scrolla la colonna destra
   position: sticky;
   top: 1rem;
-  // z-index per stare sopra eventuali elementi sovrapposti
   z-index: 1;
-  // align-self: start e' fondamentale per sticky in un grid
   align-self: start;
 
   @media (max-width: 768px) {
@@ -143,7 +146,6 @@ $transition-speed: 0.25s;
   transition: opacity $transition-speed;
 }
 
-// Solo badge esaurito (evidenza rimosso)
 .badge-esaurito {
   position: absolute;
   top: 12px;
@@ -171,7 +173,7 @@ $transition-speed: 0.25s;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: var(--color-primary, #2c3e50);
+  color: $color-primary;
   text-decoration: none;
   margin-bottom: 0.6rem;
   display: inline-block;
@@ -217,7 +219,7 @@ $transition-speed: 0.25s;
 .det-prezzo {
   font-size: 2rem;
   font-weight: 800;
-  color: var(--color-primary, #2c3e50);
+  color: $color-primary;
   margin-bottom: 0.75rem;
   letter-spacing: -0.5px;
 }
@@ -247,7 +249,7 @@ $transition-speed: 0.25s;
   padding-top: 1rem;
 }
 
-// ===== CTA — bottoni impilati verticalmente =====
+// ===== CTA =====
 
 .det-cta {
   display: flex;
@@ -256,7 +258,6 @@ $transition-speed: 0.25s;
   margin-bottom: 1.5rem;
 }
 
-// Riga quantità
 .qty-row {
   display: flex;
   align-items: center;
@@ -289,7 +290,7 @@ $transition-speed: 0.25s;
   cursor: pointer;
   transition: background $transition-speed;
 
-  &:hover:not(:disabled) { background: var(--color-primary, #2c3e50); color: #fff; }
+  &:hover:not(:disabled) { background: $color-primary; color: #fff; }
   &:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 
@@ -304,11 +305,10 @@ $transition-speed: 0.25s;
   line-height: 40px;
 }
 
-// Bottone Acquista (primario, pieno)
 .btn-acquista {
   width: 100%;
   padding: 0.85rem 1.5rem;
-  background: var(--color-primary, #2c3e50);
+  background: $color-primary;
   color: #fff;
   border: none;
   border-radius: 10px;
@@ -330,13 +330,12 @@ $transition-speed: 0.25s;
   }
 }
 
-// Bottone Carrello (secondario, bordo)
 .btn-carrello {
   width: 100%;
   padding: 0.82rem 1.5rem;
   background: #fff;
-  color: var(--color-primary, #2c3e50);
-  border: 2px solid var(--color-primary, #2c3e50);
+  color: $color-primary;
+  border: 2px solid $color-primary;
   border-radius: 10px;
   font-size: 0.98rem;
   font-weight: 700;
@@ -348,7 +347,7 @@ $transition-speed: 0.25s;
   gap: 0.5rem;
 
   &:hover {
-    background: var(--color-primary, #2c3e50);
+    background: $color-primary;
     color: #fff;
   }
 }
@@ -436,7 +435,7 @@ $transition-speed: 0.25s;
 .summary-voto {
   font-size: 2rem;
   font-weight: 800;
-  color: var(--color-primary, #2c3e50);
+  color: $color-primary;
   line-height: 1;
 }
 
@@ -513,8 +512,8 @@ $transition-speed: 0.25s;
   transition: all $transition-speed;
 
   &:hover {
-    border-color: var(--color-primary, #2c3e50);
-    color: var(--color-primary, #2c3e50);
+    border-color: $color-primary;
+    color: $color-primary;
     background: #f8f9fa;
   }
 }
@@ -568,7 +567,7 @@ $transition-speed: 0.25s;
   align-items: center;
   gap: 0.4rem;
   padding: 0.5rem 1.2rem;
-  background: var(--color-primary, #2c3e50);
+  background: $color-primary;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -582,5 +581,235 @@ $transition-speed: 0.25s;
     opacity: 0.88;
     transform: translateY(-1px);
     color: #fff;
+  }
+}
+
+// ===== FORM NUOVA RECENSIONE =====
+
+.rec-cta-wrap {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.btn-scrivi-recensione {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.8rem;
+  background: transparent;
+  color: $color-primary;
+  border: 2px solid $color-primary;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background $transition-speed, color $transition-speed;
+
+  &:hover {
+    background: $color-primary;
+    color: #fff;
+  }
+}
+
+.rec-invio-ok {
+  margin: 1.5rem 0;
+  padding: 1rem 1.4rem;
+  background: #ecfdf5;
+  border: 1px solid #6ee7b7;
+  border-radius: 10px;
+  color: #065f46;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.rec-form-wrap {
+  margin-top: 2rem;
+  padding: 2rem;
+  background: #f8fafc;
+  border: 1px solid $color-border;
+  border-radius: 16px;
+}
+
+.rec-form-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: $color-text;
+  margin: 0 0 1.5rem;
+}
+
+.rec-form-field {
+  margin-bottom: 1.25rem;
+}
+
+.rec-form-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: $color-text;
+  margin-bottom: 0.4rem;
+}
+
+.rec-form-input,
+.rec-form-textarea {
+  width: 100%;
+  padding: 0.6rem 0.9rem;
+  border: 1.5px solid $color-border;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: $color-text;
+  background: #fff;
+  transition: border-color $transition-speed;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+  }
+}
+
+.rec-form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.rec-form-chars {
+  display: block;
+  text-align: right;
+  font-size: 0.78rem;
+  color: $color-text-muted;
+  margin-top: 0.25rem;
+}
+
+.rec-stars-picker {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+
+  .star-pick {
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: #d1d5db;
+    transition: color 0.15s, transform 0.1s;
+    line-height: 1;
+
+    &.active { color: #f59e0b; }
+    &:hover { transform: scale(1.2); color: #f59e0b; }
+  }
+
+  .rec-voto-label {
+    margin-left: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: $color-text-muted;
+  }
+}
+
+.rec-form-errore {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: 8px;
+  color: #b91c1c;
+  font-size: 0.9rem;
+}
+
+.rec-form-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.btn-invia-recensione {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.8rem;
+  background: $color-primary;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity $transition-speed;
+
+  &:hover:not(:disabled) { opacity: 0.88; }
+  &:disabled { opacity: 0.55; cursor: not-allowed; }
+}
+
+.btn-annulla-recensione {
+  padding: 0.7rem 1.4rem;
+  background: transparent;
+  color: $color-text-muted;
+  border: 1.5px solid $color-border;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: border-color $transition-speed, color $transition-speed;
+
+  &:hover {
+    border-color: $color-text-muted;
+    color: $color-text;
+  }
+}
+
+.rec-form-nota {
+  margin-top: 1rem;
+  font-size: 0.82rem;
+  color: $color-text-muted;
+}
+
+.spinner-sm {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// ===== THUMBNAILS CAROSELLO =====
+// Appaiono solo quando il prodotto ha sia immagineCopertina che immagineProdotto
+
+.det-thumbnails {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.thumb-btn {
+  width: 72px;
+  height: 72px;
+  border: 2px solid $color-border;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  padding: 0;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.15s;
+  flex-shrink: 0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &.active {
+    border-color: $color-primary;
+    transform: scale(1.06);
+    box-shadow: 0 0 0 1px $color-primary;
+  }
+
+  &:hover:not(.active) {
+    border-color: #9ca3af;
+    transform: scale(1.03);
   }
 }

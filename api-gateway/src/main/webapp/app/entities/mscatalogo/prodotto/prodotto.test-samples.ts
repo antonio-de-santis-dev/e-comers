@@ -1,33 +1,33 @@
 import { IProdotto, NewProdotto } from './prodotto.model';
 
 export const sampleWithRequiredData: IProdotto = {
-  id: 31021,
-  nome: 'guilty beyond',
-  prezzo: 22297,
+  id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  nome: 'Prodotto Esempio',
+  prezzo: 22.97,
 };
 
 export const sampleWithPartialData: IProdotto = {
-  id: 24161,
-  nome: 'creative at',
-  descrizione: '../fake-data/blob/hipster.txt',
-  prezzo: 5624.29,
+  id: 'b2c3d4e5-f6a7-8901-bcde-f12345678901',
+  nome: 'Prodotto Parziale',
+  descrizione: 'Descrizione prodotto di esempio.',
+  prezzo: 56.29,
   inEvidenza: true,
 };
 
 export const sampleWithFullData: IProdotto = {
-  id: 29949,
-  nome: 'sticker',
-  descrizione: '../fake-data/blob/hipster.txt',
-  prezzo: 1973.36,
-  quantitaDisponibile: 29111,
+  id: 'c3d4e5f6-a7b8-9012-cdef-123456789012',
+  nome: 'Prodotto Completo',
+  descrizione: 'Descrizione completa del prodotto.',
+  prezzo: 19.73,
+  quantitaDisponibile: 100,
   inEvidenza: true,
-  immagineUrl: 'uh-huh sandbar times',
-  votoTotale: 9472.91,
+  immagineUrl: 'https://example.com/img.jpg',
+  votoTotale: 4.5,
 };
 
 export const sampleWithNewData: NewProdotto = {
-  nome: 'pish offset near',
-  prezzo: 10680.87,
+  nome: 'Nuovo Prodotto',
+  prezzo: 10.99,
   id: null,
 };
 

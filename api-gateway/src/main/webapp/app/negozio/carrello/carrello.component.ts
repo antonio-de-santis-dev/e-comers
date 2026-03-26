@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { DecimalPipe } from '@angular/common';
 import { Subject } from 'rxjs';
 import SharedModule from 'app/shared/shared.module';
 import { CarrelloService, CarrelloItem } from './carrello.service';
@@ -8,7 +7,7 @@ import { CarrelloService, CarrelloItem } from './carrello.service';
 @Component({
   selector: 'jhi-carrello',
   standalone: true,
-  imports: [RouterModule, DecimalPipe, SharedModule],
+  imports: [RouterModule, SharedModule],
   templateUrl: './carrello.component.html',
   styleUrl: './carrello.component.scss',
 })

@@ -41,7 +41,7 @@ export class RecensioneComponent implements OnInit {
   protected modalService = inject(NgbModal);
   protected ngZone = inject(NgZone);
 
-  trackId = (item: IRecensione): number => this.recensioneService.getRecensioneIdentifier(item);
+  trackId = (item: IRecensione): string => this.recensioneService.getRecensioneIdentifier(item);
 
   ngOnInit(): void {
     this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])

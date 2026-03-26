@@ -1,7 +1,7 @@
 import dayjs from 'dayjs/esm';
 
 export interface IRecensione {
-  id: number;
+  id: string;           // MongoDB usa String come id (non number)
   prodottoId?: string | null;
   ordineId?: string | null;
   nomeCliente?: string | null;
@@ -9,6 +9,8 @@ export interface IRecensione {
   votoSingolo?: number | null;
   approvata?: boolean | null;
   dataRecensione?: dayjs.Dayjs | null;
+  immagineRecensione?: string | null;
+  immagineRecensioneContentType?: string | null;
 }
 
 export type NewRecensione = Omit<IRecensione, 'id'> & { id: null };

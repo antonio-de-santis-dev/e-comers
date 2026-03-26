@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import main.ms.recensioni.repository.RecensioneRepository;
 import main.ms.recensioni.service.RecensioneService;
 import main.ms.recensioni.service.dto.RecensioneDTO;
@@ -136,16 +137,43 @@ public class RecensioneResource {
     }
 
     /**
-     * {@code GET  /recensiones} : get all the recensiones.
+     * {@code GET  /recensiones} : get recensiones, with optional filtering by prodottoId and approvata.
+     *
+     * Parametri supportati (compatibili con JHipster filter convention):
+     *   - prodottoId.equals  : UUID del prodotto
+     *   - approvata.equals   : true | false
+     *   - size               : numero max elementi per pagina
+     *   - sort               : campo,direzione  (es. dataRecensione,desc)
      *
      * @param pageable the pagination information.
+     * @param prodottoIdEquals optional filter by prodottoId
+     * @param approvataEquals  optional filter by approvata
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of recensiones in body.
      */
     @GetMapping("")
-    public ResponseEntity<List<RecensioneDTO>> getAllRecensiones(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
-        LOG.debug("REST request to get a page of Recensiones");
-        Page<RecensioneDTO> page = recensioneService.findAll(pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+    public ResponseEntity<List<RecensioneDTO>> getAllRecensiones(
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable,
+        @RequestParam(name = "prodottoId.equals", required = false) String prodottoIdEquals,
+        @RequestParam(name = "approvata.equals", required = false) Boolean approvataEquals
+    ) {
+        LOG.debug("REST request to get Recensiones - prodottoId: {}, approvata: {}", prodottoIdEquals, approvataEquals);
+
+        Page<RecensioneDTO> page;
+
+        if (prodottoIdEquals != null && !prodottoIdEquals.isBlank()) {
+            try {
+                UUID prodottoUuid = UUID.fromString(prodottoIdEquals);
+                page = recensioneService.findByProdottoIdAndApprovata(prodottoUuid, approvataEquals, pageable);
+            } catch (IllegalArgumentException e) {
+                LOG.warn("prodottoId non valido: {}", prodottoIdEquals);
+                return ResponseEntity.badRequest().build();
+            }
+        } else {
+            page = recensioneService.findAll(pageable);
+        }
+
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
+            ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 

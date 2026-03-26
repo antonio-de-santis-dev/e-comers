@@ -52,7 +52,7 @@ export class RecensioneService {
       .pipe(map(res => this.convertResponseFromServer(res)));
   }
 
-  find(id: number): Observable<EntityResponseType> {
+  find(id: string): Observable<EntityResponseType> {
     return this.http
       .get<RestRecensione>(`${this.resourceUrl}/${id}`, { observe: 'response' })
       .pipe(map(res => this.convertResponseFromServer(res)));
@@ -65,11 +65,11 @@ export class RecensioneService {
       .pipe(map(res => this.convertResponseArrayFromServer(res)));
   }
 
-  delete(id: number): Observable<HttpResponse<{}>> {
+  delete(id: string): Observable<HttpResponse<{}>> {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
-  getRecensioneIdentifier(recensione: Pick<IRecensione, 'id'>): number {
+  getRecensioneIdentifier(recensione: Pick<IRecensione, 'id'>): string {
     return recensione.id;
   }
 

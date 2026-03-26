@@ -22,6 +22,7 @@ import { CategoriaService } from '../entities/mscatalogo/categoria/service/categ
 import { ProdottoDeleteDialogComponent } from '../entities/mscatalogo/prodotto/delete/prodotto-delete-dialog.component';
 import { IProdotto } from '../entities/mscatalogo/prodotto/prodotto.model';
 import { ICategoria } from '../entities/mscatalogo/categoria/categoria.model';
+import { CarrelloService } from 'app/negozio/carrello/carrello.service';
 
 const CATALOGO_PAGE_SIZE = 12;
 
@@ -29,7 +30,7 @@ const CATALOGO_PAGE_SIZE = 12;
   selector: 'jhi-prodotto',
   templateUrl: './prodotto.component.html',
   styleUrl: './prodotto.component.scss',
-  imports: [RouterModule, FormsModule, DecimalPipe, SharedModule, SortDirective, SortByDirective, FilterComponent, ItemCountComponent],
+  imports: [RouterModule, FormsModule, DecimalPipe, SharedModule, ItemCountComponent],
 })
 export class ProdottoComponent implements OnInit, OnDestroy {
   subscription: Subscription | null = null;

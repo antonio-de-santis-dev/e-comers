@@ -2,6 +2,7 @@ package main.ms.recensioni.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import main.ms.recensioni.domain.Recensione;
@@ -112,6 +113,18 @@ public class RecensioneService {
      */
     public Page<RecensioneDTO> findAll(Pageable pageable) {
         LOG.debug("Request to get all Recensiones");
+        return recensioneRepository.findAll(pageable).map(recensioneMapper::toDto);
+    }
+
+    /**
+     * Get all recensioni for a product, optionally filtered by approval status.
+     */
+    public Page<RecensioneDTO> findByProdottoIdAndApprovata(UUID prodottoId, Boolean approvata, Pageable pageable) {
+        LOG.debug("Request to get Recensiones for prodottoId: {}, approvata: {}", prodottoId, approvata);
+        if (approvata != null) {
+            return recensioneRepository.findByProdottoIdAndApprovata(prodottoId, approvata, pageable)
+                .map(recensioneMapper::toDto);
+        }
         return recensioneRepository.findAll(pageable).map(recensioneMapper::toDto);
     }
 

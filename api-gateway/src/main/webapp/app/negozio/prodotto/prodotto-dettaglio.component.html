@@ -52,24 +52,42 @@
 
       <!-- COLONNA IMMAGINE -->
       <div class="det-img-col">
+
+        <!-- Immagine principale — click = zoom come prima -->
         <div
           class="det-img-wrap"
           [class.zoomed]="imgZoom()"
-          (click)="toggleZoom()"
+          (click)="imgZoom() ? chiudiZoom() : apriZoom()"
           [attr.title]="imgZoom() ? 'Clicca per ridurre' : 'Clicca per ingrandire'"
         >
           <img
-            [src]="getImmagine(p)"
+            [src]="immagineAttiva()"
             [alt]="p.nome"
             class="det-img"
             loading="eager"
-            onerror="this.onerror=null"
           />
           @if (!isDisponibile(p)) {
             <span class="badge-esaurito">Esaurito</span>
           }
           <span class="zoom-hint">{{ imgZoom() ? '−' : '+' }}</span>
         </div>
+
+        <!-- Thumbnails: appaiono solo se ci sono 2+ immagini -->
+        @if (getAllImmagini(p).length > 1) {
+          <div class="det-thumbnails">
+            @for (img of getAllImmagini(p); track $index) {
+              <button
+                class="thumb-btn"
+                [class.active]="immagineAttiva() === img"
+                (click)="selezionaImmagine(img)"
+                [title]="$index === 0 ? 'Copertina' : 'Foto prodotto ' + $index"
+              >
+                <img [src]="img" [alt]="p.nome" loading="lazy" />
+              </button>
+            }
+          </div>
+        }
+
       </div>
 
       <!-- COLONNA INFO -->
@@ -216,6 +234,100 @@
           <p>Nessuna recensione ancora. Acquista questo prodotto e lascia la tua opinione!</p>
         </div>
       }
+
+      <!-- ===== MESSAGGIO SUCCESSO INVIO ===== -->
+      @if (invioOk()) {
+        <div class="rec-invio-ok">
+          ✅ Grazie! La tua recensione è stata inviata e sarà pubblicata dopo la moderazione.
+        </div>
+      }
+
+      <!-- ===== BOTTONE APRI FORM ===== -->
+      @if (!formRecensione() && !invioOk()) {
+        <div class="rec-cta-wrap">
+          <button class="btn-scrivi-recensione" (click)="apriFormRecensione()">
+            ✏️ Scrivi una recensione
+          </button>
+        </div>
+      }
+
+      <!-- ===== FORM NUOVA RECENSIONE ===== -->
+      @if (formRecensione()) {
+        <div class="rec-form-wrap">
+          <h3 class="rec-form-title">La tua recensione</h3>
+
+          <!-- Stella interattiva -->
+          <div class="rec-form-field">
+            <label class="rec-form-label">Voto *</label>
+            <div class="rec-stars-picker">
+              @for (v of getStarsInteractive(); track v) {
+                <span
+                  class="star-pick"
+                  [class.active]="v <= nuovaRecensione.votoSingolo"
+                  (click)="setVoto(v)"
+                  [attr.title]="v + ' stelle'"
+                >★</span>
+              }
+              <span class="rec-voto-label">{{ nuovaRecensione.votoSingolo }} / 5</span>
+            </div>
+          </div>
+
+          <!-- Nome -->
+          <div class="rec-form-field">
+            <label class="rec-form-label" for="rec-nome">Nome *</label>
+            <input
+              id="rec-nome"
+              class="rec-form-input"
+              type="text"
+              placeholder="Il tuo nome"
+              maxlength="100"
+              [(ngModel)]="nuovaRecensione.nomeCliente"
+            />
+          </div>
+
+          <!-- Testo -->
+          <div class="rec-form-field">
+            <label class="rec-form-label" for="rec-testo">Recensione *</label>
+            <textarea
+              id="rec-testo"
+              class="rec-form-textarea"
+              rows="4"
+              placeholder="Racconta la tua esperienza con questo prodotto..."
+              maxlength="1000"
+              [(ngModel)]="nuovaRecensione.descrizione"
+            ></textarea>
+            <span class="rec-form-chars">{{ nuovaRecensione.descrizione.length }} / 1000</span>
+          </div>
+
+          <!-- Errore -->
+          @if (invioErrore()) {
+            <div class="rec-form-errore">⚠️ {{ invioErrore() }}</div>
+          }
+
+          <!-- Azioni -->
+          <div class="rec-form-actions">
+            <button
+              class="btn-invia-recensione"
+              (click)="inviaRecensione()"
+              [disabled]="invioRecensione()"
+            >
+              @if (invioRecensione()) {
+                <span class="spinner-sm"></span> Invio in corso...
+              } @else {
+                Invia recensione
+              }
+            </button>
+            <button class="btn-annulla-recensione" (click)="chiudiFormRecensione()">
+              Annulla
+            </button>
+          </div>
+
+          <p class="rec-form-nota">
+            ℹ️ La recensione sarà visibile dopo la moderazione da parte del nostro team.
+          </p>
+        </div>
+      }
+
     </section>
 
     <div class="det-back-wrap">
