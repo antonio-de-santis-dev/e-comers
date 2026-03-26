@@ -773,26 +773,39 @@ $transition-speed: 0.25s;
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-// ===== THUMBNAILS CAROSELLO =====
-// Appaiono solo quando il prodotto ha sia immagineCopertina che immagineProdotto
+// ===== CAROSELLO IMMAGINI — stile Amazon =====
+// Thumbnails in fila orizzontale sotto l'immagine principale
 
 .det-thumbnails {
   display: flex;
+  flex-direction: row;
   gap: 0.5rem;
-  margin-top: 0.75rem;
-  flex-wrap: wrap;
+  margin-top: 0.6rem;
+  overflow-x: auto;          // scroll orizzontale se ci sono molte immagini
+  padding-bottom: 4px;       // spazio per la scrollbar
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 2px;
+  }
 }
 
 .thumb-btn {
-  width: 72px;
-  height: 72px;
+  width: 68px;
+  height: 68px;
+  min-width: 68px;           // impedisce la compressione in flexbox
   border: 2px solid $color-border;
-  border-radius: 8px;
+  border-radius: 6px;
   overflow: hidden;
   background: #fff;
   padding: 0;
   cursor: pointer;
-  transition: border-color 0.2s, transform 0.15s;
+  transition: border-color 0.18s, box-shadow 0.18s;
   flex-shrink: 0;
 
   img {
@@ -800,16 +813,39 @@ $transition-speed: 0.25s;
     height: 100%;
     object-fit: cover;
     display: block;
+    transition: opacity 0.15s;
   }
 
+  // Thumbnail attiva — bordo colorato stile Amazon
   &.active {
     border-color: $color-primary;
-    transform: scale(1.06);
     box-shadow: 0 0 0 1px $color-primary;
+
+    img { opacity: 1; }
   }
 
+  // Hover su thumbnail non attiva
   &:hover:not(.active) {
-    border-color: #9ca3af;
-    transform: scale(1.03);
+    border-color: #6b7280;
+
+    img { opacity: 0.85; }
   }
+}
+
+.btn-admin-img {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 1rem;
+  background: #eff6ff;
+  color: $color-primary;
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  margin-left: 0.5rem;
+  transition: background $transition-speed;
+
+  &:hover { background: #dbeafe; }
 }

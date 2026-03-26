@@ -13,7 +13,8 @@ export interface Prodotto {
   nome: string;
   descrizione?: string;
   prezzoUnitario: number;
-  immagineCopertina?: string;
+  immagineCopertina?: string | null;
+  immagineCopertinaContentType?: string | null;
   disponibile: boolean;
   votMedio?: number;
   categoria?: {
@@ -131,7 +132,10 @@ export default class HomeComponent implements OnInit, OnDestroy {
   }
 
   getImmagine(prodotto: Prodotto): string {
-    if (prodotto.immagineCopertina) return prodotto.immagineCopertina;
+    if (prodotto.immagineCopertina && prodotto.immagineCopertina.length > 10) {
+      const ct = prodotto.immagineCopertinaContentType ?? 'image/jpeg';
+      return `data:${ct};base64,${prodotto.immagineCopertina}`;
+    }
     return '/content/images/prodotto-placeholder.svg';
   }
 

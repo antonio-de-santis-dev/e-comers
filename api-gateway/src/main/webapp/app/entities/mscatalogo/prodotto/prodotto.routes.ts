@@ -39,6 +39,12 @@ const prodottoRoute: Routes = [
     data: { authorities: ['ROLE_ADMIN'] },
     canActivate: [UserRouteAccessService],
   },
+  {
+    path: ':prodottoId/immagini',
+    loadComponent: () => import('./immagini/prodotto-immagini.component').then(m => m.ProdottoImmaginiComponent),
+    data: { authorities: ['ROLE_ADMIN'] },
+    canActivate: [UserRouteAccessService],
+  },
 ];
 
 export default prodottoRoute;

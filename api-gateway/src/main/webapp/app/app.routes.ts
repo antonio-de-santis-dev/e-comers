@@ -26,27 +26,27 @@ const routes: Routes = [
   {
     path: 'catalogo',
     loadComponent: () => import('./negozio/catalogo/catalogo.component'),
-    title: 'Catalogo',
+    title: 'negozio.catalogo',
   },
   {
     path: 'catalogo/prodotti',
     loadComponent: () => import('./prodotto/prodotto.component').then(m => m.ProdottoComponent),
-    title: 'Prodotti',
+    title: 'negozio.prodotti',
   },
   {
     path: 'prodotto/:id',
     loadComponent: () => import('./negozio/prodotto/prodotto-dettaglio.component'),
-    title: 'Dettaglio Prodotto',
+    title: 'negozio.dettaglioProdotto',
   },
   {
     path: 'carrello',
     loadComponent: () => import('./negozio/carrello/carrello.component'),
-    title: 'Carrello',
+    title: 'negozio.carrello',
   },
   {
     path: 'ordini',
     loadComponent: () => import('./negozio/ordini/ordini.component'),
-    title: 'I miei ordini',
+    title: 'negozio.ordini',
   },
 
   // -- Admin (solo ROLE_ADMIN) --

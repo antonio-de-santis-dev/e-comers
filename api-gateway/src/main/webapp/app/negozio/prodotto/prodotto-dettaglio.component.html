@@ -50,7 +50,7 @@
   <div class="det-page">
     <div class="det-layout">
 
-      <!-- COLONNA IMMAGINE -->
+      <!-- COLONNA IMMAGINE — carosello stile Amazon -->
       <div class="det-img-col">
 
         <!-- Immagine principale — click = zoom come prima -->
@@ -80,9 +80,9 @@
                 class="thumb-btn"
                 [class.active]="immagineAttiva() === img"
                 (click)="selezionaImmagine(img)"
-                [title]="$index === 0 ? 'Copertina' : 'Foto prodotto ' + $index"
+                [title]="$index === 0 ? 'Copertina' : 'Foto ' + $index"
               >
-                <img [src]="img" [alt]="p.nome" loading="lazy" />
+                <img [src]="img" [alt]="p.nome + ' - foto ' + ($index + 1)" loading="lazy" />
               </button>
             }
           </div>
@@ -169,8 +169,11 @@
 
         @if (account()?.authorities?.includes('ROLE_ADMIN')) {
           <div class="det-admin-actions">
-            <a [routerLink]="['/mscatalogo/prodotto', p.id, 'edit']" class="btn-admin-edit">
+            <a [routerLink]="['/prodotto', p.id, 'edit']" class="btn-admin-edit">
               ✏️ Modifica prodotto
+            </a>
+            <a [routerLink]="['/prodotto', p.id, 'immagini']" class="btn-admin-img">
+              📷 Gestisci immagini
             </a>
           </div>
         }

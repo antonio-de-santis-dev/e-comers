@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+        Aggiunge la tabella prodotto_immagine per supportare
+        più immagini per prodotto (carosello stile Amazon).
+        immagineCopertina rimane sul Prodotto (usata nella card lista).
+        Le immagini del carosello vanno in questa tabella.
+    -->
+    <changeSet id="20260326-1" author="antonio">
+        <createTable tableName="prodotto_immagine">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="prodotto_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="immagine" type="bytea">
+                <constraints nullable="false"/>
+            </column>
+            <column name="immagine_content_type" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ordine" type="integer" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="20260326-2" author="antonio">
+        <addForeignKeyConstraint
+            baseTableName="prodotto_immagine"
+            baseColumnNames="prodotto_id"
+            constraintName="fk_prodotto_immagine_prodotto"
+            referencedTableName="prodotto"
+            referencedColumnNames="id"
+            onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="20260326-3" author="antonio">
+        <createIndex tableName="prodotto_immagine" indexName="idx_prodotto_immagine_prodotto_id">
+            <column name="prodotto_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

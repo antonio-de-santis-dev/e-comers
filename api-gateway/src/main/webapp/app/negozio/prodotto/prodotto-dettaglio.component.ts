@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { DecimalPipe } from '@angular/common';
+import { Title } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { Subject, of } from 'rxjs';
 import { takeUntil, catchError } from 'rxjs/operators';
@@ -43,6 +44,15 @@ interface Recensione {
   dataRecensione?: string | null;
 }
 
+// Immagine carosello dal nuovo endpoint /api/prodottos/{id}/immagini
+interface ProdottoImmagine {
+  id: string;
+  prodottoId?: string | null;
+  immagine?: string | null;           // base64
+  immagineContentType?: string | null;
+  ordine?: number | null;
+}
+
 @Component({
   selector: 'jhi-prodotto-dettaglio',
   standalone: true,
@@ -54,6 +64,7 @@ export default class ProdottoDettaglioComponent implements OnInit, OnDestroy {
   // ---- Signals ----
   prodotto = signal<Prodotto | null>(null);
   recensioni = signal<Recensione[]>([]);
+  immaginiCarosello = signal<ProdottoImmagine[]>([]);
   account = signal<Account | null>(null);
 
   loadingProdotto = signal(true);
@@ -84,6 +95,7 @@ export default class ProdottoDettaglioComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly http = inject(HttpClient);
+  private readonly titleService = inject(Title);
   private readonly accountService = inject(AccountService);
   private readonly carrelloService = inject(CarrelloService);
 
@@ -137,8 +149,13 @@ export default class ProdottoDettaglioComponent implements OnInit, OnDestroy {
         this.prodotto.set(p);
         this.loadingProdotto.set(false);
         if (p) {
+          // Titolo tab dinamico con il nome del prodotto
+          if (p.nome) {
+            this.titleService.setTitle(`${p.nome} — E-comers`);
+          }
           this.immagineAttiva.set(this.getAllImmagini(p)[0]);
           this.loadRecensioni(id);
+          this.loadImmaginiCarosello(id);
         }
       });
   }
@@ -165,7 +182,33 @@ export default class ProdottoDettaglioComponent implements OnInit, OnDestroy {
       });
   }
 
+  private loadImmaginiCarosello(prodottoId: string): void {
+    this.http
+      .get<ProdottoImmagine[]>(`/services/mscatalogo/api/prodottos/${prodottoId}/immagini`)
+      .pipe(
+        catchError(() => of([])),
+        takeUntil(this.destroy$),
+      )
+      .subscribe(imgs => {
+        this.immaginiCarosello.set(imgs);
+        // Ricalcola tutte le immagini e aggiorna quella attiva
+        const p = this.prodotto();
+        if (p) {
+          const tutte = this.getAllImmagini(p);
+          // Mantieni la copertina come prima immagine attiva
+          this.immagineAttiva.set(tutte[0]);
+        }
+      });
+  }
+
   // ---- Azioni carrello ----
+  private buildImgUri(p: Prodotto): string | null {
+    if (p.immagineCopertina && p.immagineCopertina.length > 10 && p.immagineCopertinaContentType) {
+      return `data:${p.immagineCopertinaContentType};base64,${p.immagineCopertina}`;
+    }
+    return null;
+  }
+
   aggiungiAlCarrello(): void {
     const p = this.prodotto();
     if (!p) return;
@@ -175,7 +218,7 @@ export default class ProdottoDettaglioComponent implements OnInit, OnDestroy {
         id: p.id,
         nome: p.nome,
         prezzo: p.prezzo,
-        immagineUrl: p.immagineUrl,
+        immagineUrl: this.buildImgUri(p),
       });
     }
     // Feedback visivo temporaneo navigando al carrello
@@ -191,7 +234,7 @@ export default class ProdottoDettaglioComponent implements OnInit, OnDestroy {
         id: p.id,
         nome: p.nome,
         prezzo: p.prezzo,
-        immagineUrl: p.immagineUrl,
+        immagineUrl: this.buildImgUri(p),
       });
     }
     this.router.navigate(['/carrello']);
@@ -241,20 +284,26 @@ export default class ProdottoDettaglioComponent implements OnInit, OnDestroy {
     this.immagineAttiva.set(imgs[(idx + 1) % imgs.length]);
   }
 
-  // Costruisce la lista immagini dal prodotto:
-  // 1a immagine = immagineCopertina (la card/cover)
-  // 2a+ immagine = immagineProdotto (dettaglio prodotto)
+  // Costruisce la lista completa di immagini:
+  // 1. immagineCopertina del prodotto (sempre prima)
+  // 2. immagini del carosello dal backend (ordinate per ordine ASC)
   // Fallback = placeholder SVG
   getAllImmagini(p: Prodotto | null): string[] {
     if (!p) return [this.PLACEHOLDER];
     const imgs: string[] = [];
 
-    if (p.immagineCopertina && p.immagineCopertinaContentType) {
+    // 1. Copertina (da Prodotto) — controlla che non sia stringa vuota
+    if (p.immagineCopertina && p.immagineCopertina.length > 10 && p.immagineCopertinaContentType) {
       imgs.push(`data:${p.immagineCopertinaContentType};base64,${p.immagineCopertina}`);
     }
-    if (p.immagineProdotto && p.immagineProdottoContentType) {
-      imgs.push(`data:${p.immagineProdottoContentType};base64,${p.immagineProdotto}`);
+
+    // 2. Immagini carosello (da tabella prodotto_immagine)
+    for (const img of this.immaginiCarosello()) {
+      if (img.immagine && img.immagine.length > 10 && img.immagineContentType) {
+        imgs.push(`data:${img.immagineContentType};base64,${img.immagine}`);
+      }
     }
+
     if (imgs.length === 0) {
       imgs.push(this.PLACEHOLDER);
     }

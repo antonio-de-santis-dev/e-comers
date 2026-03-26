@@ -1,0 +1,175 @@
+<!-- HEADER -->
+<div class="img-manager-page">
+
+  <div class="img-header">
+    <button class="btn-back" (click)="tornaIndietro()">← Indietro</button>
+    <div>
+      <h1 class="img-title">📷 Gestione Immagini</h1>
+      @if (prodotto()) {
+        <p class="img-subtitle">{{ prodotto()!.nome }}</p>
+      }
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-box">Caricamento...</div>
+  }
+
+  @if (!loading()) {
+
+    <!-- MESSAGGI -->
+    @if (messaggioOk()) {
+      <div class="msg msg--ok">{{ messaggioOk() }}</div>
+    }
+    @if (messaggioErr()) {
+      <div class="msg msg--err">{{ messaggioErr() }}</div>
+    }
+
+    <!-- ══════════════════════════════════════
+         SEZIONE 1 — IMMAGINE DI COPERTINA
+         ══════════════════════════════════════ -->
+    <section class="img-section">
+      <h2 class="section-title">
+        🖼️ Immagine di Copertina
+        <span class="section-hint">Appare nelle card prodotto e come prima foto nel dettaglio</span>
+      </h2>
+
+      <div class="copertina-layout">
+
+        <!-- Anteprima attuale -->
+        <div class="copertina-preview">
+          <p class="preview-label">Immagine attuale</p>
+          @if (getCopertinaSrc()) {
+            <img [src]="getCopertinaSrc()!" alt="Copertina" class="preview-img" />
+          } @else {
+            <div class="preview-placeholder">
+              <span>📦</span>
+              <p>Nessuna immagine</p>
+            </div>
+          }
+          @if (nuovaCopertina()) {
+            <div class="preview-badge">🔄 Nuova (non ancora salvata)</div>
+          }
+        </div>
+
+        <!-- Upload copertina -->
+        <div class="copertina-upload">
+          <p class="preview-label">Carica nuova copertina</p>
+
+          <!-- Zona drag & drop -->
+          <div
+            class="drop-zone"
+            [class.drag-over]="dragOver()"
+            (dragover)="$event.preventDefault(); dragOver.set(true)"
+            (dragleave)="dragOver.set(false)"
+            (drop)="onDropCopertina($event)"
+            (click)="copertinaInput.click()"
+          >
+            <span class="drop-icon">📁</span>
+            <p class="drop-text">Trascina un'immagine qui<br>o <strong>clicca per scegliere</strong></p>
+            <p class="drop-hint">JPG, PNG, WebP — max 5MB</p>
+          </div>
+
+          <input
+            #copertinaInput
+            type="file"
+            accept="image/*"
+            style="display:none"
+            (change)="onCopertinaChange($event)"
+          />
+
+          @if (nuovaCopertina()) {
+            <div class="upload-actions">
+              <button
+                class="btn-save"
+                (click)="salvaCopertina()"
+                [disabled]="salvando()"
+              >
+                @if (salvando()) { ⏳ Salvataggio... } @else { 💾 Salva copertina }
+              </button>
+              <button class="btn-cancel" (click)="annullaCopertina()">✕ Annulla</button>
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════
+         SEZIONE 2 — IMMAGINI CAROSELLO
+         ══════════════════════════════════════ -->
+    <section class="img-section">
+      <h2 class="section-title">
+        🎠 Immagini Carosello
+        <span class="section-hint">Appaiono come thumbnails nella pagina prodotto</span>
+      </h2>
+
+      <!-- Griglia immagini esistenti -->
+      @if (immagini().length > 0) {
+        <div class="carosello-grid">
+          @for (img of immagini(); track img.id) {
+            <div class="carosello-item">
+              <img [src]="getImmagineCaroselloSrc(img)" alt="Foto carosello" class="carosello-img" />
+              <div class="carosello-overlay">
+                <span class="carosello-ordine">#{{ img.ordine + 1 }}</span>
+                <button class="btn-delete" (click)="eliminaImmagine(img)" title="Elimina">🗑️</button>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="carosello-empty">
+          <span>📷</span>
+          <p>Nessuna immagine nel carosello.<br>Aggiungi foto per mostrarle nella pagina prodotto.</p>
+        </div>
+      }
+
+      <!-- Upload nuove immagini -->
+      <div class="carosello-upload">
+        <label class="btn-add-img" for="caroselloInput">
+          ➕ Aggiungi immagini al carosello
+        </label>
+        <input
+          id="caroselloInput"
+          type="file"
+          accept="image/*"
+          multiple
+          style="display:none"
+          (change)="onCaroselloChange($event)"
+        />
+        <p class="upload-note">
+          Puoi selezionare più immagini alla volta. Saranno aggiunte in ordine.
+        </p>
+      </div>
+    </section>
+
+    <!-- GUIDA -->
+    <section class="img-section img-section--guide">
+      <h2 class="section-title">📖 Come funziona</h2>
+      <div class="guide-steps">
+        <div class="guide-step">
+          <span class="step-num">1</span>
+          <div>
+            <strong>Immagine di copertina</strong>
+            <p>Viene mostrata nella card del prodotto nella lista e come prima immagine nel dettaglio. Formato consigliato: quadrato 800×800px.</p>
+          </div>
+        </div>
+        <div class="guide-step">
+          <span class="step-num">2</span>
+          <div>
+            <strong>Immagini carosello</strong>
+            <p>Sono le immagini aggiuntive che appaiono come thumbnails in basso nella pagina dettaglio prodotto. Puoi aggiungerne quante vuoi.</p>
+          </div>
+        </div>
+        <div class="guide-step">
+          <span class="step-num">3</span>
+          <div>
+            <strong>Formato immagini</strong>
+            <p>JPG o PNG, risoluzione almeno 400×400px. Le immagini vengono salvate nel database come file binari (non richiedono server di storage esterno).</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  }
+
+</div>
