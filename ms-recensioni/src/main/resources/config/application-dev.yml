@@ -53,6 +53,20 @@ spring:
       profile: dev
       label: main # toggle to switch to a different version of the configuration as stored in git
       # it can be set to any label, branch or commit of the configuration source Git repository
+    stream:
+      kafka:
+        binder:
+          brokers: localhost:9092
+          auto-create-topics: true
+      bindings:
+        kafkaProducer-out-0:
+          destination: recensione-approvata
+          content-type: application/json
+          group: ms-recensioni
+        kafkaConsumer-in-0:
+          destination: sse-topic
+          content-type: text/plain
+          group: ms-recensioni
   data:
     mongodb:
       uri: mongodb://localhost:27017/msRecensioni

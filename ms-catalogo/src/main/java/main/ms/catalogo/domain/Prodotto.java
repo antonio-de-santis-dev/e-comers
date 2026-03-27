@@ -86,6 +86,9 @@ public class Prodotto implements Serializable {
     @Column(name = "totale_purchased")
     private Integer totalePurchased;
 
+    @Column(name = "num_recensioni", nullable = false)
+    private Integer numRecensioni = 0;
+
     @ManyToOne(optional = false)
     @NotNull
     private Categoria categoria;
@@ -270,6 +273,14 @@ public class Prodotto implements Serializable {
         this.totalePurchased = totalePurchased;
     }
 
+    public Integer getNumRecensioni() {
+        return this.numRecensioni != null ? this.numRecensioni : 0;
+    }
+
+    public void setNumRecensioni(Integer numRecensioni) {
+        this.numRecensioni = numRecensioni != null ? numRecensioni : 0;
+    }
+
     public Categoria getCategoria() {
         return this.categoria;
     }
@@ -320,6 +331,7 @@ public class Prodotto implements Serializable {
             ", votoTotale=" + getVotoTotale() +
             ", inEvidenza='" + getInEvidenza() + "'" +
             ", totalePurchased=" + getTotalePurchased() +
+            ", numRecensioni=" + getNumRecensioni() +
             "}";
     }
 }

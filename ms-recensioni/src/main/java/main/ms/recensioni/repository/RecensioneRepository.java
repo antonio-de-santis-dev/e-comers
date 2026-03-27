@@ -14,9 +14,14 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RecensioneRepository extends MongoRepository<Recensione, String> {
     /**
-     * Trova tutte le recensioni per un prodotto specifico (approvate o meno).
+     * Trova tutte le recensioni per un prodotto specifico (approvate o meno), senza paginazione.
      */
     List<Recensione> findByProdottoId(UUID prodottoId);
+
+    /**
+     * Trova tutte le recensioni per un prodotto specifico (approvate o meno), con paginazione.
+     */
+    Page<Recensione> findByProdottoId(UUID prodottoId, Pageable pageable);
 
     /**
      * Trova le recensioni per un prodotto filtrate per stato approvazione, con paginazione.

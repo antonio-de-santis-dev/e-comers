@@ -13,7 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-@Component
+@Component("sseConsumer")
 public class KafkaConsumer implements Consumer<String> {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumer.class);

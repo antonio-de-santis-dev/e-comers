@@ -43,20 +43,21 @@
         <p class="section-label">Scelti per te</p>
         <h2 class="section-title">Prodotti in Evidenza</h2>
       </div>
-      <a routerLink="/catalogo" class="view-all-link">
-        Vedi tutti <span>→</span>
-      </a>
+      <a routerLink="/catalogo" class="view-all-link">Vedi tutti <span>→</span></a>
     </div>
 
-    <!-- Loading state -->
+    <!-- Skeleton -->
     @if (loadingEvidenza()) {
       <div class="skeleton-row">
         @for (n of [1,2,3,4]; track n) {
           <div class="skeleton-card">
             <div class="skeleton-img"></div>
-            <div class="skeleton-line w-80"></div>
-            <div class="skeleton-line w-50"></div>
-            <div class="skeleton-line w-30"></div>
+            <div class="skeleton-body">
+              <div class="skeleton-line w-30"></div>
+              <div class="skeleton-line w-80"></div>
+              <div class="skeleton-line w-50"></div>
+              <div class="skeleton-line w-40"></div>
+            </div>
           </div>
         }
       </div>
@@ -65,71 +66,70 @@
     <!-- Carousel -->
     @if (!loadingEvidenza() && prodottiInEvidenza().length > 0) {
       <div class="carousel-wrapper">
-        <button
-          class="carousel-btn carousel-btn--prev"
-          [class.disabled]="!canPrev('evidenza')"
-          (click)="prevSlide('evidenza')"
-          aria-label="Precedente"
-        >‹</button>
+        <button class="carousel-btn carousel-btn--prev"
+                [class.disabled]="!canPrev('evidenza')"
+                (click)="prevSlide('evidenza')" aria-label="Precedente">‹</button>
 
         <div class="carousel-viewport">
-          <div
-            class="carousel-track"
-            [style.transform]="translateX('evidenza')"
-          >
-            @for (prodotto of prodottiInEvidenza(); track prodotto.id) {
+          <div class="carousel-track" [style.transform]="translateX('evidenza')">
+            @for (p of prodottiInEvidenza(); track p.id) {
               <div class="product-card-wrap">
-                <div class="product-card" [class.esaurito]="!prodotto.disponibile">
-                  <a [routerLink]="['/prodotto', prodotto.id]" class="card-img-link">
-                    <img
-                      [src]="getImmagine(prodotto)"
-                      [alt]="prodotto.nome"
-                      class="card-img"
-                      loading="lazy"
-                    />
-                    @if (!prodotto.disponibile) {
-                      <span class="badge-esaurito">Esaurito</span>
+                <a class="prod-card" [routerLink]="['/prodotto', p.id]">
+
+                  <!-- Immagine -->
+                  <div class="prod-img-wrap">
+                    <img [src]="getImmagine(p)" [alt]="p.nome" class="prod-img" loading="lazy" />
+                    @if (!p.disponibile) {
+                      <span class="badge badge--esaurito">Esaurito</span>
                     }
-                  </a>
-                  <div class="card-body">
-                    @if (prodotto.categoria) {
-                      <span class="card-category">{{ prodotto.categoria.nome }}</span>
+                  </div>
+
+                  <!-- Corpo -->
+                  <div class="prod-body">
+                    @if (p.categoria) {
+                      <span class="prod-cat">{{ p.categoria.nome }}</span>
                     }
-                    <h3 class="card-name">
-                      <a [routerLink]="['/prodotto', prodotto.id]">{{ prodotto.nome }}</a>
-                    </h3>
-                    <div class="card-stars">
-                      @for (star of getStarsArray(prodotto.votMedio); track $index) {
-                        <span [class.filled]="star">★</span>
+                    <h3 class="prod-nome">{{ p.nome }}</h3>
+                    <div class="prod-stars">
+                      @for (s of getStelle(p.votoTotale); track $index) {
+                        <span [class.star--on]="s === '★'">{{ s }}</span>
                       }
                     </div>
-                    <div class="card-footer">
-                      <span class="card-price">{{ formatPrice(prodotto.prezzoUnitario) }}</span>
-                      <button
-                        class="card-btn-cart"
-                        [disabled]="!prodotto.disponibile"
-                        aria-label="Aggiungi al carrello"
-                      >
-                        🛒
-                      </button>
-                    </div>
+                    @if (p.disponibile) {
+                      <p class="prod-disponibile">
+                        <span class="dot dot--green"></span>
+                        Disponibile ({{ p.quantitaDisponibile }})
+                      </p>
+                    } @else {
+                      <p class="prod-esaurito"><span class="dot dot--red"></span>Esaurito</p>
+                    }
+                    <p class="prod-prezzo">{{ formatPrice(getPrezzo(p)) }}</p>
                   </div>
-                </div>
+
+                  <!-- Azioni -->
+                  <div class="prod-actions">
+                    <button class="btn-acquista" type="button"
+                            [disabled]="!p.disponibile"
+                            (click)="acquistaOra($event, p)">Acquista</button>
+                    <button class="btn-carrello" type="button"
+                            [disabled]="!p.disponibile"
+                            (click)="aggiungiAlCarrello($event, p)">
+                      🛒 Aggiungi al carrello
+                    </button>
+                  </div>
+
+                </a>
               </div>
             }
           </div>
         </div>
 
-        <button
-          class="carousel-btn carousel-btn--next"
-          [class.disabled]="!canNext('evidenza')"
-          (click)="nextSlide('evidenza')"
-          aria-label="Successivo"
-        >›</button>
+        <button class="carousel-btn carousel-btn--next"
+                [class.disabled]="!canNext('evidenza')"
+                (click)="nextSlide('evidenza')" aria-label="Successivo">›</button>
       </div>
     }
 
-    <!-- Empty state -->
     @if (!loadingEvidenza() && prodottiInEvidenza().length === 0) {
       <div class="empty-state">
         <p>Nessun prodotto in evidenza al momento.</p>
@@ -144,34 +144,22 @@
   <div class="banner-strip__inner">
     <div class="banner-strip__item">
       <span class="strip-icon">⭐</span>
-      <div>
-        <strong>Qualità garantita</strong>
-        <span>Prodotti selezionati e testati</span>
-      </div>
+      <div><strong>Qualità garantita</strong><span>Prodotti selezionati e testati</span></div>
     </div>
     <div class="banner-strip__divider"></div>
     <div class="banner-strip__item">
       <span class="strip-icon">📦</span>
-      <div>
-        <strong>Spedizione in 24/48h</strong>
-        <span>Corriere espresso incluso</span>
-      </div>
+      <div><strong>Spedizione in 24/48h</strong><span>Corriere espresso incluso</span></div>
     </div>
     <div class="banner-strip__divider"></div>
     <div class="banner-strip__item">
       <span class="strip-icon">💳</span>
-      <div>
-        <strong>Paga come vuoi</strong>
-        <span>Carta, PayPal, contanti alla consegna</span>
-      </div>
+      <div><strong>Paga come vuoi</strong><span>Carta, PayPal, contanti alla consegna</span></div>
     </div>
     <div class="banner-strip__divider"></div>
     <div class="banner-strip__item">
       <span class="strip-icon">🎧</span>
-      <div>
-        <strong>Supporto sempre attivo</strong>
-        <span>Siamo qui per aiutarti</span>
-      </div>
+      <div><strong>Supporto sempre attivo</strong><span>Siamo qui per aiutarti</span></div>
     </div>
   </div>
 </section>
@@ -184,9 +172,7 @@
         <p class="section-label">I più acquistati</p>
         <h2 class="section-title">Top Venduti</h2>
       </div>
-      <a routerLink="/catalogo" class="view-all-link">
-        Vedi tutti <span>→</span>
-      </a>
+      <a routerLink="/catalogo" class="view-all-link">Vedi tutti <span>→</span></a>
     </div>
 
     @if (loadingTop()) {
@@ -194,9 +180,12 @@
         @for (n of [1,2,3,4]; track n) {
           <div class="skeleton-card">
             <div class="skeleton-img"></div>
-            <div class="skeleton-line w-80"></div>
-            <div class="skeleton-line w-50"></div>
-            <div class="skeleton-line w-30"></div>
+            <div class="skeleton-body">
+              <div class="skeleton-line w-30"></div>
+              <div class="skeleton-line w-80"></div>
+              <div class="skeleton-line w-50"></div>
+              <div class="skeleton-line w-40"></div>
+            </div>
           </div>
         }
       </div>
@@ -204,68 +193,64 @@
 
     @if (!loadingTop() && topVenduti().length > 0) {
       <div class="carousel-wrapper">
-        <button
-          class="carousel-btn carousel-btn--prev"
-          [class.disabled]="!canPrev('top')"
-          (click)="prevSlide('top')"
-          aria-label="Precedente"
-        >‹</button>
+        <button class="carousel-btn carousel-btn--prev"
+                [class.disabled]="!canPrev('top')"
+                (click)="prevSlide('top')" aria-label="Precedente">‹</button>
 
         <div class="carousel-viewport">
-          <div
-            class="carousel-track"
-            [style.transform]="translateX('top')"
-          >
-            @for (prodotto of topVenduti(); track prodotto.id) {
+          <div class="carousel-track" [style.transform]="translateX('top')">
+            @for (p of topVenduti(); track p.id) {
               <div class="product-card-wrap">
-                <div class="product-card" [class.esaurito]="!prodotto.disponibile">
-                  <a [routerLink]="['/prodotto', prodotto.id]" class="card-img-link">
-                    <img
-                      [src]="getImmagine(prodotto)"
-                      [alt]="prodotto.nome"
-                      class="card-img"
-                      loading="lazy"
-                    />
-                    <span class="badge-top">🔥 Top</span>
-                    @if (!prodotto.disponibile) {
-                      <span class="badge-esaurito">Esaurito</span>
+                <a class="prod-card" [routerLink]="['/prodotto', p.id]">
+
+                  <div class="prod-img-wrap">
+                    <img [src]="getImmagine(p)" [alt]="p.nome" class="prod-img" loading="lazy" />
+                    @if (!p.disponibile) {
+                      <span class="badge badge--esaurito">Esaurito</span>
                     }
-                  </a>
-                  <div class="card-body">
-                    @if (prodotto.categoria) {
-                      <span class="card-category">{{ prodotto.categoria.nome }}</span>
+                  </div>
+
+                  <div class="prod-body">
+                    @if (p.categoria) {
+                      <span class="prod-cat">{{ p.categoria.nome }}</span>
                     }
-                    <h3 class="card-name">
-                      <a [routerLink]="['/prodotto', prodotto.id]">{{ prodotto.nome }}</a>
-                    </h3>
-                    <div class="card-stars">
-                      @for (star of getStarsArray(prodotto.votMedio); track $index) {
-                        <span [class.filled]="star">★</span>
+                    <h3 class="prod-nome">{{ p.nome }}</h3>
+                    <div class="prod-stars">
+                      @for (s of getStelle(p.votoTotale); track $index) {
+                        <span [class.star--on]="s === '★'">{{ s }}</span>
                       }
                     </div>
-                    <div class="card-footer">
-                      <span class="card-price">{{ formatPrice(prodotto.prezzoUnitario) }}</span>
-                      <button
-                        class="card-btn-cart"
-                        [disabled]="!prodotto.disponibile"
-                        aria-label="Aggiungi al carrello"
-                      >
-                        🛒
-                      </button>
-                    </div>
+                    @if (p.disponibile) {
+                      <p class="prod-disponibile">
+                        <span class="dot dot--green"></span>
+                        Disponibile ({{ p.quantitaDisponibile }})
+                      </p>
+                    } @else {
+                      <p class="prod-esaurito"><span class="dot dot--red"></span>Esaurito</p>
+                    }
+                    <p class="prod-prezzo">{{ formatPrice(getPrezzo(p)) }}</p>
                   </div>
-                </div>
+
+                  <div class="prod-actions">
+                    <button class="btn-acquista" type="button"
+                            [disabled]="!p.disponibile"
+                            (click)="acquistaOra($event, p)">Acquista</button>
+                    <button class="btn-carrello" type="button"
+                            [disabled]="!p.disponibile"
+                            (click)="aggiungiAlCarrello($event, p)">
+                      🛒 Aggiungi al carrello
+                    </button>
+                  </div>
+
+                </a>
               </div>
             }
           </div>
         </div>
 
-        <button
-          class="carousel-btn carousel-btn--next"
-          [class.disabled]="!canNext('top')"
-          (click)="nextSlide('top')"
-          aria-label="Successivo"
-        >›</button>
+        <button class="carousel-btn carousel-btn--next"
+                [class.disabled]="!canNext('top')"
+                (click)="nextSlide('top')" aria-label="Successivo">›</button>
       </div>
     }
 
@@ -282,7 +267,6 @@
 <section class="chi-siamo-section">
   <div class="section-container">
     <div class="chi-siamo-grid">
-
       <div class="chi-siamo-text">
         <p class="section-label">La nostra storia</p>
         <h2 class="section-title">Chi Siamo</h2>
@@ -294,55 +278,31 @@
         <p class="chi-siamo-body">
           Fondata con l'obiettivo di portare qualità a portata di tutti,
           la nostra piattaforma unisce tecnologia moderna e attenzione al cliente.
-          Dalla ricerca del prodotto al tuo doorstep: ci prendiamo cura di ogni passo.
         </p>
         <div class="chi-siamo-valori">
           <div class="valore-item">
             <span class="valore-icon">🎯</span>
-            <div>
-              <strong>Qualità prima di tutto</strong>
-              <p>Ogni prodotto supera i nostri standard di selezione</p>
-            </div>
+            <div><strong>Qualità prima di tutto</strong><p>Ogni prodotto supera i nostri standard</p></div>
           </div>
           <div class="valore-item">
             <span class="valore-icon">🤝</span>
-            <div>
-              <strong>Trasparenza totale</strong>
-              <p>Prezzi chiari, nessun costo nascosto</p>
-            </div>
+            <div><strong>Trasparenza totale</strong><p>Prezzi chiari, nessun costo nascosto</p></div>
           </div>
           <div class="valore-item">
             <span class="valore-icon">💚</span>
-            <div>
-              <strong>Sostenibilità</strong>
-              <p>Packaging eco-friendly e spedizioni compensate</p>
-            </div>
+            <div><strong>Sostenibilità</strong><p>Packaging eco-friendly e spedizioni compensate</p></div>
           </div>
         </div>
         <a routerLink="/catalogo" class="btn-primary-lg" style="display:inline-flex; margin-top: 2rem;">
           Esplora il catalogo <span class="btn-arrow">→</span>
         </a>
       </div>
-
       <div class="chi-siamo-stats">
-        <div class="stat-card">
-          <span class="stat-number">5.000+</span>
-          <span class="stat-label">Clienti soddisfatti</span>
-        </div>
-        <div class="stat-card">
-          <span class="stat-number">500+</span>
-          <span class="stat-label">Prodotti disponibili</span>
-        </div>
-        <div class="stat-card">
-          <span class="stat-number">4,8★</span>
-          <span class="stat-label">Valutazione media</span>
-        </div>
-        <div class="stat-card">
-          <span class="stat-number">24h</span>
-          <span class="stat-label">Tempi di spedizione</span>
-        </div>
+        <div class="stat-card"><span class="stat-number">5.000+</span><span class="stat-label">Clienti soddisfatti</span></div>
+        <div class="stat-card"><span class="stat-number">500+</span><span class="stat-label">Prodotti disponibili</span></div>
+        <div class="stat-card"><span class="stat-number">4,8★</span><span class="stat-label">Valutazione media</span></div>
+        <div class="stat-card"><span class="stat-number">24h</span><span class="stat-label">Tempi di spedizione</span></div>
       </div>
-
     </div>
   </div>
 </section>

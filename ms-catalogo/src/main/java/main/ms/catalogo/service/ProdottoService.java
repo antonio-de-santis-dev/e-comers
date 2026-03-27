@@ -130,10 +130,10 @@ public class ProdottoService {
                 Pageable pageable = PageRequest.of(0, CORRELATI_LIMIT);
                 return prodottoRepository
                     .findByCategoria_IdAndProdottoUuidNotAndDisponibileTrue(
-                    prodotto.getCategoria().getId(),
-                    prodottoId,
-                    pageable
-                )
+                        prodotto.getCategoria().getId(),
+                        prodottoId,
+                        pageable
+                    )
                     .stream()
                     .map(prodottoMapper::toDto)
                     .toList();
@@ -146,15 +146,22 @@ public class ProdottoService {
     // =========================================================================
 
     @Transactional
-    public void aggiornaVotoTotale(UUID prodottoUuid, Double nuovaMedia) {
-        LOG.debug("Aggiornamento votoTotale per prodottoUuid={}, nuovaMedia={}", prodottoUuid, nuovaMedia);
+    public void aggiornaVotoMedio(UUID prodottoUuid, Integer nuovoVoto) {
+        LOG.debug("Aggiornamento votoMedio per prodottoUuid={}, nuovoVoto={}", prodottoUuid, nuovoVoto);
         prodottoRepository
             .findByProdottoUuid(prodottoUuid)
             .ifPresentOrElse(
                 prodotto -> {
-                    prodotto.setVotoTotale(nuovaMedia);
+                    // Media incrementale: newAvg = ((oldAvg * (n-1)) + newVoto) / n
+                    int n = prodotto.getNumRecensioni() + 1;
+                    double mediaAttuale = prodotto.getVotoTotale() != null ? prodotto.getVotoTotale() : 0.0;
+                    double nuovaMedia = ((mediaAttuale * (n - 1)) + nuovoVoto) / n;
+                    // Arrotonda a 1 decimale
+                    double nuovaMediaArrotondata = Math.round(nuovaMedia * 10.0) / 10.0;
+                    prodotto.setVotoTotale(nuovaMediaArrotondata);
+                    prodotto.setNumRecensioni(n);
                     prodottoRepository.save(prodotto);
-                    LOG.info("VotoTotale aggiornato a {} per uuid={}", nuovaMedia, prodottoUuid);
+                    LOG.info("VotoTotale aggiornato a {} (n={}) per uuid={}", nuovaMediaArrotondata, n, prodottoUuid);
                 },
                 () -> LOG.warn("Prodotto uuid={} non trovato — votoTotale non aggiornato", prodottoUuid)
             );

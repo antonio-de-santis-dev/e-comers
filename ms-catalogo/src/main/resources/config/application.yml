@@ -129,7 +129,7 @@ spring:
     name: msCatalogo
   cloud:
     function:
-      definition: kafkaConsumer
+      definition: kafkaConsumer;recensioneConsumer
     stream:
       kafka:
         binder:
@@ -141,7 +141,7 @@ spring:
           destination: ordine-confermato
           content-type: application/json
           group: mscatalogo-ordine
-        kafkaConsumer-in-1:
+        recensioneConsumer-in-0:
           destination: recensione-approvata
           content-type: application/json
           group: mscatalogo-recensione

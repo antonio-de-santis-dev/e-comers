@@ -181,9 +181,6 @@
               <!-- Immagine -->
               <div class="prod-img-wrap">
                 <img [src]="getImmagine(p)" [alt]="p.nome" class="prod-img" />
-                @if (p.inEvidenza) {
-                  <span class="badge badge--evidenza">⭐ In evidenza</span>
-                }
                 @if (!p.disponibile) {
                   <span class="badge badge--esaurito">Esaurito</span>
                 }

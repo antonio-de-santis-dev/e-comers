@@ -1,17 +1,15 @@
 package main.ms.recensioni.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import main.ms.recensioni.broker.RecensioneKafkaPublisher;
 import main.ms.recensioni.domain.Recensione;
 import main.ms.recensioni.repository.RecensioneRepository;
 import main.ms.recensioni.service.dto.RecensioneDTO;
 import main.ms.recensioni.service.mapper.RecensioneMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,47 +24,45 @@ public class RecensioneService {
 
     private final RecensioneRepository recensioneRepository;
     private final RecensioneMapper recensioneMapper;
-    private final StreamBridge streamBridge;
-    private final ObjectMapper objectMapper;
+    private final RecensioneKafkaPublisher kafkaPublisher;
 
     public RecensioneService(
         RecensioneRepository recensioneRepository,
         RecensioneMapper recensioneMapper,
-        StreamBridge streamBridge,
-        ObjectMapper objectMapper
+        RecensioneKafkaPublisher kafkaPublisher
     ) {
         this.recensioneRepository = recensioneRepository;
         this.recensioneMapper = recensioneMapper;
-        this.streamBridge = streamBridge;
-        this.objectMapper = objectMapper;
+        this.kafkaPublisher = kafkaPublisher;
     }
 
     /**
-     * Save a recensione. Imposta dataRecensione automaticamente se non fornita.
+     * Save a recensione.
+     * Imposta dataRecensione e approvata automaticamente se non forniti.
      */
     public RecensioneDTO save(RecensioneDTO recensioneDTO) {
         LOG.debug("Request to save Recensione : {}", recensioneDTO);
         Recensione recensione = recensioneMapper.toEntity(recensioneDTO);
 
-        // Imposta dataRecensione automaticamente se non fornita
         if (recensione.getDataRecensione() == null) {
             recensione.setDataRecensione(Instant.now());
         }
-
-        // Imposta approvata = false di default se non fornito
         if (recensione.getApprovata() == null) {
             recensione.setApprovata(false);
         }
 
         recensione = recensioneRepository.save(recensione);
-        RecensioneDTO result = recensioneMapper.toDto(recensione);
 
-        // Pubblica evento Kafka se recensione approvata
+        // Kafka pubblicato in modo asincrono dal bean separato — non causa mai 500
         if (Boolean.TRUE.equals(recensione.getApprovata())) {
-            pubblicaRecensioneApprovata(recensione);
+            kafkaPublisher.pubblicaRecensioneApprovata(
+                recensione.getId(),
+                recensione.getProdottoId(),
+                recensione.getVotoSingolo()
+            );
         }
 
-        return result;
+        return recensioneMapper.toDto(recensione);
     }
 
     /**
@@ -76,14 +72,16 @@ public class RecensioneService {
         LOG.debug("Request to update Recensione : {}", recensioneDTO);
         Recensione recensione = recensioneMapper.toEntity(recensioneDTO);
         recensione = recensioneRepository.save(recensione);
-        RecensioneDTO result = recensioneMapper.toDto(recensione);
 
-        // Pubblica evento Kafka se recensione approvata
         if (Boolean.TRUE.equals(recensione.getApprovata())) {
-            pubblicaRecensioneApprovata(recensione);
+            kafkaPublisher.pubblicaRecensioneApprovata(
+                recensione.getId(),
+                recensione.getProdottoId(),
+                recensione.getVotoSingolo()
+            );
         }
 
-        return result;
+        return recensioneMapper.toDto(recensione);
     }
 
     /**
@@ -101,7 +99,11 @@ public class RecensioneService {
             .map(recensioneRepository::save)
             .map(saved -> {
                 if (Boolean.TRUE.equals(saved.getApprovata())) {
-                    pubblicaRecensioneApprovata(saved);
+                    kafkaPublisher.pubblicaRecensioneApprovata(
+                        saved.getId(),
+                        saved.getProdottoId(),
+                        saved.getVotoSingolo()
+                    );
                 }
                 return saved;
             })
@@ -117,7 +119,7 @@ public class RecensioneService {
     }
 
     /**
-     * Get all recensioni for a product, optionally filtered by approval status.
+     * Get recensioni per prodotto, opzionalmente filtrate per approvazione.
      */
     public Page<RecensioneDTO> findByProdottoIdAndApprovata(UUID prodottoId, Boolean approvata, Pageable pageable) {
         LOG.debug("Request to get Recensiones for prodottoId: {}, approvata: {}", prodottoId, approvata);
@@ -125,7 +127,9 @@ public class RecensioneService {
             return recensioneRepository.findByProdottoIdAndApprovata(prodottoId, approvata, pageable)
                 .map(recensioneMapper::toDto);
         }
-        return recensioneRepository.findAll(pageable).map(recensioneMapper::toDto);
+        // approvata non specificata → tutte le recensioni del prodotto, non di tutti i prodotti
+        return recensioneRepository.findByProdottoId(prodottoId, pageable)
+            .map(recensioneMapper::toDto);
     }
 
     /**
@@ -143,27 +147,4 @@ public class RecensioneService {
         LOG.debug("Request to delete Recensione : {}", id);
         recensioneRepository.deleteById(id);
     }
-
-    /**
-     * Pubblica evento recensione-approvata su Kafka.
-     * ms-catalogo consumerà questo evento per aggiornare il votoTotale del prodotto.
-     */
-    private void pubblicaRecensioneApprovata(Recensione recensione) {
-        try {
-            String payload = objectMapper.writeValueAsString(new RecensioneApprovataEvent(
-                recensione.getId(),
-                recensione.getProdottoId(),
-                recensione.getVotoSingolo()
-            ));
-            streamBridge.send("kafkaProducer-out-0", payload);
-            LOG.info("Evento recensione-approvata pubblicato per prodotto: {}", recensione.getProdottoId());
-        } catch (Exception e) {
-            LOG.error("Errore pubblicazione evento Kafka per recensione {}: {}", recensione.getId(), e.getMessage());
-        }
-    }
-
-    /**
-     * Evento Kafka emesso quando una recensione viene approvata.
-     */
-    public record RecensioneApprovataEvent(String recensioneId, UUID prodottoId, Integer votoSingolo) {}
 }

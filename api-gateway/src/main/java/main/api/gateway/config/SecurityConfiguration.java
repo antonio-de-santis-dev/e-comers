@@ -86,6 +86,7 @@ public class SecurityConfiguration {
                     .pathMatchers("/services/*/v3/api-docs").hasAuthority(AuthoritiesConstants.ADMIN)
                     .pathMatchers(HttpMethod.GET, "/services/mscatalogo/**").permitAll()
                     .pathMatchers(HttpMethod.GET, "/services/msrecensioni/**").permitAll()
+                    .pathMatchers(HttpMethod.POST, "/services/msrecensioni/**").permitAll()
                     .pathMatchers(HttpMethod.POST, "/services/msordini/**").permitAll()
                     .pathMatchers(HttpMethod.POST, "/services/mspagamenti/**").permitAll()
                     .pathMatchers("/services/**").authenticated()
