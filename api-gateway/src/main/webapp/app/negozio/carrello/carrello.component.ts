@@ -64,8 +64,7 @@ export default class CarrelloComponent implements OnInit, OnDestroy {
   }
 
   procediPagamento(): void {
-    // TODO: collegare al microservizio ordini
-    this.router.navigate(['/ordini/nuovo']);
+    this.router.navigate(['/checkout']);
   }
 
   formatPrice(price: number): string {

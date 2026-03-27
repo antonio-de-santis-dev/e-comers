@@ -342,3 +342,15 @@
 
   </div>
 }
+
+<!-- ── TOAST NOTIFICA CARRELLO ── -->
+@if (toastVisibile()) {
+  <div class="cart-toast" role="alert">
+    <span class="cart-toast__icon">✅</span>
+    <div class="cart-toast__text">
+      <strong>Aggiunto al carrello</strong>
+      <span>{{ toastNomeProdotto() }}</span>
+    </div>
+    <button class="cart-toast__close" (click)="chiudiToast()" aria-label="Chiudi">×</button>
+  </div>
+}

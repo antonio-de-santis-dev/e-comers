@@ -44,6 +44,11 @@ const routes: Routes = [
     title: 'negozio.carrello',
   },
   {
+    path: 'checkout',
+    loadComponent: () => import('./negozio/checkout/checkout.component'),
+    title: 'negozio.checkout',
+  },
+  {
     path: 'ordini',
     loadComponent: () => import('./negozio/ordini/ordini.component'),
     title: 'negozio.ordini',

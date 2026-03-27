@@ -81,6 +81,11 @@ export default class ProdottoDettaglioComponent implements OnInit, OnDestroy {
   invioOk = signal(false);
   invioErrore = signal<string | null>(null);
 
+  // ---- Toast carrello ----
+  toastVisibile = signal(false);
+  toastNomeProdotto = signal('');
+  private toastTimer: ReturnType<typeof setTimeout> | null = null;
+
   nuovaRecensione = {
     nomeCliente: '',
     descrizione: '',
@@ -127,6 +132,7 @@ export default class ProdottoDettaglioComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.toastTimer) clearTimeout(this.toastTimer);
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -220,8 +226,22 @@ export default class ProdottoDettaglioComponent implements OnInit, OnDestroy {
         immagineUrl: this.buildImgUri(p),
       });
     }
-    // Feedback visivo temporaneo navigando al carrello
-    this.router.navigate(['/carrello']);
+    this.mostraToast(p.nome ?? 'Prodotto');
+  }
+
+  private mostraToast(nomeProdotto: string): void {
+    if (this.toastTimer) clearTimeout(this.toastTimer);
+    this.toastNomeProdotto.set(nomeProdotto);
+    this.toastVisibile.set(true);
+    this.toastTimer = setTimeout(() => {
+      this.toastVisibile.set(false);
+      this.toastTimer = null;
+    }, 3000);
+  }
+
+  chiudiToast(): void {
+    if (this.toastTimer) clearTimeout(this.toastTimer);
+    this.toastVisibile.set(false);
   }
 
   acquistaOra(): void {

@@ -6,6 +6,7 @@ import { Subject, of } from 'rxjs';
 import { takeUntil, catchError } from 'rxjs/operators';
 import SharedModule from 'app/shared/shared.module';
 import { DecimalPipe } from '@angular/common';
+import { CarrelloService } from 'app/negozio/carrello/carrello.service';
 
 interface Prodotto {
   id: string;
@@ -56,10 +57,16 @@ export default class CatalogoProdottiComponent implements OnInit, OnDestroy {
   pagina = signal(0);
   readonly PAGE_SIZE = 12;
 
+  // ── Toast notifica carrello ──
+  toastVisibile = signal(false);
+  toastNomeProdotto = signal('');
+  private toastTimer: ReturnType<typeof setTimeout> | null = null;
+
   private readonly destroy$ = new Subject<void>();
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly http = inject(HttpClient);
+  private readonly carrelloService = inject(CarrelloService);
 
   readonly PLACEHOLDER = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIiB2aWV3Qm94PSIwIDAgNDAwIDQwMCI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSI0MDAiIGZpbGw9IiNmNWY1ZjUiLz48cmVjdCB4PSIxMjAiIHk9IjEwMCIgd2lkdGg9IjE2MCIgaGVpZ2h0PSIxMjAiIHJ4PSIxMiIgZmlsbD0iI2UwZTBlMCIvPjxjaXJjbGUgY3g9IjIwMCIgY3k9IjI4MCIgcj0iNDAiIGZpbGw9IiNlMGUwZTAiLz48dGV4dCB4PSIyMDAiIHk9IjM3MCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiNiYmIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltbWFnaW5lIHByb2RvdHRvPC90ZXh0Pjwvc3ZnPg==';
 
@@ -74,11 +81,12 @@ export default class CatalogoProdottiComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.toastTimer) clearTimeout(this.toastTimer);
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-  // ── Caricamento categorie per la sidebar ──────────────────────
+  // ── Caricamento ──────────────────────────────────────────
   private caricaCategorie(): void {
     this.http
       .get<CategoriaItem[]>('/services/mscatalogo/api/categorias', { params: { size: '200' } })
@@ -86,7 +94,6 @@ export default class CatalogoProdottiComponent implements OnInit, OnDestroy {
       .subscribe(cats => this.categorie.set(cats));
   }
 
-  // ── Caricamento prodotti con tutti i filtri ───────────────────
   caricaProdotti(): void {
     this.loading.set(true);
     const params: Record<string, string> = {
@@ -94,7 +101,6 @@ export default class CatalogoProdottiComponent implements OnInit, OnDestroy {
       size: this.PAGE_SIZE.toString(),
       sort: this.ordinamento(),
     };
-
     if (this.categoriaId()) params['categoriaId.equals'] = this.categoriaId()!;
     if (this.ricerca().trim().length >= 2) params['nome.contains'] = this.ricerca().trim();
     if (this.soloEvidenza()) params['inEvidenza.equals'] = 'true';
@@ -114,7 +120,6 @@ export default class CatalogoProdottiComponent implements OnInit, OnDestroy {
         this.prodotti.set(res.body ?? []);
         const tot = res.headers.get('X-Total-Count');
         this.totale.set(tot ? parseInt(tot, 10) : 0);
-
         const first = res.body?.[0];
         if (first?.categoria?.nome && this.categoriaId()) {
           this.nomeCategoria.set(first.categoria.nome);
@@ -126,18 +131,12 @@ export default class CatalogoProdottiComponent implements OnInit, OnDestroy {
     });
   }
 
-  // ── Handler filtri ────────────────────────────────────────────
-  onRicercaChange(val: string): void {
-    this.ricerca.set(val);
-    this.pagina.set(0);
-    this.caricaProdotti();
-  }
-
-  onOrdinamentoChange(val: string): void {
-    this.ordinamento.set(val);
-    this.pagina.set(0);
-    this.caricaProdotti();
-  }
+  // ── Handler filtri ────────────────────────────────────────
+  onRicercaChange(val: string): void { this.ricerca.set(val); this.pagina.set(0); this.caricaProdotti(); }
+  onOrdinamentoChange(val: string): void { this.ordinamento.set(val); this.pagina.set(0); this.caricaProdotti(); }
+  onEvidenzaChange(val: boolean): void { this.soloEvidenza.set(val); this.pagina.set(0); this.caricaProdotti(); }
+  onDisponibiliChange(val: boolean): void { this.soloDisponibili.set(val); this.pagina.set(0); this.caricaProdotti(); }
+  onPrezzoMaxChange(val: number): void { this.prezzoMax.set(val); this.pagina.set(0); this.caricaProdotti(); }
 
   onCategoriaChange(id: string | null): void {
     this.categoriaId.set(id);
@@ -150,39 +149,53 @@ export default class CatalogoProdottiComponent implements OnInit, OnDestroy {
     this.caricaProdotti();
   }
 
-  onEvidenzaChange(val: boolean): void {
-    this.soloEvidenza.set(val);
-    this.pagina.set(0);
-    this.caricaProdotti();
+  // ── Carrello con toast ────────────────────────────────────
+  aggiungiAlCarrello(event: Event, prodotto: Prodotto): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.carrelloService.aggiungi({
+      id: prodotto.id,
+      nome: prodotto.nome,
+      prezzo: prodotto.prezzo,
+      immagineUrl: this.getImmagine(prodotto),
+    });
+    this.mostraToast(prodotto.nome);
   }
 
-  onDisponibiliChange(val: boolean): void {
-    this.soloDisponibili.set(val);
-    this.pagina.set(0);
-    this.caricaProdotti();
+  acquistaOra(event: Event, prodotto: Prodotto): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.carrelloService.aggiungi({
+      id: prodotto.id,
+      nome: prodotto.nome,
+      prezzo: prodotto.prezzo,
+      immagineUrl: this.getImmagine(prodotto),
+    });
+    this.router.navigate(['/carrello']);
   }
 
-  onPrezzoMaxChange(val: number): void {
-    this.prezzoMax.set(val);
-    this.pagina.set(0);
-    this.caricaProdotti();
+  private mostraToast(nomeProdotto: string): void {
+    // Cancella timer precedente se c'era già un toast attivo
+    if (this.toastTimer) clearTimeout(this.toastTimer);
+    this.toastNomeProdotto.set(nomeProdotto);
+    this.toastVisibile.set(true);
+    this.toastTimer = setTimeout(() => {
+      this.toastVisibile.set(false);
+      this.toastTimer = null;
+    }, 3000);
   }
 
-  // ── Paginazione ───────────────────────────────────────────────
+  chiudiToast(): void {
+    if (this.toastTimer) clearTimeout(this.toastTimer);
+    this.toastVisibile.set(false);
+  }
+
+  // ── Paginazione ───────────────────────────────────────────
   paginaPrecedente(): void {
-    if (this.pagina() > 0) {
-      this.pagina.update(p => p - 1);
-      this.caricaProdotti();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    if (this.pagina() > 0) { this.pagina.update(p => p - 1); this.caricaProdotti(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
   }
-
   paginaSuccessiva(): void {
-    if ((this.pagina() + 1) * this.PAGE_SIZE < this.totale()) {
-      this.pagina.update(p => p + 1);
-      this.caricaProdotti();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    if ((this.pagina() + 1) * this.PAGE_SIZE < this.totale()) { this.pagina.update(p => p + 1); this.caricaProdotti(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
   }
 
   get paginaCorrente(): number { return this.pagina() + 1; }
@@ -190,7 +203,7 @@ export default class CatalogoProdottiComponent implements OnInit, OnDestroy {
   get hasPrev(): boolean { return this.pagina() > 0; }
   get hasNext(): boolean { return (this.pagina() + 1) * this.PAGE_SIZE < this.totale(); }
 
-  // ── Helpers ───────────────────────────────────────────────────
+  // ── Helpers ───────────────────────────────────────────────
   getImmagine(p: Prodotto): string {
     if (p.immagineCopertina && p.immagineCopertina.length > 10 && p.immagineCopertinaContentType) {
       return `data:${p.immagineCopertinaContentType};base64,${p.immagineCopertina}`;
@@ -208,7 +221,5 @@ export default class CatalogoProdottiComponent implements OnInit, OnDestroy {
     return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(p);
   }
 
-  tornaAlCatalogo(): void {
-    this.router.navigate(['/catalogo']);
-  }
+  tornaAlCatalogo(): void { this.router.navigate(['/catalogo']); }
 }

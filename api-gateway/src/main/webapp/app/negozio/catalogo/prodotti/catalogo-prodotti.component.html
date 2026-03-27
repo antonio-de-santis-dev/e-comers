@@ -1,12 +1,6 @@
-<!-- ═══════════════════════════════════════════════════════════
-     PAGINA CATALOGO PRODOTTI — layout sidebar + griglia
-     Sidebar sinistra: CERCA · CATEGORIA · FILTRI RAPIDI · PREZZO
-     Contenuto destra: toolbar ordinamento + griglia prodotti
-     ═══════════════════════════════════════════════════════════ -->
-
 <div class="cp-page">
 
-  <!-- HEADER breadcrumb -->
+  <!-- HEADER -->
   <div class="cp-header">
     <div class="cp-breadcrumb">
       <button class="btn-back" (click)="tornaAlCatalogo()">← Catalogo</button>
@@ -54,26 +48,14 @@
       <div class="sf-section">
         <p class="sf-label">CATEGORIA</p>
         <div class="sf-radio-group">
-          <!-- Tutte le categorie -->
           <label class="sf-radio">
-            <input
-              type="radio"
-              name="categoria"
-              [checked]="categoriaId() === null"
-              (change)="onCategoriaChange(null)"
-            />
+            <input type="radio" name="categoria" [checked]="categoriaId() === null" (change)="onCategoriaChange(null)"/>
             <span class="sf-radio-mark"></span>
             <span class="sf-radio-text">Tutte le categorie</span>
           </label>
-          <!-- Categorie dinamiche dal server -->
           @for (cat of categorie(); track cat.id) {
             <label class="sf-radio">
-              <input
-                type="radio"
-                name="categoria"
-                [checked]="categoriaId() === cat.id.toString()"
-                (change)="onCategoriaChange(cat.id.toString())"
-              />
+              <input type="radio" name="categoria" [checked]="categoriaId() === cat.id.toString()" (change)="onCategoriaChange(cat.id.toString())"/>
               <span class="sf-radio-mark"></span>
               <span class="sf-radio-text">{{ cat.nome }}</span>
             </label>
@@ -87,22 +69,14 @@
         <div class="sf-toggle-group">
           <label class="sf-toggle">
             <div class="sf-toggle-track" [class.sf-toggle-track--on]="soloEvidenza()">
-              <input
-                type="checkbox"
-                [checked]="soloEvidenza()"
-                (change)="onEvidenzaChange($any($event.target).checked)"
-              />
+              <input type="checkbox" [checked]="soloEvidenza()" (change)="onEvidenzaChange($any($event.target).checked)"/>
               <span class="sf-toggle-knob"></span>
             </div>
             <span class="sf-toggle-text">Solo in evidenza</span>
           </label>
           <label class="sf-toggle">
             <div class="sf-toggle-track" [class.sf-toggle-track--on]="soloDisponibili()">
-              <input
-                type="checkbox"
-                [checked]="soloDisponibili()"
-                (change)="onDisponibiliChange($any($event.target).checked)"
-              />
+              <input type="checkbox" [checked]="soloDisponibili()" (change)="onDisponibiliChange($any($event.target).checked)"/>
               <span class="sf-toggle-knob"></span>
             </div>
             <span class="sf-toggle-text">Solo disponibili</span>
@@ -113,23 +87,17 @@
       <!-- PREZZO MASSIMO -->
       <div class="sf-section">
         <p class="sf-label">PREZZO MASSIMO</p>
-        <input
-          type="range"
-          class="sf-slider"
-          [min]="0"
-          [max]="PREZZO_MAX_ASSOLUTO"
-          [value]="prezzoMax()"
-          (input)="onPrezzoMaxChange(+$any($event.target).value)"
-        />
+        <input type="range" class="sf-slider" [min]="0" [max]="PREZZO_MAX_ASSOLUTO" [value]="prezzoMax()"
+               (input)="onPrezzoMaxChange(+$any($event.target).value)"/>
         <p class="sf-slider-val">fino a {{ formatPrezzo(prezzoMax()) }}</p>
       </div>
 
     </aside>
 
-    <!-- ── MAIN CONTENT ── -->
+    <!-- ── MAIN ── -->
     <div class="cp-main">
 
-      <!-- Toolbar risultati + ordinamento -->
+      <!-- Toolbar -->
       <div class="cp-toolbar">
         @if (!loading()) {
           <span class="cp-results">{{ totale() }} risultat{{ totale() === 1 ? 'o' : 'i' }}</span>
@@ -144,7 +112,7 @@
         </div>
       </div>
 
-      <!-- SKELETON LOADING -->
+      <!-- Skeleton -->
       @if (loading()) {
         <div class="cp-grid">
           @for (_ of [1,2,3,4,5,6,7,8,9]; track $index) {
@@ -161,7 +129,7 @@
         </div>
       }
 
-      <!-- STATO VUOTO -->
+      <!-- Vuoto -->
       @if (!loading() && prodotti().length === 0) {
         <div class="cp-empty">
           <span>📦</span>
@@ -172,7 +140,7 @@
         </div>
       }
 
-      <!-- GRIGLIA PRODOTTI -->
+      <!-- Griglia -->
       @if (!loading() && prodotti().length > 0) {
         <div class="cp-grid">
           @for (p of prodotti(); track p.id) {
@@ -186,44 +154,38 @@
                 }
               </div>
 
-              <!-- Corpo card -->
+              <!-- Corpo -->
               <div class="prod-body">
-                <!-- Categoria -->
                 @if (p.categoria) {
                   <span class="prod-cat">{{ p.categoria.nome }}</span>
                 }
-
-                <!-- Nome -->
                 <h3 class="prod-nome">{{ p.nome }}</h3>
-
-                <!-- Stelle voto -->
                 <div class="prod-stars">
                   @for (s of getStelle(p.votoTotale); track $index) {
                     <span [class.star--on]="s === '★'">{{ s }}</span>
                   }
                 </div>
-
-                <!-- Disponibilità + quantità -->
                 @if (p.disponibile) {
                   <p class="prod-disponibile">
                     <span class="dot dot--green"></span>
                     Disponibile ({{ p.quantitaDisponibile }})
                   </p>
                 } @else {
-                  <p class="prod-esaurito">
-                    <span class="dot dot--red"></span>
-                    Esaurito
-                  </p>
+                  <p class="prod-esaurito"><span class="dot dot--red"></span>Esaurito</p>
                 }
-
-                <!-- Prezzo -->
                 <p class="prod-prezzo">{{ formatPrezzo(p.prezzo) }}</p>
               </div>
 
-              <!-- Azioni -->
+              <!-- Azioni — stopPropagation impedisce la navigazione alla card -->
               <div class="prod-actions">
-                <button class="btn-acquista" type="button" (click)="$event.preventDefault()">Acquista</button>
-                <button class="btn-carrello" type="button" (click)="$event.preventDefault()">
+                <button class="btn-acquista" type="button"
+                        [disabled]="!p.disponibile"
+                        (click)="acquistaOra($event, p)">
+                  Acquista
+                </button>
+                <button class="btn-carrello" type="button"
+                        [disabled]="!p.disponibile"
+                        (click)="aggiungiAlCarrello($event, p)">
                   🛒 Aggiungi al carrello
                 </button>
               </div>
@@ -232,7 +194,7 @@
           }
         </div>
 
-        <!-- PAGINAZIONE -->
+        <!-- Paginazione -->
         @if (totalePagine > 1) {
           <div class="cp-pagination">
             <button class="btn-pag" [disabled]="!hasPrev" (click)="paginaPrecedente()">← Precedente</button>
@@ -246,3 +208,15 @@
   </div><!-- /cp-layout -->
 
 </div>
+
+<!-- ── TOAST NOTIFICA CARRELLO ── -->
+@if (toastVisibile()) {
+  <div class="cart-toast" role="alert">
+    <span class="cart-toast__icon">✅</span>
+    <div class="cart-toast__text">
+      <strong>Aggiunto al carrello</strong>
+      <span>{{ toastNomeProdotto() }}</span>
+    </div>
+    <button class="cart-toast__close" (click)="chiudiToast()" aria-label="Chiudi">×</button>
+  </div>
+}
