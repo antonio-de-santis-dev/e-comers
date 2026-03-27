@@ -42,6 +42,10 @@ public class SecurityConfiguration {
                 authz
                     .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/authenticate")).permitAll()
                     .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/authenticate")).permitAll()
+                    // Checkout pubblico — utenti anonimi possono comprare
+                    .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/checkout")).permitAll()
+                    .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/ordines")).permitAll()
+                    .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/riga-ordines")).permitAll()
                     .requestMatchers(mvc.pattern("/api/admin/**")).hasAuthority(AuthoritiesConstants.ADMIN)
                     .requestMatchers(mvc.pattern("/api/**")).authenticated()
                     .requestMatchers(mvc.pattern("/v3/api-docs/**")).hasAuthority(AuthoritiesConstants.ADMIN)

@@ -1,13 +1,14 @@
 package main.ms.ordini.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import main.ms.ordini.domain.Ordine;
+import main.ms.ordini.domain.RigaOrdine;
 import main.ms.ordini.domain.enumeration.StatoOrdine;
 import main.ms.ordini.repository.OrdineRepository;
 import main.ms.ordini.service.dto.OrdineDTO;
@@ -31,32 +32,36 @@ public class OrdineService {
     private final OrdineMapper ordineMapper;
     private final StreamBridge streamBridge;
     private final ObjectMapper objectMapper;
+    private final OrdineMailService ordineMailService;
 
-    public OrdineService(OrdineRepository ordineRepository, OrdineMapper ordineMapper,
-                         StreamBridge streamBridge, ObjectMapper objectMapper) {
-        this.ordineRepository = ordineRepository;
-        this.ordineMapper = ordineMapper;
-        this.streamBridge = streamBridge;
-        this.objectMapper = objectMapper;
+    public OrdineService(
+        OrdineRepository ordineRepository,
+        OrdineMapper ordineMapper,
+        StreamBridge streamBridge,
+        ObjectMapper objectMapper,
+        OrdineMailService ordineMailService
+    ) {
+        this.ordineRepository  = ordineRepository;
+        this.ordineMapper      = ordineMapper;
+        this.streamBridge      = streamBridge;
+        this.objectMapper      = objectMapper;
+        this.ordineMailService = ordineMailService;
     }
 
     public OrdineDTO save(OrdineDTO ordineDTO) {
         LOG.debug("Request to save Ordine : {}", ordineDTO);
         Ordine ordine = ordineMapper.toEntity(ordineDTO);
 
-        // Auto-genera numeroOrdine
         if (ordine.getNumeroOrdine() == null || ordine.getNumeroOrdine().isBlank()) {
             String data   = NUMERO_ORDINE_FMT.format(Instant.now());
             String random = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
             ordine.setNumeroOrdine("ORD-" + data + "-" + random);
         }
 
-        // Auto-genera dataCreazione
         if (ordine.getDataCreazione() == null) {
             ordine.setDataCreazione(Instant.now());
         }
 
-        // Stato iniziale di default
         if (ordine.getStatoOrdine() == null) {
             ordine.setStatoOrdine(StatoOrdine.IN_ELABORAZIONE);
         }
@@ -115,10 +120,19 @@ public class OrdineService {
     }
 
     /**
-     * Pubblica evento ordine-confermato su Kafka.
-     * Il payload include emailCliente e nomeCliente così ms-notifiche
-     * può popolare il campo destinatario.
+     * Trova l'entità Ordine per id (usata da CheckoutResource per l'email).
      */
+    public Optional<Ordine> findEntityById(UUID id) {
+        return ordineRepository.findById(id);
+    }
+
+    /**
+     * Invia email di conferma ordine al cliente (chiamato da CheckoutResource).
+     */
+    public void inviaEmailConferma(Ordine ordine, List<RigaOrdine> righe, String metodoPagamento) {
+        ordineMailService.inviaConfermaOrdine(ordine, righe, metodoPagamento);
+    }
+
     private void pubblicaOrdineConfermato(Ordine ordine) {
         try {
             String payload = objectMapper.writeValueAsString(new OrdineConfermatoEvent(
@@ -130,14 +144,12 @@ public class OrdineService {
                 ordine.getCognomeCliente()
             ));
             streamBridge.send("kafkaProducer-out-0", payload);
-            LOG.info("Evento ordine-confermato pubblicato per ordine: {} destinatario: {}",
-                ordine.getNumeroOrdine(), ordine.getEmail());
+            LOG.info("Evento ordine-confermato pubblicato: {} → {}", ordine.getNumeroOrdine(), ordine.getEmail());
         } catch (Exception e) {
             LOG.error("Errore pubblicazione evento Kafka per ordine {}: {}", ordine.getId(), e.getMessage());
         }
     }
 
-    // Record evento Kafka — ora include email e nome per le notifiche
     public record OrdineConfermatoEvent(
         UUID ordineId,
         String numeroOrdine,

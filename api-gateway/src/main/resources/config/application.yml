@@ -133,6 +133,42 @@ spring:
     gateway:
       default-filters:
         - JWTRelay
+      routes:
+        # Route esplicita per il checkout (anonimo) — non dipende dal discovery
+        - id: msordini-checkout
+          uri: lb://msordini
+          predicates:
+            - Path=/services/msordini/api/checkout
+          filters:
+            - StripPrefix=2
+        # Route esplicita generica msordini
+        - id: msordini-all
+          uri: lb://msordini
+          predicates:
+            - Path=/services/msordini/**
+          filters:
+            - StripPrefix=2
+        # Route esplicita mspagamenti
+        - id: mspagamenti-all
+          uri: lb://mspagamenti
+          predicates:
+            - Path=/services/mspagamenti/**
+          filters:
+            - StripPrefix=2
+        # Route esplicita msrecensioni
+        - id: msrecensioni-all
+          uri: lb://msrecensioni
+          predicates:
+            - Path=/services/msrecensioni/**
+          filters:
+            - StripPrefix=2
+        # Route esplicita mscatalogo
+        - id: mscatalogo-all
+          uri: lb://mscatalogo
+          predicates:
+            - Path=/services/mscatalogo/**
+          filters:
+            - StripPrefix=2
       discovery:
         locator:
           enabled: true

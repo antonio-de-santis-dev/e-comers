@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms';
 import { Subject, of } from 'rxjs';
 import { takeUntil, catchError } from 'rxjs/operators';
 import SharedModule from 'app/shared/shared.module';
-import { DecimalPipe } from '@angular/common';
 import { CarrelloService } from 'app/negozio/carrello/carrello.service';
 
 interface Prodotto {
@@ -30,7 +29,7 @@ interface CategoriaItem {
 @Component({
   selector: 'jhi-catalogo-prodotti',
   standalone: true,
-  imports: [SharedModule, FormsModule, RouterModule, DecimalPipe],
+  imports: [SharedModule, FormsModule, RouterModule],
   templateUrl: './catalogo-prodotti.component.html',
   styleUrl: './catalogo-prodotti.component.scss',
 })

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="it">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Conferma ordine</title>
+  <style>
+    body { margin:0; padding:0; background:#F4F4F5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; }
+    .wrap { max-width:600px; margin:32px auto; background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 2px 16px rgba(0,0,0,0.08); }
+    .header { background:#1D3A4F; padding:32px 40px; text-align:center; }
+    .header h1 { color:#fff; margin:0; font-size:22px; font-weight:700; }
+    .header p  { color:rgba(255,255,255,0.75); margin:6px 0 0; font-size:14px; }
+    .badge { display:inline-block; background:#16A34A; color:#fff; border-radius:6px; padding:6px 20px; font-size:15px; font-weight:700; letter-spacing:0.05em; margin-top:16px; }
+    .body  { padding:32px 40px; }
+    .greeting { font-size:16px; color:#111827; margin-bottom:24px; }
+    .section-title { font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#6B7280; margin-bottom:12px; }
+    table.items { width:100%; border-collapse:collapse; margin-bottom:24px; }
+    table.items th { text-align:left; font-size:12px; color:#9CA3AF; font-weight:600; padding:6px 8px; border-bottom:1px solid #E5E7EB; }
+    table.items td { padding:10px 8px; font-size:14px; color:#111827; border-bottom:1px solid #F3F4F6; }
+    table.items td.right { text-align:right; font-weight:600; }
+    .totale-row td { border-top:2px solid #E5E7EB; font-weight:700; font-size:15px; padding-top:12px; }
+    .info-box { background:#F9FAFB; border:1px solid #E5E7EB; border-radius:8px; padding:16px 20px; margin-bottom:20px; }
+    .info-box p { margin:4px 0; font-size:14px; color:#374151; line-height:1.6; }
+    .info-box strong { color:#111827; }
+    .chip { display:inline-block; background:#DBEAFE; color:#1E40AF; border-radius:20px; font-size:12px; font-weight:700; padding:3px 10px; }
+    .footer { background:#F9FAFB; border-top:1px solid #E5E7EB; padding:24px 40px; text-align:center; }
+    .footer p { font-size:12px; color:#9CA3AF; margin:4px 0; }
+    .footer a { color:#2563EB; text-decoration:none; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>🛍️ Il Tuo Store</h1>
+    <p>Conferma ordine</p>
+    <div class="badge" th:text="${ordine.numeroOrdine}">ORD-20260327-XXXXXX</div>
+  </div>
+
+  <!-- Body -->
+  <div class="body">
+
+    <p class="greeting">
+      Ciao <strong th:text="${ordine.nomeCliente + ' ' + ordine.cognomeCliente}">Mario Rossi</strong>,<br/>
+      il tuo ordine è stato confermato con successo! 🎉<br/>
+      Stiamo elaborando la tua richiesta e ti aggiorneremo sullo stato della spedizione.
+    </p>
+
+    <!-- Prodotti -->
+    <p class="section-title">Articoli ordinati</p>
+    <table class="items">
+      <thead>
+        <tr>
+          <th>Prodotto</th>
+          <th style="text-align:right">Qta</th>
+          <th style="text-align:right">Prezzo</th>
+          <th style="text-align:right">Subtotale</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="riga : ${righe}">
+          <td th:text="${riga.nomeProdotto}">Nome prodotto</td>
+          <td class="right" th:text="${riga.quantita}">1</td>
+          <td class="right" th:text="${'€ ' + #numbers.formatDecimal(riga.prezzoUnitario, 1, 2)}">€ 0,00</td>
+          <td class="right" th:text="${'€ ' + #numbers.formatDecimal(riga.prezzoTotale, 1, 2)}">€ 0,00</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr class="totale-row">
+          <td colspan="3">Totale ordine</td>
+          <td class="right" th:text="${'€ ' + #numbers.formatDecimal(ordine.totaleFinal, 1, 2)}">€ 0,00</td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <!-- Dati spedizione -->
+    <p class="section-title">Indirizzo di spedizione</p>
+    <div class="info-box">
+      <p><strong th:text="${ordine.nomeCliente + ' ' + ordine.cognomeCliente}">Mario Rossi</strong></p>
+      <p th:text="${ordine.indirizzo}">Via Roma 1</p>
+      <p th:text="${ordine.cap + ' ' + ordine.citta + ' (' + ordine.provincia + ')'}">73100 Lecce (LE)</p>
+      <p th:text="${ordine.statoPaese}">Italia</p>
+      <p th:if="${ordine.telefono}" th:text="${'Tel: ' + ordine.telefono}">Tel: +39 333 000 0000</p>
+    </div>
+
+    <!-- Riepilogo ordine -->
+    <p class="section-title">Dettagli ordine</p>
+    <div class="info-box">
+      <p><strong>Numero ordine:</strong> <span th:text="${ordine.numeroOrdine}">ORD-...</span></p>
+      <p><strong>Data:</strong> <span th:text="${data}">27/03/2026 10:00</span></p>
+      <p><strong>Tipo spedizione:</strong>
+        <span class="chip" th:text="${ordine.tipoSpedizione}">STANDARD</span>
+      </p>
+      <p><strong>Metodo di pagamento:</strong> <span th:text="${metodo}">Carta di credito</span></p>
+      <p><strong>Stato:</strong> <span style="color:#16A34A;font-weight:700">In elaborazione</span></p>
+    </div>
+
+    <p style="font-size:14px; color:#6B7280;">
+      Hai domande sul tuo ordine? Rispondi a questa email o visita il nostro
+      <a th:href="${baseUrl}" style="color:#2563EB">sito</a>.
+    </p>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>© 2026 Il Tuo Store. Tutti i diritti riservati.</p>
+    <p>Hai ricevuto questa email perché hai effettuato un ordine sul nostro sito.</p>
+  </div>
+
+</div>
+</body>
+</html>

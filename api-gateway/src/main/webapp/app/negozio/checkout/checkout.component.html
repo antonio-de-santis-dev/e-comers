@@ -1,125 +1,105 @@
 <div class="checkout-page">
 
-  <!-- ── HEADER PROGRESS BAR ── -->
-  <div class="checkout-header">
-    <div class="checkout-steps">
-      <div class="cstep" [class.cstep--active]="step() === 'spedizione'" [class.cstep--done]="step() === 'riepilogo' || step() === 'successo'">
-        <span class="cstep__num">1</span>
-        <span class="cstep__label">Spedizione</span>
-      </div>
-      <div class="cstep__line" [class.cstep__line--done]="step() === 'riepilogo' || step() === 'successo'"></div>
-      <div class="cstep" [class.cstep--active]="step() === 'riepilogo'" [class.cstep--done]="step() === 'successo'">
-        <span class="cstep__num">2</span>
-        <span class="cstep__label">Riepilogo</span>
-      </div>
-      <div class="cstep__line" [class.cstep__line--done]="step() === 'successo'"></div>
-      <div class="cstep" [class.cstep--active]="step() === 'successo'">
-        <span class="cstep__num">3</span>
-        <span class="cstep__label">Conferma</span>
+  <!-- ── PROGRESS BAR ── -->
+  @if (step() !== 'successo') {
+    <div class="checkout-header">
+      <div class="checkout-steps">
+        <div class="cstep" [class.cstep--active]="step() === 'spedizione'" [class.cstep--done]="stepIndex() > 0">
+          <span class="cstep__num">{{ stepIndex() > 0 ? '✓' : '1' }}</span>
+          <span class="cstep__label">Spedizione</span>
+        </div>
+        <div class="cstep__line" [class.cstep__line--done]="stepIndex() > 0"></div>
+        <div class="cstep" [class.cstep--active]="step() === 'pagamento'" [class.cstep--done]="stepIndex() > 1">
+          <span class="cstep__num">{{ stepIndex() > 1 ? '✓' : '2' }}</span>
+          <span class="cstep__label">Pagamento</span>
+        </div>
+        <div class="cstep__line" [class.cstep__line--done]="stepIndex() > 1"></div>
+        <div class="cstep" [class.cstep--active]="step() === 'riepilogo'" [class.cstep--done]="stepIndex() > 2">
+          <span class="cstep__num">3</span>
+          <span class="cstep__label">Riepilogo</span>
+        </div>
       </div>
     </div>
-  </div>
+  }
 
-  <!-- ══════════════════════════════════════
-       STEP 1 — DATI SPEDIZIONE
-  ══════════════════════════════════════ -->
+  <!-- ══════════════════════════════
+       STEP 1 — SPEDIZIONE
+  ══════════════════════════════════ -->
   @if (step() === 'spedizione') {
     <div class="checkout-layout">
-
-      <!-- Form -->
       <div class="checkout-main">
         <h2 class="section-title">Dati di spedizione</h2>
 
         <div class="form-grid">
-
-          <!-- Nome -->
           <div class="form-group">
             <label class="form-label">Nome <span class="req">*</span></label>
             <input class="form-input" [class.form-input--error]="erroriForm.nome"
-              type="text" [(ngModel)]="form.nome" placeholder="Mario" />
+                   type="text" [(ngModel)]="form.nome" placeholder="Mario"/>
             @if (erroriForm.nome) { <span class="form-error">{{ erroriForm.nome }}</span> }
           </div>
-
-          <!-- Cognome -->
           <div class="form-group">
             <label class="form-label">Cognome <span class="req">*</span></label>
             <input class="form-input" [class.form-input--error]="erroriForm.cognome"
-              type="text" [(ngModel)]="form.cognome" placeholder="Rossi" />
+                   type="text" [(ngModel)]="form.cognome" placeholder="Rossi"/>
             @if (erroriForm.cognome) { <span class="form-error">{{ erroriForm.cognome }}</span> }
           </div>
-
-          <!-- Email -->
           <div class="form-group form-group--full">
             <label class="form-label">Email <span class="req">*</span></label>
             <input class="form-input" [class.form-input--error]="erroriForm.email"
-              type="email" [(ngModel)]="form.email" placeholder="mario.rossi@email.it" />
+                   type="email" [(ngModel)]="form.email" placeholder="mario.rossi@email.it"/>
             @if (erroriForm.email) { <span class="form-error">{{ erroriForm.email }}</span> }
           </div>
-
-          <!-- Telefono -->
           <div class="form-group form-group--full">
             <label class="form-label">Telefono</label>
-            <input class="form-input" type="tel" [(ngModel)]="form.telefono" placeholder="+39 333 000 0000" />
+            <input class="form-input" type="tel" [(ngModel)]="form.telefono" placeholder="+39 333 000 0000"/>
           </div>
-
-          <!-- Indirizzo -->
           <div class="form-group form-group--full">
             <label class="form-label">Indirizzo <span class="req">*</span></label>
             <input class="form-input" [class.form-input--error]="erroriForm.indirizzo"
-              type="text" [(ngModel)]="form.indirizzo" placeholder="Via Roma 1" />
+                   type="text" [(ngModel)]="form.indirizzo" placeholder="Via Roma 1"/>
             @if (erroriForm.indirizzo) { <span class="form-error">{{ erroriForm.indirizzo }}</span> }
           </div>
-
-          <!-- Città -->
           <div class="form-group">
             <label class="form-label">Città <span class="req">*</span></label>
             <input class="form-input" [class.form-input--error]="erroriForm.citta"
-              type="text" [(ngModel)]="form.citta" placeholder="Lecce" />
+                   type="text" [(ngModel)]="form.citta" placeholder="Lecce"/>
             @if (erroriForm.citta) { <span class="form-error">{{ erroriForm.citta }}</span> }
           </div>
-
-          <!-- Provincia + CAP affiancati -->
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Provincia <span class="req">*</span></label>
+              <label class="form-label">Prov. <span class="req">*</span></label>
               <input class="form-input" [class.form-input--error]="erroriForm.provincia"
-                type="text" [(ngModel)]="form.provincia" placeholder="LE" maxlength="2" style="text-transform:uppercase" />
+                     type="text" [(ngModel)]="form.provincia" placeholder="LE" maxlength="2" style="text-transform:uppercase"/>
               @if (erroriForm.provincia) { <span class="form-error">{{ erroriForm.provincia }}</span> }
             </div>
             <div class="form-group">
               <label class="form-label">CAP <span class="req">*</span></label>
               <input class="form-input" [class.form-input--error]="erroriForm.cap"
-                type="text" [(ngModel)]="form.cap" placeholder="73100" maxlength="5" />
+                     type="text" [(ngModel)]="form.cap" placeholder="73100" maxlength="5"/>
               @if (erroriForm.cap) { <span class="form-error">{{ erroriForm.cap }}</span> }
             </div>
           </div>
-
-          <!-- Note spedizione -->
           <div class="form-group form-group--full">
             <label class="form-label">Note per il corriere</label>
             <textarea class="form-input form-textarea" [(ngModel)]="form.noteSpedizione"
-              placeholder="Citofono, piano, istruzioni particolari..." rows="2"></textarea>
+                      placeholder="Citofono, piano, istruzioni..." rows="2"></textarea>
           </div>
-
         </div>
 
-        <!-- Tipo spedizione -->
         <h2 class="section-title" style="margin-top:2rem">Tipo di spedizione</h2>
         <div class="spedizione-options">
-          @for (opzione of opzioniSpedizione; track opzione.valore) {
-            <div class="spedizione-card" [class.spedizione-card--selected]="tipoSpedizioneSelezionato().valore === opzione.valore"
-              (click)="selezionaSpedizione(opzione)">
-              <div class="spedizione-card__radio">
-                <span class="radio-dot" [class.radio-dot--on]="tipoSpedizioneSelezionato().valore === opzione.valore"></span>
-              </div>
+          @for (o of opzioniSpedizione; track o.valore) {
+            <div class="spedizione-card" [class.spedizione-card--selected]="tipoSpedizioneSelezionato().valore === o.valore"
+                 (click)="selezionaSpedizione(o)">
+              <span class="radio-dot" [class.radio-dot--on]="tipoSpedizioneSelezionato().valore === o.valore"></span>
               <div class="spedizione-card__info">
-                <strong>{{ opzione.etichetta }}</strong>
-                @if (opzione.giorni) { <span class="spedizione-giorni">{{ opzione.giorni }}</span> }
-                <p>{{ opzione.descrizione }}</p>
+                <strong>{{ o.etichetta }}</strong>
+                @if (o.giorni) { <span class="chip-giorni">{{ o.giorni }}</span> }
+                <p>{{ o.descrizione }}</p>
               </div>
               <div class="spedizione-card__costo">
-                @if (opzione.costo === 0) { <span class="gratuita">Gratuita</span> }
-                @else { <span>{{ formatPrice(opzione.costo) }}</span> }
+                @if (o.costo === 0) { <span class="gratuita">Gratuita</span> }
+                @else { <span>{{ formatPrice(o.costo) }}</span> }
               </div>
             </div>
           }
@@ -127,19 +107,17 @@
 
         <div class="step-actions">
           <button class="btn-secondary" (click)="tornaAlCatalogo()">← Torna al catalogo</button>
-          <button class="btn-primary" (click)="avanti()">Continua al riepilogo →</button>
+          <button class="btn-primary" (click)="avanti()">Continua al pagamento →</button>
         </div>
       </div>
 
-      <!-- Sidebar riepilogo mini -->
+      <!-- Sidebar mini -->
       <aside class="checkout-sidebar">
         <h3 class="sidebar-title">Articoli ({{ totaleArticoli() }})</h3>
         <div class="sidebar-items">
           @for (item of items(); track item.id) {
             <div class="sidebar-item">
-              @if (getImmagine(item)) {
-                <img [src]="getImmagine(item)" [alt]="item.nome" class="sidebar-item__img" />
-              }
+              @if (getImmagine(item)) { <img [src]="getImmagine(item)" [alt]="item.nome" class="sidebar-item__img"/> }
               <div class="sidebar-item__info">
                 <span class="sidebar-item__nome">{{ item.nome }}</span>
                 <span class="sidebar-item__qta">× {{ item.quantita }}</span>
@@ -153,16 +131,221 @@
           <strong>{{ formatPrice(totale()) }}</strong>
         </div>
       </aside>
-
     </div>
   }
 
-  <!-- ══════════════════════════════════════
-       STEP 2 — RIEPILOGO + CONFERMA
-  ══════════════════════════════════════ -->
+  <!-- ══════════════════════════════
+       STEP 2 — PAGAMENTO
+  ══════════════════════════════════ -->
+  @if (step() === 'pagamento') {
+    <div class="checkout-layout">
+      <div class="checkout-main">
+        <h2 class="section-title">Metodo di pagamento</h2>
+
+        <!-- Selezione metodo -->
+        <div class="metodo-tabs">
+          <button class="metodo-tab" [class.metodo-tab--active]="pagamento.metodo === 'CARTA_CREDITO'"
+                  (click)="selezionaMetodo('CARTA_CREDITO')">
+            💳 Carta di credito
+          </button>
+          <button class="metodo-tab" [class.metodo-tab--active]="pagamento.metodo === 'CARTA_DEBITO'"
+                  (click)="selezionaMetodo('CARTA_DEBITO')">
+            🏦 Carta di debito
+          </button>
+          <button class="metodo-tab" [class.metodo-tab--active]="pagamento.metodo === 'PAYPAL'"
+                  (click)="selezionaMetodo('PAYPAL')">
+            🅿️ PayPal
+          </button>
+        </div>
+
+        <!-- Form carta con live preview 3D -->
+        @if (pagamento.metodo === 'CARTA_CREDITO' || pagamento.metodo === 'CARTA_DEBITO') {
+
+          <!-- Card 3D flip -->
+          <div class="card3d-scene">
+            <div class="card3d" [class.card3d--flipped]="cvvFocused">
+
+              <!-- FRONTE -->
+              <div class="card3d__front" [class.card3d__front--visa]="cardBrand === 'visa'" [class.card3d__front--mc]="cardBrand === 'mastercard'">
+                <!-- Chip EMV -->
+                <div class="card3d__chip">
+                  <div class="card3d__chip-line"></div>
+                  <div class="card3d__chip-line"></div>
+                  <div class="card3d__chip-line"></div>
+                </div>
+
+                <!-- Contactless icon -->
+                <div class="card3d__contactless">
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="none"/>
+                    <path d="M7 12a5 5 0 0 1 5-5" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" stroke-linecap="round"/>
+                    <path d="M9.5 12a2.5 2.5 0 0 1 2.5-2.5" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" stroke-linecap="round"/>
+                    <circle cx="12" cy="12" r="1" fill="rgba(255,255,255,0.9)"/>
+                  </svg>
+                </div>
+
+                <!-- Brand logo -->
+                <div class="card3d__brand">
+                  @if (cardBrand === 'visa') {
+                    <svg viewBox="0 0 256 83" class="card3d__logo-visa" xmlns="http://www.w3.org/2000/svg">
+                      <defs><linearGradient y2="100%" y1="0" x2="55%" x1="46%" id="visaGrad"><stop stop-color="#fff" offset="0%"/><stop stop-color="#e0e0e0" offset="100%"/></linearGradient></defs>
+                      <path transform="matrix(1 0 0 -1 0 82.668)" d="M132.397 56.24c-.146-11.516 10.263-17.942 18.104-21.763c8.056-3.92 10.762-6.434 10.73-9.94c-.06-5.365-6.426-7.733-12.383-7.825c-10.393-.161-16.436 2.806-21.24 5.05l-3.744-17.519c4.82-2.221 13.745-4.158 23-4.243c21.725 0 35.938 10.724 36.015 27.351c.085 21.102-29.188 22.27-28.988 31.702c.069 2.86 2.798 5.912 8.778 6.688c2.96.392 11.131.692 20.395-3.574l3.636 16.95c-4.982 1.814-11.385 3.551-19.357 3.551c-20.448 0-34.83-10.87-34.946-26.428m89.241 24.968c-3.967 0-7.31-2.314-8.802-5.865L181.803 1.245h21.709l4.32 11.939h26.528l2.506-11.939H256l-16.697 79.963zm3.037-21.601l6.265-30.027h-17.158zm-118.599 21.6L88.964 1.246h20.687l17.104 79.963zm-30.603 0L53.941 26.782l-8.71 46.277c-1.022 5.166-5.058 8.149-9.54 8.149H.493L0 78.886c7.226-1.568 15.436-4.097 20.41-6.803c3.044-1.653 3.912-3.098 4.912-7.026L41.819 1.245H63.68l33.516 79.963z" fill="url(#visaGrad)"/>
+                    </svg>
+                  }
+                  @if (cardBrand === 'mastercard') {
+                    <div class="card3d__mc">
+                      <span class="card3d__mc-left"></span>
+                      <span class="card3d__mc-right"></span>
+                    </div>
+                  }
+                  @if (cardBrand === 'other') {
+                    <span class="card3d__brand-text">{{ pagamento.metodo === 'CARTA_DEBITO' ? 'DEBIT' : 'CREDIT' }}</span>
+                  }
+                </div>
+
+                <!-- Numero -->
+                <div class="card3d__number">{{ cardNumberDisplay }}</div>
+
+                <!-- Intestatario + scadenza -->
+                <div class="card3d__bottom">
+                  <div class="card3d__holder">
+                    <span class="card3d__label">Titolare</span>
+                    <span class="card3d__value">{{ cardHolder }}</span>
+                  </div>
+                  <div class="card3d__expiry">
+                    <span class="card3d__label">Scadenza</span>
+                    <span class="card3d__value">{{ cardExpiry }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- RETRO (visibile quando CVV è in focus) -->
+              <div class="card3d__back">
+                <div class="card3d__strip"></div>
+                <div class="card3d__cvv-row">
+                  <span class="card3d__cvv-label">CVV</span>
+                  <div class="card3d__cvv-box">
+                    <span>{{ pagamento.cvv ? '•'.repeat(pagamento.cvv.length) : '•••' }}</span>
+                  </div>
+                </div>
+                <div class="card3d__back-brand">
+                  @if (cardBrand === 'visa') {
+                    <span style="color:rgba(255,255,255,0.6); font-style:italic; font-weight:900; font-size:1.1rem;">VISA</span>
+                  }
+                  @if (cardBrand === 'mastercard') {
+                    <div class="card3d__mc card3d__mc--sm">
+                      <span class="card3d__mc-left"></span>
+                      <span class="card3d__mc-right"></span>
+                    </div>
+                  }
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Form dati carta -->
+          <div class="card-form">
+            <div class="card-form__field card-form__field--full">
+              <label class="card-form__label">
+                Numero carta
+                <span class="req">*</span>
+                @if (cardBrand === 'visa') { <span class="brand-badge brand-badge--visa">VISA</span> }
+                @if (cardBrand === 'mastercard') { <span class="brand-badge brand-badge--mc">MC</span> }
+              </label>
+              <input class="card-form__input card-form__input--mono"
+                     [class.card-form__input--error]="erroriPagamento.numeroCarta"
+                     type="text" [value]="pagamento.numeroCarta"
+                     (input)="formattaCarta($event)"
+                     placeholder="0000 0000 0000 0000" maxlength="19"
+                     autocomplete="cc-number"/>
+              @if (erroriPagamento.numeroCarta) { <span class="form-error">{{ erroriPagamento.numeroCarta }}</span> }
+            </div>
+
+            <div class="card-form__field card-form__field--full">
+              <label class="card-form__label">Intestatario <span class="req">*</span></label>
+              <input class="card-form__input"
+                     [class.card-form__input--error]="erroriPagamento.intestatario"
+                     type="text" [(ngModel)]="pagamento.intestatario"
+                     placeholder="MARIO ROSSI"
+                     style="text-transform:uppercase"
+                     autocomplete="cc-name"/>
+              @if (erroriPagamento.intestatario) { <span class="form-error">{{ erroriPagamento.intestatario }}</span> }
+            </div>
+
+            <div class="card-form__row">
+              <div class="card-form__field">
+                <label class="card-form__label">Scadenza <span class="req">*</span></label>
+                <input class="card-form__input card-form__input--mono"
+                       [class.card-form__input--error]="erroriPagamento.scadenza"
+                       type="text" [(ngModel)]="pagamento.scadenza"
+                       placeholder="MM/AA" maxlength="5"
+                       autocomplete="cc-exp"/>
+                @if (erroriPagamento.scadenza) { <span class="form-error">{{ erroriPagamento.scadenza }}</span> }
+              </div>
+              <div class="card-form__field">
+                <label class="card-form__label">CVV <span class="req">*</span></label>
+                <input class="card-form__input card-form__input--mono"
+                       [class.card-form__input--error]="erroriPagamento.cvv"
+                       type="password" [(ngModel)]="pagamento.cvv"
+                       placeholder="•••" maxlength="4"
+                       (focus)="onCvvFocus()" (blur)="onCvvBlur()"
+                       autocomplete="cc-csc"/>
+                @if (erroriPagamento.cvv) { <span class="form-error">{{ erroriPagamento.cvv }}</span> }
+              </div>
+            </div>
+          </div>
+
+          <p class="sicurezza-nota">🔒 Crittografia SSL 256 bit — i dati della carta non vengono memorizzati.</p>
+        }
+
+        <!-- Form PayPal -->
+        @if (pagamento.metodo === 'PAYPAL') {
+          <div class="paypal-box">
+            <div class="paypal-logo">PayPal</div>
+            <p class="paypal-desc">Verrai reindirizzato a PayPal per completare il pagamento in modo sicuro.</p>
+            <div class="form-group" style="max-width:360px; margin: 0 auto;">
+              <label class="form-label">Email PayPal <span class="req">*</span></label>
+              <input class="form-input" [class.form-input--error]="erroriPagamento.emailPaypal"
+                     type="email" [(ngModel)]="pagamento.emailPaypal" placeholder="mario.rossi@paypal.it"/>
+              @if (erroriPagamento.emailPaypal) { <span class="form-error">{{ erroriPagamento.emailPaypal }}</span> }
+            </div>
+          </div>
+        }
+
+        <div class="step-actions">
+          <button class="btn-secondary" (click)="indietro()">← Torna alla spedizione</button>
+          <button class="btn-primary" (click)="avanti()">Continua al riepilogo →</button>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="checkout-sidebar">
+        <h3 class="sidebar-title">Riepilogo</h3>
+        <div class="total-rows">
+          <div class="total-row">
+            <span>Prodotti ({{ totaleArticoli() }})</span>
+            <span>{{ formatPrice(subtotale()) }}</span>
+          </div>
+          <div class="total-row">
+            <span>Spedizione</span>
+            @if (costoSpedizione() === 0) { <span class="gratuita">Gratuita</span> }
+            @else { <span>{{ formatPrice(costoSpedizione()) }}</span> }
+          </div>
+          <div class="total-row total-row--finale">
+            <strong>Totale</strong>
+            <strong>{{ formatPrice(totale()) }}</strong>
+          </div>
+        </div>
+      </aside>
+    </div>
+  }
+
+  <!-- ══════════════════════════════
+       STEP 3 — RIEPILOGO
+  ══════════════════════════════════ -->
   @if (step() === 'riepilogo') {
     <div class="checkout-layout">
-
       <div class="checkout-main">
         <h2 class="section-title">Riepilogo ordine</h2>
 
@@ -170,9 +353,7 @@
         <div class="recap-items">
           @for (item of items(); track item.id) {
             <div class="recap-item">
-              @if (getImmagine(item)) {
-                <img [src]="getImmagine(item)" [alt]="item.nome" class="recap-item__img" />
-              }
+              @if (getImmagine(item)) { <img [src]="getImmagine(item)" [alt]="item.nome" class="recap-item__img"/> }
               <div class="recap-item__info">
                 <strong>{{ item.nome }}</strong>
                 <span>{{ formatPrice(item.prezzo) }} × {{ item.quantita }}</span>
@@ -182,7 +363,7 @@
           }
         </div>
 
-        <!-- Dati spedizione recap -->
+        <!-- Spedizione recap -->
         <div class="recap-section">
           <h3>📦 Spedizione</h3>
           <div class="recap-address">
@@ -192,22 +373,34 @@
             <p>{{ form.email }}</p>
             @if (form.telefono) { <p>{{ form.telefono }}</p> }
           </div>
-          <div class="recap-spedizione">
-            <strong>{{ tipoSpedizioneSelezionato().etichetta }}</strong> —
-            {{ tipoSpedizioneSelezionato().descrizione }}
-          </div>
+          <p class="recap-spedizione">
+            <strong>{{ tipoSpedizioneSelezionato().etichetta }}</strong> — {{ tipoSpedizioneSelezionato().descrizione }}
+          </p>
         </div>
 
-        <!-- Errore invio -->
+        <!-- Pagamento recap -->
+        <div class="recap-section">
+          <h3>💳 Pagamento</h3>
+          <p style="font-size:0.9rem; color:#374151;">
+            <strong>{{ metodoPagamentoLabel }}</strong>
+            @if (pagamento.metodo !== 'PAYPAL' && pagamento.numeroCarta) {
+              — •••• •••• •••• {{ ultime4Carta }}
+            }
+            @if (pagamento.metodo === 'PAYPAL' && pagamento.emailPaypal) {
+              — {{ pagamento.emailPaypal }}
+            }
+          </p>
+        </div>
+
         @if (erroreInvio()) {
           <div class="alert-error">⚠️ {{ erroreInvio() }}</div>
         }
 
         <div class="step-actions">
-          <button class="btn-secondary" (click)="indietro()" [disabled]="invioInCorso()">← Modifica dati</button>
+          <button class="btn-secondary" (click)="indietro()" [disabled]="invioInCorso()">← Modifica pagamento</button>
           <button class="btn-confirm" (click)="confermaOrdine()" [disabled]="invioInCorso()">
-            @if (invioInCorso()) { <span class="spinner"></span> Invio in corso... }
-            @else { ✅ Conferma ordine }
+            @if (invioInCorso()) { <span class="spinner"></span> Elaborazione... }
+            @else { ✅ Conferma e paga {{ formatPrice(totale()) }} }
           </button>
         </div>
       </div>
@@ -217,11 +410,11 @@
         <h3 class="sidebar-title">Totale ordine</h3>
         <div class="total-rows">
           <div class="total-row">
-            <span>Subtotale prodotti</span>
+            <span>Subtotale</span>
             <span>{{ formatPrice(subtotale()) }}</span>
           </div>
           <div class="total-row">
-            <span>Spedizione ({{ tipoSpedizioneSelezionato().etichetta }})</span>
+            <span>Spedizione</span>
             @if (costoSpedizione() === 0) { <span class="gratuita">Gratuita</span> }
             @else { <span>{{ formatPrice(costoSpedizione()) }}</span> }
           </div>
@@ -235,22 +428,24 @@
           </div>
         </div>
         <div class="sidebar-badges">
-          <span>🔒 Pagamento sicuro</span>
-          <span>↩️ Reso 30 giorni</span>
+          <span>🔒 Pagamento sicuro SSL</span>
+          <span>↩️ Reso gratuito 30 giorni</span>
         </div>
       </aside>
-
     </div>
   }
 
-  <!-- ══════════════════════════════════════
-       STEP 3 — SUCCESSO
-  ══════════════════════════════════════ -->
+  <!-- ══════════════════════════════
+       STEP 4 — SUCCESSO
+  ══════════════════════════════════ -->
   @if (step() === 'successo') {
     <div class="success-page">
-      <div class="success-icon">✅</div>
+      <div class="success-icon">🎉</div>
       <h1 class="success-title">Ordine confermato!</h1>
-      <p class="success-subtitle">Grazie per il tuo acquisto. Riceverai una conferma via email.</p>
+      <p class="success-subtitle">
+        Grazie <strong>{{ form.nome }}</strong>! Abbiamo ricevuto il tuo ordine.<br/>
+        Riceverai una email di conferma a <strong>{{ form.email }}</strong>.
+      </p>
       @if (numeroOrdineCreato()) {
         <div class="success-numero">
           <span>Numero ordine</span>
@@ -266,9 +461,16 @@
           </div>
         </div>
         <div class="success-info__item">
+          <span class="info-icon">💳</span>
+          <div>
+            <strong>{{ metodoPagamentoLabel }}</strong>
+            <p>Pagamento di {{ formatPrice(totale()) }} elaborato con successo</p>
+          </div>
+        </div>
+        <div class="success-info__item">
           <span class="info-icon">📧</span>
           <div>
-            <strong>Conferma inviata a</strong>
+            <strong>Email di conferma inviata</strong>
             <p>{{ form.email }}</p>
           </div>
         </div>
