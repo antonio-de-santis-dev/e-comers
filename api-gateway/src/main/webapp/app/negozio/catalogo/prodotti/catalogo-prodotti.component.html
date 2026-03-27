@@ -1,116 +1,251 @@
-<div class="cat-page">
+<!-- ═══════════════════════════════════════════════════════════
+     PAGINA CATALOGO PRODOTTI — layout sidebar + griglia
+     Sidebar sinistra: CERCA · CATEGORIA · FILTRI RAPIDI · PREZZO
+     Contenuto destra: toolbar ordinamento + griglia prodotti
+     ═══════════════════════════════════════════════════════════ -->
 
-  <!-- HEADER -->
-  <div class="cat-header">
-    <div class="cat-breadcrumb">
+<div class="cp-page">
+
+  <!-- HEADER breadcrumb -->
+  <div class="cp-header">
+    <div class="cp-breadcrumb">
       <button class="btn-back" (click)="tornaAlCatalogo()">← Catalogo</button>
       @if (nomeCategoria()) {
         <span class="breadcrumb-sep">/</span>
         <span class="breadcrumb-cat">{{ nomeCategoria() }}</span>
       }
     </div>
-
-    <h1 class="cat-title">
-      @if (nomeCategoria()) {
-        {{ nomeCategoria() }}
-      } @else {
-        Tutti i prodotti
+    <div class="cp-header-row">
+      <h1 class="cp-title">
+        @if (nomeCategoria()) { {{ nomeCategoria() }} } @else { Tutti i prodotti }
+      </h1>
+      @if (!loading()) {
+        <span class="cp-count">{{ totale() }} prodott{{ totale() === 1 ? 'o' : 'i' }} disponibil{{ totale() === 1 ? 'e' : 'i' }}</span>
       }
-    </h1>
-
-    @if (!loading()) {
-      <p class="cat-count">{{ totale() }} prodott{{ totale() === 1 ? 'o' : 'i' }} trovat{{ totale() === 1 ? 'o' : 'i' }}</p>
-    }
-  </div>
-
-  <!-- FILTRI E ORDINAMENTO -->
-  <div class="cat-toolbar">
-    <div class="cat-search">
-      <span class="search-icon">🔍</span>
-      <input
-        type="text"
-        class="search-input"
-        placeholder="Cerca prodotto..."
-        [value]="ricerca()"
-        (input)="onRicercaChange($any($event.target).value)"
-      />
-    </div>
-
-    <div class="cat-sort">
-      <label>Ordina per:</label>
-      <select [value]="ordinamento()" (change)="onOrdinamentoChange($any($event.target).value)">
-        <option value="nome,asc">Nome A→Z</option>
-        <option value="nome,desc">Nome Z→A</option>
-        <option value="prezzo,asc">Prezzo crescente</option>
-        <option value="prezzo,desc">Prezzo decrescente</option>
-      </select>
     </div>
   </div>
 
-  <!-- GRIGLIA PRODOTTI -->
-  @if (loading()) {
-    <div class="cat-grid">
-      @for (_ of [1,2,3,4,5,6,7,8]; track $index) {
-        <div class="prod-card skeleton-card">
-          <div class="skeleton-img"></div>
-          <div class="skeleton-body">
-            <div class="skeleton-line w-80"></div>
-            <div class="skeleton-line w-40"></div>
-            <div class="skeleton-line w-60"></div>
-          </div>
+  <!-- LAYOUT: sidebar + main -->
+  <div class="cp-layout">
+
+    <!-- ── SIDEBAR FILTRI ── -->
+    <aside class="cp-sidebar">
+
+      <!-- CERCA -->
+      <div class="sf-section">
+        <p class="sf-label">CERCA</p>
+        <div class="sf-search">
+          <input
+            type="text"
+            class="sf-search-input"
+            placeholder="Cerca prodotto..."
+            [value]="ricerca()"
+            (input)="onRicercaChange($any($event.target).value)"
+          />
+          <button class="sf-search-btn" type="button">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <circle cx="8.5" cy="8.5" r="5.5"/><line x1="13" y1="13" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- CATEGORIA -->
+      <div class="sf-section">
+        <p class="sf-label">CATEGORIA</p>
+        <div class="sf-radio-group">
+          <!-- Tutte le categorie -->
+          <label class="sf-radio">
+            <input
+              type="radio"
+              name="categoria"
+              [checked]="categoriaId() === null"
+              (change)="onCategoriaChange(null)"
+            />
+            <span class="sf-radio-mark"></span>
+            <span class="sf-radio-text">Tutte le categorie</span>
+          </label>
+          <!-- Categorie dinamiche dal server -->
+          @for (cat of categorie(); track cat.id) {
+            <label class="sf-radio">
+              <input
+                type="radio"
+                name="categoria"
+                [checked]="categoriaId() === cat.id.toString()"
+                (change)="onCategoriaChange(cat.id.toString())"
+              />
+              <span class="sf-radio-mark"></span>
+              <span class="sf-radio-text">{{ cat.nome }}</span>
+            </label>
+          }
+        </div>
+      </div>
+
+      <!-- FILTRI RAPIDI -->
+      <div class="sf-section">
+        <p class="sf-label">FILTRI RAPIDI</p>
+        <div class="sf-toggle-group">
+          <label class="sf-toggle">
+            <div class="sf-toggle-track" [class.sf-toggle-track--on]="soloEvidenza()">
+              <input
+                type="checkbox"
+                [checked]="soloEvidenza()"
+                (change)="onEvidenzaChange($any($event.target).checked)"
+              />
+              <span class="sf-toggle-knob"></span>
+            </div>
+            <span class="sf-toggle-text">Solo in evidenza</span>
+          </label>
+          <label class="sf-toggle">
+            <div class="sf-toggle-track" [class.sf-toggle-track--on]="soloDisponibili()">
+              <input
+                type="checkbox"
+                [checked]="soloDisponibili()"
+                (change)="onDisponibiliChange($any($event.target).checked)"
+              />
+              <span class="sf-toggle-knob"></span>
+            </div>
+            <span class="sf-toggle-text">Solo disponibili</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- PREZZO MASSIMO -->
+      <div class="sf-section">
+        <p class="sf-label">PREZZO MASSIMO</p>
+        <input
+          type="range"
+          class="sf-slider"
+          [min]="0"
+          [max]="PREZZO_MAX_ASSOLUTO"
+          [value]="prezzoMax()"
+          (input)="onPrezzoMaxChange(+$any($event.target).value)"
+        />
+        <p class="sf-slider-val">fino a {{ formatPrezzo(prezzoMax()) }}</p>
+      </div>
+
+    </aside>
+
+    <!-- ── MAIN CONTENT ── -->
+    <div class="cp-main">
+
+      <!-- Toolbar risultati + ordinamento -->
+      <div class="cp-toolbar">
+        @if (!loading()) {
+          <span class="cp-results">{{ totale() }} risultat{{ totale() === 1 ? 'o' : 'i' }}</span>
+        }
+        <div class="cp-sort">
+          <select [value]="ordinamento()" (change)="onOrdinamentoChange($any($event.target).value)">
+            <option value="nome,asc">Nome A-Z</option>
+            <option value="nome,desc">Nome Z-A</option>
+            <option value="prezzo,asc">Prezzo crescente</option>
+            <option value="prezzo,desc">Prezzo decrescente</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- SKELETON LOADING -->
+      @if (loading()) {
+        <div class="cp-grid">
+          @for (_ of [1,2,3,4,5,6,7,8,9]; track $index) {
+            <div class="prod-card prod-card--skeleton">
+              <div class="prod-img-wrap skeleton-img"></div>
+              <div class="prod-body">
+                <div class="skeleton-line w-30"></div>
+                <div class="skeleton-line w-80"></div>
+                <div class="skeleton-line w-50"></div>
+                <div class="skeleton-line w-40 mt-auto"></div>
+              </div>
+            </div>
+          }
         </div>
       }
-    </div>
-  }
 
-  @if (!loading() && prodotti().length === 0) {
-    <div class="cat-empty">
-      <span>📦</span>
-      <p>Nessun prodotto trovato.</p>
-      @if (ricerca()) {
-        <button class="btn-reset" (click)="onRicercaChange('')">Rimuovi filtro ricerca</button>
+      <!-- STATO VUOTO -->
+      @if (!loading() && prodotti().length === 0) {
+        <div class="cp-empty">
+          <span>📦</span>
+          <p>Nessun prodotto trovato.</p>
+          @if (ricerca()) {
+            <button class="btn-reset" (click)="onRicercaChange('')">Rimuovi ricerca</button>
+          }
+        </div>
       }
-    </div>
-  }
 
-  @if (!loading() && prodotti().length > 0) {
-    <div class="cat-grid">
-      @for (p of prodotti(); track p.id) {
-        <a class="prod-card" [routerLink]="['/prodotto', p.id]">
-          <div class="prod-img-wrap">
-            <img [src]="getImmagine(p)" [alt]="p.nome" class="prod-img" />
-            @if (p.inEvidenza) {
-              <span class="badge-evidenza">⭐ In evidenza</span>
-            }
-            @if (!p.disponibile) {
-              <span class="badge-esaurito">Esaurito</span>
-            }
+      <!-- GRIGLIA PRODOTTI -->
+      @if (!loading() && prodotti().length > 0) {
+        <div class="cp-grid">
+          @for (p of prodotti(); track p.id) {
+            <a class="prod-card" [routerLink]="['/prodotto', p.id]">
+
+              <!-- Immagine -->
+              <div class="prod-img-wrap">
+                <img [src]="getImmagine(p)" [alt]="p.nome" class="prod-img" />
+                @if (p.inEvidenza) {
+                  <span class="badge badge--evidenza">⭐ In evidenza</span>
+                }
+                @if (!p.disponibile) {
+                  <span class="badge badge--esaurito">Esaurito</span>
+                }
+              </div>
+
+              <!-- Corpo card -->
+              <div class="prod-body">
+                <!-- Categoria -->
+                @if (p.categoria) {
+                  <span class="prod-cat">{{ p.categoria.nome }}</span>
+                }
+
+                <!-- Nome -->
+                <h3 class="prod-nome">{{ p.nome }}</h3>
+
+                <!-- Stelle voto -->
+                <div class="prod-stars">
+                  @for (s of getStelle(p.votoTotale); track $index) {
+                    <span [class.star--on]="s === '★'">{{ s }}</span>
+                  }
+                </div>
+
+                <!-- Disponibilità + quantità -->
+                @if (p.disponibile) {
+                  <p class="prod-disponibile">
+                    <span class="dot dot--green"></span>
+                    Disponibile ({{ p.quantitaDisponibile }})
+                  </p>
+                } @else {
+                  <p class="prod-esaurito">
+                    <span class="dot dot--red"></span>
+                    Esaurito
+                  </p>
+                }
+
+                <!-- Prezzo -->
+                <p class="prod-prezzo">{{ formatPrezzo(p.prezzo) }}</p>
+              </div>
+
+              <!-- Azioni -->
+              <div class="prod-actions">
+                <button class="btn-acquista" type="button" (click)="$event.preventDefault()">Acquista</button>
+                <button class="btn-carrello" type="button" (click)="$event.preventDefault()">
+                  🛒 Aggiungi al carrello
+                </button>
+              </div>
+
+            </a>
+          }
+        </div>
+
+        <!-- PAGINAZIONE -->
+        @if (totalePagine > 1) {
+          <div class="cp-pagination">
+            <button class="btn-pag" [disabled]="!hasPrev" (click)="paginaPrecedente()">← Precedente</button>
+            <span class="pag-info">Pagina {{ paginaCorrente }} di {{ totalePagine }}</span>
+            <button class="btn-pag" [disabled]="!hasNext" (click)="paginaSuccessiva()">Successiva →</button>
           </div>
-          <div class="prod-body">
-            @if (p.categoria && !nomeCategoria()) {
-              <span class="prod-cat">{{ p.categoria.nome }}</span>
-            }
-            <h3 class="prod-nome">{{ p.nome }}</h3>
-            @if (p.descrizione) {
-              <p class="prod-desc">{{ p.descrizione }}</p>
-            }
-            <div class="prod-footer">
-              <span class="prod-prezzo">{{ formatPrezzo(p.prezzo) }}</span>
-              <span class="prod-cta">Vedi →</span>
-            </div>
-          </div>
-        </a>
+        }
       }
-    </div>
 
-    <!-- PAGINAZIONE -->
-    @if (totalePagine > 1) {
-      <div class="cat-pagination">
-        <button class="btn-pag" [disabled]="!hasPrev" (click)="paginaPrecedente()">← Precedente</button>
-        <span class="pag-info">Pagina {{ paginaCorrente }} di {{ totalePagine }}</span>
-        <button class="btn-pag" [disabled]="!hasNext" (click)="paginaSuccessiva()">Successiva →</button>
-      </div>
-    }
-  }
+    </div><!-- /cp-main -->
+  </div><!-- /cp-layout -->
 
 </div>
